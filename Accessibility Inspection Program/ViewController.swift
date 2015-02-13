@@ -19,6 +19,7 @@ class ViewController: UIViewController {
         if (self.password.text == "" || self.username.text == "") {
             warning.text = "Warning: Username and Password need to be filled out"
         } else {
+            println("logging in...")
             jsonLogin()
         }
     }
@@ -32,34 +33,6 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    /*func jsonStuff() {
-        self.warning.text = "";
-        
-        let urlAsString = "http://date.jsontest.com"
-        let url = NSURL(string: urlAsString)!
-        let urlSession = NSURLSession.sharedSession()
-        
-        let jsonQuery = urlSession.dataTaskWithURL(url, completionHandler: {data, response, error-> Void in if (error != nil) {
-            println(error.localizedDescription)
-            }
-            var err: NSError?
-            
-            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
-            if (error != nil) {
-                println("JSON Error \(err!.localizedDescription)")
-            }
-            
-            let jsonDate: String! = jsonResult["date"] as NSString
-            let jsonTime: String! = jsonResult["time"] as NSString
-            
-            dispatch_async(dispatch_get_main_queue(), {
-                self.password.text = jsonDate
-            })
-        })
-        
-        jsonQuery.resume()
-    }*/
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         self.view.endEditing(true)
@@ -115,9 +88,16 @@ class ViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-            var tableViewVar =  segue.destinationViewController as tableViewControl
-            tableViewVar.username = self.username.text
-            tableViewVar.password = self.password.text
+            var navigationController =  segue.destinationViewController as UINavigationController
+            var controller = navigationController.topViewController as tableViewControl
+            //controller.delegate = self
+            controller.username = self.username.text
+            controller.password = self.password.text
+    }
+    
+    @IBAction func cancelToLogin(segue:UIStoryboardSegue) {
+        dismissViewControllerAnimated(true, completion: nil)
+        println("logiwn")
     }
 }
 

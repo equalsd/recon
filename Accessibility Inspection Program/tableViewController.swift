@@ -24,6 +24,15 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
        jsonGetSites()
     }
     
+    /*required init(coder aDecoder: NSCoder) {
+        println("init tableViewController")
+        super.init(coder: aDecoder)
+    }
+    
+    deinit {
+        println("deinit tableViewController")
+    }*/
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -145,6 +154,33 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 50
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "login" {
+            //player = Player(name: self.nameTextField.text, game: "Chess", rating: 1)
+            let loginViewController = segue.destinationViewController as UIViewController
+            println("login")
+            //gamePickerViewController.selectedGame = game
+        } else if (segue.identifier == "loadingElements") {
+            var navigationController =  segue.destinationViewController as UINavigationController
+            var controller = navigationController.topViewController as elementTable
+            //controller.delegate = self
+            controller.username = self.username
+            controller.password = self.password
+            
+            let myIndexPath = self.tableView.indexPathForSelectedRow()
+            let row = myIndexPath?.row
+            controller.site = nameData[row!]
+            
+        }
+        println("sobeit")
+        println(segue.identifier)
+    }
+    
+    @IBAction func siteList(segue:UIStoryboardSegue) {
+        dismissViewControllerAnimated(true, completion: nil)
+        println("listElements")
     }
 
 }
