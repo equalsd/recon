@@ -7,12 +7,17 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var warning: UILabel!
+    var site: String?
+    
+    var existingUser = [NSManagedObject]()
+    
     var login = "none"
     
     @IBAction func loginButton(sender: AnyObject) {
@@ -27,6 +32,27 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let fetchRequest = NSFetchRequest(entityName: "User")
+        
+        var error: NSError?
+        
+        let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        
+        if let existingUser = fetchedResults {
+            //println(exitingUser.count)
+            if (existingUser.count > 0) {
+                let user = existingUser[0]
+                self.username.text = user.valueForKey("username") as? String
+                self.password.text = user.valueForKey("password") as? String
+                self.site = user.valueForKey("site") as? String
+            }
+        } else {
+            println("Could not fetch \(error), \(error!.userInfo)")
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -79,12 +105,50 @@ class ViewController: UIViewController {
                 //self.warning.text = ""
                 //self.performSegueWithIdentifier("sites", sender: self)
                 NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
-                        self.warning.text = ""
-                        self.performSegueWithIdentifier("sites", sender: self)
-                    })
+                    if (self.existingUser.count == 0) {
+                        self.coreSaveUser()
+                    } else {
+                        self.coreRemoveUser()
+                        self.coreSaveUser()
+                    }
+                    
+                    self.warning.text = ""
+                    self.performSegueWithIdentifier("sites", sender: self)
+                })
             }
             
         }.resume()
+    }
+    
+    func coreRemoveUser() {
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity = NSEntityDescription.entityForName("User", inManagedObjectContext: managedContext)
+        
+        let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        
+        managedContext.deleteObject(user)
+        
+        managedContext.save(nil)
+    }
+    
+    func coreSaveUser() {
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity = NSEntityDescription.entityForName("User", inManagedObjectContext: managedContext)
+        
+        let results = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+                        
+        var error: NSError?
+        if let results = fetchedResults {
+            people = results
+        } else {
+            println("Could not fetch \(error), \(error!.userInfo)")
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -93,6 +157,7 @@ class ViewController: UIViewController {
             //controller.delegate = self
             controller.username = self.username.text
             controller.password = self.password.text
+            controller.site = self.site
     }
     
     @IBAction func cancelToLogin(segue:UIStoryboardSegue) {

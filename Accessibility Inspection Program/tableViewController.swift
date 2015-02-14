@@ -12,16 +12,30 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
 
     var username: String!
     var password: String!
+    var site: String!
 
     var nameData = [String]()
     var descriptionData = [String]()
     var trackingData = [String]()
+
+    @IBOutlet weak var continueLabel: UIBarButtonItem!
+    
+    @IBAction func continueElement(sender: AnyObject) {
+        self.performSegueWithIdentifier("loadingElements", sender: self)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-       jsonGetSites()
+        jsonGetSites()
+        if (site != nil) {
+            continueLabel.title = "continue \(site)"
+            continueLabel.enabled = true
+        } else {
+            continueLabel.enabled = false
+            //mod later with presence of sitedata...
+        }
     }
     
     /*required init(coder aDecoder: NSCoder) {
@@ -168,14 +182,17 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
             //controller.delegate = self
             controller.username = self.username
             controller.password = self.password
+            controller.site = self.site
             
             let myIndexPath = self.tableView.indexPathForSelectedRow()
-            let row = myIndexPath?.row
-            controller.site = nameData[row!]
-            
+            if (myIndexPath != nil) {
+                let row = myIndexPath?.row
+                controller.site = nameData[row!]
+                controller.tracking = trackingData[row!]
+            }
         }
-        println("sobeit")
-        println(segue.identifier)
+        //println("sobeit")
+        //println(segue.identifier)
     }
     
     @IBAction func siteList(segue:UIStoryboardSegue) {
