@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var warning: UILabel!
     var site: String?
     
-    var existingUser = [NSManagedObject]()
+    //var existingUser = [NSManagedObject]()
     
     var login = "none"
     
@@ -35,15 +35,34 @@ class ViewController: UIViewController {
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
-        
+    
         let fetchRequest = NSFetchRequest(entityName: "User")
-        
+    
         var error: NSError?
         
-        let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        
+        if let results = fetchedResults {
+            println(results.count)
+            if (results.count > 0) {
+                //println(results[0].valueForKey("username"))
+                let user = results[0]
+                self.username.text = user.valueForKey("username") as? String
+                self.password.text = user.valueForKey("password") as? String
+                self.site = user.valueForKey("site") as? String
+
+            }
+        } else {
+            println("Could not fetch \(error), \(error!.userInfo)")
+        }
+    
+        
+        /*let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        
+        
         
         if let existingUser = fetchedResults {
-            //println(exitingUser.count)
+            //println(fetchedResults)
             if (existingUser.count > 0) {
                 let user = existingUser[0]
                 self.username.text = user.valueForKey("username") as? String
@@ -52,7 +71,7 @@ class ViewController: UIViewController {
             }
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
-        }
+        }*/
     }
 
     override func didReceiveMemoryWarning() {
@@ -105,12 +124,13 @@ class ViewController: UIViewController {
                 //self.warning.text = ""
                 //self.performSegueWithIdentifier("sites", sender: self)
                 NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
-                    if (self.existingUser.count == 0) {
-                        self.coreSaveUser()
-                    } else {
+                    //println(self.existingUser.count)
+                    //if (self.existingUser.count == 0) {
+                    //    self.coreSaveUser()
+                    //} else {
                         self.coreRemoveUser()
                         self.coreSaveUser()
-                    }
+                    //}
                     
                     self.warning.text = ""
                     self.performSegueWithIdentifier("sites", sender: self)
@@ -121,20 +141,33 @@ class ViewController: UIViewController {
     }
     
     func coreRemoveUser() {
+        println("removing...")
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         
-        let managedContext = appDelegate.managedObjectContext!
+        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
         
-        let entity = NSEntityDescription.entityForName("User", inManagedObjectContext: managedContext)
+        let entity = NSFetchRequest(entityName: "User")
         
-        let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
         
-        managedContext.deleteObject(user)
+        var error: NSError? = nil
+        let list = managedContext.executeFetchRequest(entity, error: &error)
         
-        managedContext.save(nil)
+        if let users = list {
+            var bas: NSManagedObject!
+            
+            for bas: AnyObject in users {
+                managedContext.deleteObject(bas as NSManagedObject)
+            }
+            
+            managedContext.save(nil)
+            
+        }
+        println(user)
     }
     
     func coreSaveUser() {
+        println("saving...")
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             
         let managedContext = appDelegate.managedObjectContext!
@@ -142,12 +175,13 @@ class ViewController: UIViewController {
         let entity = NSEntityDescription.entityForName("User", inManagedObjectContext: managedContext)
         
         let results = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        
+        results.setValue(self.password.text, forKey: "password")
+        results.setValue(self.username.text, forKey: "username")
                         
         var error: NSError?
-        if let results = fetchedResults {
-            people = results
-        } else {
-            println("Could not fetch \(error), \(error!.userInfo)")
+        if !managedContext.save(&error) {
+            println("Could not save \(error), \(error?.userInfo)")
         }
     }
     
