@@ -13,15 +13,44 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     var username: String!
     var password: String!
     var site: String!
+    var tracking: String!
+    var continuance: String = "continue"
 
     var nameData = [String]()
     var descriptionData = [String]()
     var trackingData = [String]()
 
-    @IBOutlet weak var continueLabel: UIBarButtonItem!
+    @IBAction func clickSite(sender: UIButton) {
+        var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data.", preferredStyle: UIAlertControllerStyle.Alert)
+        emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+            
+            let pointInTable = sender.convertPoint(sender.bounds.origin, toView: self.tableView)
+            let myIndexPath = self.tableView.indexPathForRowAtPoint(pointInTable)
+            //var row = myIndexPath.row
+            if let path = myIndexPath?.indexAtPosition(1) {
+                //println(self.nameData[path])
+                self.site = self.nameData[path]
+                self.tracking = self.trackingData[path]
+                self.continuance = ""
+            self.performSegueWithIdentifier("loadingElements", sender: self)
+                //println(self.site)
+            }
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+        }))
+        
+        self.presentViewController(emptyAlert, animated: true, completion: nil)
+        
+    }
+    
+    @IBOutlet weak var continueLabel: UIButton!
     
     @IBAction func continueElement(sender: AnyObject) {
+        self.continuance = "continue"
         self.performSegueWithIdentifier("loadingElements", sender: self)
+        //println("continue")
     }
     
     override func viewDidLoad() {
@@ -30,7 +59,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
         
         jsonGetSites()
         if (site != nil) {
-            continueLabel.title = "continue \(site)"
+            continueLabel.setTitle("continue \(site)", forState: UIControlState.Normal)
             continueLabel.enabled = true
         } else {
             continueLabel.enabled = false
@@ -114,7 +143,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
                 self.descriptionData = description
                 self.trackingData = tracking
                 self.tableView!.reloadData()
-                println(self.nameData)
+                //println(self.nameData)
             })
             
             NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
@@ -179,17 +208,21 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
         } else if (segue.identifier == "loadingElements") {
             var navigationController =  segue.destinationViewController as UINavigationController
             var controller = navigationController.topViewController as elementTable
-            //controller.delegate = self
+
             controller.username = self.username
             controller.password = self.password
+            controller.tracking = self.tracking
             controller.site = self.site
+            controller.continuance = self.continuance
             
-            let myIndexPath = self.tableView.indexPathForSelectedRow()
+            /*let myIndexPath = self.tableView.indexPathForSelectedRow()
             if (myIndexPath != nil) {
+                
                 let row = myIndexPath?.row
                 controller.site = nameData[row!]
                 controller.tracking = trackingData[row!]
-            }
+                controller.continuance = ""
+            }*/
         }
         //println("sobeit")
         //println(segue.identifier)

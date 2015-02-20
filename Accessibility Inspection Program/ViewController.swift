@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var warning: UILabel!
     var site: String?
+    var tracking: String?
     
     //var existingUser = [NSManagedObject]()
     
@@ -50,6 +51,7 @@ class ViewController: UIViewController {
                 self.username.text = user.valueForKey("username") as? String
                 self.password.text = user.valueForKey("password") as? String
                 self.site = user.valueForKey("site") as? String
+                self.tracking = user.valueForKey("tracking") as? String
 
             }
         } else {
@@ -178,7 +180,21 @@ class ViewController: UIViewController {
         
         results.setValue(self.password.text, forKey: "password")
         results.setValue(self.username.text, forKey: "username")
-                        
+        if (self.site == nil) {
+            var site = ""
+        } else {
+            var site = self.site
+        }
+        
+        if (self.tracking == nil) {
+            var tracking = ""
+        } else {
+            var tracking = self.tracking
+        }
+        
+        results.setValue(site, forKey: "site")
+        results.setValue(tracking, forKey: "tracking")
+        
         var error: NSError?
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
@@ -192,6 +208,7 @@ class ViewController: UIViewController {
             controller.username = self.username.text
             controller.password = self.password.text
             controller.site = self.site
+            controller.tracking = self.tracking
     }
     
     @IBAction func cancelToLogin(segue:UIStoryboardSegue) {

@@ -16,10 +16,13 @@ class elementTable: UITableViewController {
     var site: String!
     var use: String!
     var tracking: String!
+    var continuance: String!
     
-    var locations = [String]()
-    var notes = [String]()
-    var pictures = [String]()
+    var location: String!
+    var notes: String!
+    var picture: String!
+    
+    var elements: [Elemental] = []
     
     //var existingUser = [NSManagedObject]()
     
@@ -27,37 +30,28 @@ class elementTable: UITableViewController {
         println("new Item")
     }
     
-    /*func manageSite() {
-        
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext!
-        
-        let fetchRequest = NSFetchRequest(entityName: "User")
-        
-        var error: NSError?
-        
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
-    
-        //let entity = NSEntityDescription.entityForName("User", inManagedObjectContext: managedContext)
-        
-        //let object = NSManagedObject(entity: entity, insertIntoManagedObjectContext:managedContext)
-        
-        if fetchedResults != nil {
-            let existingUser = fetchedResults
-            site = existingUser[0]
-            if (self.site != site.valueForKey("site")) {
-                jsonElements()
-            } else {
-                coreElements()
+    @IBAction func detailClick(sender: UIButton) {
+        let pointInTable = sender.convertPoint(sender.bounds.origin, toView: self.tableView)
+        let myIndexPath = self.tableView.indexPathForRowAtPoint(pointInTable)
+        //var row = myIndexPath.row
+        if let path = myIndexPath?.indexAtPosition(1) {
+            //println(self.nameData[path])
+            var item = self.elements[path]
+            if let location = item.location {
+                self.location = location
             }
-        } else {
-            println("Could not fetch \(error), \(error!.userInfo)")
+            if let picture = item.picture {
+                self.picture = picture
+            }
+            if let notes = item.notes {
+                self.notes = notes
+            }
+            self.performSegueWithIdentifier("detail", sender: self)
         }
-    }*/
+    }
     
     func jsonElements() {
-        println("fetching elements from online")
+        println("getting...Online")
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
         
@@ -72,9 +66,10 @@ class elementTable: UITableViewController {
         let task: Void = session.dataTaskWithRequest(request) {
             data, response, error in
             
-            var pictures = [String]()
-            var notes = [String]()
-            var locations = [String]()
+            var picture: String?
+            var notes: String?
+            var location: String?
+            var elements: [Elemental] = []
             
             if let httpResponse = response as? NSHTTPURLResponse {
                 if httpResponse.statusCode != 200 {
@@ -93,8 +88,7 @@ class elementTable: UITableViewController {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
             
-            
-            println(jsonResult)
+            //println(jsonResult)
             
             for (rootKey, rootValue) in jsonResult {
                 //println(rootValue)
@@ -103,13 +97,16 @@ class elementTable: UITableViewController {
                     for (siteKey, siteValue) in rootValue as NSDictionary {
                         //println("\(siteKey), \(siteValue)")
                         if (siteKey as NSString == "location") {
-                            locations.append(siteValue as NSString)
+                            location = siteValue as NSString
                         } else if (siteKey as NSString == "notes") {
-                            notes.append(siteValue as NSString)
+                            notes = siteValue as NSString
                         } else if (siteKey as NSString == "picture") {
-                            pictures.append(siteValue as NSString)
+                            picture = siteValue as NSString
                         }
+                        
                     }
+                    
+                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
                 } else if (rootKey as NSString == "dir") {
                     self.site = rootValue as NSString
                 }
@@ -123,8 +120,10 @@ class elementTable: UITableViewController {
             NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                 dispatch_async(dispatch_get_main_queue(), {
                     
-                    if (locations.count == 0) {
-                        var emptyAlert = UIAlertController(title: "Notice", message: "This site has no locations registered", preferredStyle: UIAlertControllerStyle.Alert)
+                    self.coreRemoveElements()
+                    
+                    if (elements.count == 0) {
+                        var emptyAlert = UIAlertController(title: "Notice", message: "This site has no registered locations", preferredStyle: UIAlertControllerStyle.Alert)
                         emptyAlert.addAction(UIAlertAction(title: "Acknowledged", style: .Default, handler: {( action: UIAlertAction!) in
                             //add logic here
                         }))
@@ -132,11 +131,14 @@ class elementTable: UITableViewController {
                         self.presentViewController(emptyAlert, animated: true, completion: nil)
                         
                     } else {
+                        
                         self.tableView.dataSource = self
                         self.tableView.delegate = self
-                        self.locations = locations
-                        self.notes = notes
-                        self.pictures = pictures
+                        //self.locations = locations
+                        //self.notes = notes
+                        //self.pictures = pictures
+                        self.elements = elements
+                        self.coreSaveElements()
                         self.tableView!.reloadData()
                     }
                 })
@@ -145,7 +147,93 @@ class elementTable: UITableViewController {
             }.resume()
     }
     
-    func coreElements() {
+    func coreSaveElements() {
+        println("inserting...Core")
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
+
+        
+        //var index = 0
+        for element in elements {
+            //index++
+            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            item.setValue(element.location, forKey: "location")
+            item.setValue(element.picture, forKey: "picture")
+            item.setValue(element.notes, forKey: "notes")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Could not save \(error), \(error?.userInfo)")
+            }
+        }
+    }
+    
+    func coreRemoveElements() {
+        println("removing...Core")
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
+        
+        let entity = NSFetchRequest(entityName: "Elements")
+        
+        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        
+        var error: NSError? = nil
+        let list = managedContext.executeFetchRequest(entity, error: &error)
+        
+        if let users = list {
+            var bas: NSManagedObject!
+            
+            for bas: AnyObject in users {
+                managedContext.deleteObject(bas as NSManagedObject)
+            }
+            
+            managedContext.save(nil)
+            
+        }
+        //println(user)
+    }
+    
+    func coreSaveSite() {
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
+        
+        let entity = NSFetchRequest(entityName: "User")
+        
+        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        
+        var error: NSError? = nil
+        let list = managedContext.executeFetchRequest(entity, error: &error)
+        
+        if let users = list {
+            var bas: NSManagedObject!
+            
+            for bas: AnyObject in users {
+                managedContext.deleteObject(bas as NSManagedObject)
+            }
+            
+            managedContext.save(nil)
+        }
+        
+        let newEntity = NSEntityDescription.entityForName("User", inManagedObjectContext: managedContext)
+        
+        let results = NSManagedObject(entity: newEntity!, insertIntoManagedObjectContext:managedContext)
+        
+        results.setValue(self.password, forKey: "password")
+        results.setValue(self.username, forKey: "username")
+        results.setValue(self.tracking, forKey: "site")
+        
+        if !managedContext.save(&error) {
+            println("Could not save \(error), \(error?.userInfo)")
+        }
+    }
+    
+    func coreGetElements() {
+        println("getting...Core")
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
@@ -156,26 +244,53 @@ class elementTable: UITableViewController {
         
         let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
         
-        if let elements = fetchedResults {
+        if let results = fetchedResults {
             //do something if its empty...
-            println("empty for now")
+            //println("empty for now")
+            println(results.count)
+            
+            var picture: String?
+            var notes: String?
+            var location: String?
+            var elements: [Elemental] = []
+            
+            if (results.count == 0) {
+                var emptyAlert = UIAlertController(title: "Notice", message: "This site has no registered locations", preferredStyle: UIAlertControllerStyle.Alert)
+                emptyAlert.addAction(UIAlertAction(title: "Acknowledged", style: .Default, handler: {( action: UIAlertAction!) in
+                //add logic here
+                }))
+            
+                self.presentViewController(emptyAlert, animated: true, completion: nil)
+            } else {
+                for result in results {
+                    //println("\(siteKey), \(siteValue)")
+                    location = result.valueForKey("location") as? String
+                    notes = result.valueForKey("notes") as? String
+                    picture = result.valueForKey("picture") as? String
+                    
+                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
+                }
+                
+                self.elements = elements
+                self.tableView!.reloadData()
+            }
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
         }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.locations.count
+        return self.elements.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("elementItem") as UITableViewCell
-        let location = self.locations[indexPath.row]
+        let item = self.elements[indexPath.row]
         //cell.textLabel.text = location
         
         if let locationLabel = cell.viewWithTag(100) as? UILabel{
-            locationLabel.text = location
+            locationLabel.text = item.location
         }
         
         return cell
@@ -185,11 +300,11 @@ class elementTable: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //println(site)
-        self.navigationItem.title = "List of Elements: \(site)"
+        self.navigationItem.title = "\(site)"
         //if new tracking and in sitedata doesn't match; delete old.
         
         //get core, compare Tracking if not match, replace. get Elements or get jsonElements
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        /*let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
         
@@ -206,16 +321,22 @@ class elementTable: UITableViewController {
                 site = user.valueForKey("site") as? String
                 //println("site: \(site)")
                 //println("tracking: \(self.tracking)")
-                if (site == nil) {
-                    jsonElements()
-                } else if (self.tracking == site && site != nil) {
-                    coreElements()
+                if (site != self.tracking) {
+                    coreGetElements()
                 } else {
+                    coreSaveSite()
                     jsonElements()
                 }
             }
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
+        }*/
+        
+        if (self.continuance == "continue") {
+            coreGetElements()
+        } else {
+            coreSaveSite()
+            jsonElements()
         }
 
     }
@@ -234,6 +355,13 @@ class elementTable: UITableViewController {
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
+            controller.tracking = self.tracking
+        } else if (segue.identifier == "detail") {
+            var navigationController =  segue.destinationViewController as UINavigationController
+            var controller = navigationController.topViewController as detailView
+            controller.location = self.location
+            controller.picture = self.picture
+            controller.notes = self.notes
         }
     }
     
