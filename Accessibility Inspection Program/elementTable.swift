@@ -21,10 +21,26 @@ class elementTable: UITableViewController {
     var location: String!
     var notes: String!
     var picture: String!
+    var uniqueID: Int!
     
     var elements: [Elemental] = []
     
     //var existingUser = [NSManagedObject]()
+    
+    @IBAction func cancelElementList(sender: AnyObject) {
+        var menuAlert = UIAlertController(title: "Options", message: "Cancel to return to site list.  YOU WILL LOSE YOUR CHANGES.  Or select Upload to save to server", preferredStyle: UIAlertControllerStyle.Alert)
+        menuAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+            self.performSegueWithIdentifier("backtoSites", sender: self)
+        }))
+        menuAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+            println("to be uploaded")
+        }))
+        
+        self.presentViewController(menuAlert, animated: true, completion: nil)
+        
+    }
     
     @IBAction func newItem(sender: AnyObject) {
         println("new Item")
@@ -36,6 +52,7 @@ class elementTable: UITableViewController {
         //var row = myIndexPath.row
         if let path = myIndexPath?.indexAtPosition(1) {
             //println(self.nameData[path])
+            self.uniqueID = path
             var item = self.elements[path]
             if let location = item.location {
                 self.location = location
@@ -263,7 +280,6 @@ class elementTable: UITableViewController {
                 self.presentViewController(emptyAlert, animated: true, completion: nil)
             } else {
                 for result in results {
-                    //println("\(siteKey), \(siteValue)")
                     location = result.valueForKey("location") as? String
                     notes = result.valueForKey("notes") as? String
                     picture = result.valueForKey("picture") as? String
@@ -301,36 +317,7 @@ class elementTable: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         //println(site)
         self.navigationItem.title = "\(site)"
-        //if new tracking and in sitedata doesn't match; delete old.
         
-        //get core, compare Tracking if not match, replace. get Elements or get jsonElements
-        /*let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext!
-        
-        let fetchRequest = NSFetchRequest(entityName: "User")
-        
-        var error: NSError?
-        
-        let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
-        
-        if let existingUser = fetchedResults {
-            //println(exitingUser.count)
-            if (existingUser.count > 0) {
-                let user = existingUser[0]
-                site = user.valueForKey("site") as? String
-                //println("site: \(site)")
-                //println("tracking: \(self.tracking)")
-                if (site != self.tracking) {
-                    coreGetElements()
-                } else {
-                    coreSaveSite()
-                    jsonElements()
-                }
-            }
-        } else {
-            println("Could not fetch \(error), \(error!.userInfo)")
-        }*/
         
         if (self.continuance == "continue") {
             coreGetElements()
@@ -338,6 +325,8 @@ class elementTable: UITableViewController {
             coreSaveSite()
             jsonElements()
         }
+        println("ss")
+        if (uniqueID != nil) {println("jj")}
 
     }
     
@@ -362,11 +351,26 @@ class elementTable: UITableViewController {
             controller.location = self.location
             controller.picture = self.picture
             controller.notes = self.notes
+            controller.uniqueID = self.uniqueID
         }
     }
     
     @IBAction func continueToELements(segue:UIStoryboardSegue) {
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    @IBAction func saveDetail(segue:UIStoryboardSegue) {
+        //dismissViewControllerAnimated(true, completion: nil)
+        println("pown")
+        println(self.uniqueID)
+        
+    }
+    
+    @IBAction func cancelDetail(segue:UIStoryboardSegue) {
+        //dismissViewControllerAnimated(true, completion: nil)
+        //println("yo")
+        //println(self.elements)
     }
 
 }

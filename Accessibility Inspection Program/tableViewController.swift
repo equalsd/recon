@@ -19,7 +19,12 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     var nameData = [String]()
     var descriptionData = [String]()
     var trackingData = [String]()
-
+    
+    var overlay = UIView()
+    var activityIndicator = UIActivityIndicatorView()
+    
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    
     @IBAction func clickSite(sender: UIButton) {
         var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data.", preferredStyle: UIAlertControllerStyle.Alert)
         emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
@@ -56,7 +61,6 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
         jsonGetSites()
         if (site != nil) {
             continueLabel.setTitle("continue \(site)", forState: UIControlState.Normal)
@@ -82,6 +86,16 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     }
     
     func jsonGetSites() {
+        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
+        activityIndicator.center = CGPointMake(tableView.bounds.width / 2, overlay.bounds.height / 2)
+        overlay = UIView(frame: view.frame)
+        overlay.backgroundColor = UIColor.blackColor()
+        overlay.alpha = 0.8
+        overlay.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        
+        view.addSubview(overlay)
+        
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
         
@@ -144,6 +158,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
                 self.trackingData = tracking
                 self.tableView!.reloadData()
                 //println(self.nameData)
+                self.overlay.removeFromSuperview()
             })
             
             NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in

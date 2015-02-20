@@ -76,6 +76,8 @@ class ViewController: UIViewController {
         }*/
     }
 
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -86,6 +88,8 @@ class ViewController: UIViewController {
     }
     
     func jsonLogin() {
+        activityIndicatorView.startAnimating()
+        
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
         var username = self.username.text
@@ -121,6 +125,7 @@ class ViewController: UIViewController {
                 NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                         self.warning.text = "Error: Bad username or password"
                         println("bad username or password")
+                        self.activityIndicatorView.stopAnimating()
                     })
             } else {
                 //self.warning.text = ""
@@ -136,6 +141,7 @@ class ViewController: UIViewController {
                     
                     self.warning.text = ""
                     self.performSegueWithIdentifier("sites", sender: self)
+                    self.activityIndicatorView.stopAnimating()
                 })
             }
             

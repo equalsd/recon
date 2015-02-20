@@ -4,6 +4,7 @@
         <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uniqueID" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
     </entity>
     <entity name="User" syncable="YES">
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
@@ -12,7 +13,7 @@
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Elements" positionX="-27" positionY="36" width="128" height="90"/>
+        <element name="Elements" positionX="-27" positionY="36" width="128" height="105"/>
         <element name="User" positionX="-63" positionY="-18" width="128" height="105"/>
     </elements>
 </model>
