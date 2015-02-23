@@ -28,7 +28,7 @@ class elementTable: UITableViewController {
     //var existingUser = [NSManagedObject]()
     
     @IBAction func cancelElementList(sender: AnyObject) {
-        var menuAlert = UIAlertController(title: "Options", message: "Cancel to return to site list.  YOU WILL LOSE YOUR CHANGES.  Or select Upload to save to server", preferredStyle: UIAlertControllerStyle.Alert)
+        var menuAlert = UIAlertController(title: "Options", message: "Cancel to return to site list.  Reload to lose all changes not on server.  Or select Upload to save to server", preferredStyle: UIAlertControllerStyle.Alert)
         menuAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
             self.performSegueWithIdentifier("backtoSites", sender: self)
@@ -37,6 +37,11 @@ class elementTable: UITableViewController {
             //add logic here
             println("to be uploaded")
         }))
+        menuAlert.addAction(UIAlertAction(title: "Reload", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+            self.coreRemoveElements()
+            self.jsonElements()
+        }))
         
         self.presentViewController(menuAlert, animated: true, completion: nil)
         
@@ -44,6 +49,10 @@ class elementTable: UITableViewController {
     
     @IBAction func newItem(sender: AnyObject) {
         println("new Item")
+        self.location = ""
+        self.uniqueID = -1
+        self.notes = ""
+        self.performSegueWithIdentifier("detail", sender: self)
     }
     
     @IBAction func detailClick(sender: UIButton) {
@@ -72,7 +81,7 @@ class elementTable: UITableViewController {
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
         
-        let params:[String: AnyObject] = ["username" : username, "password" : password, "site": tracking]
+        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "site": self.tracking]
         
         let url = NSURL(string: "http://precisreports.com/api/get-elements-json.php")
         let request = NSMutableURLRequest(URL: url!)
@@ -320,14 +329,28 @@ class elementTable: UITableViewController {
         
         
         if (self.continuance == "continue") {
+            //either from cancelled detail or from last edit
             coreGetElements()
+        } else if (self.continuance == "saveThis") {
+            coreGetElements()
+            if (uniqueID > -1 ) {
+                var path = self.uniqueID
+                let item = self.elements[path]
+                item.location = self.location
+                item.notes = self.notes
+                item.picture = self.picture
+            //println(self.elements[path].location)
+            } else {
+                //add new element from details
+                self.elements.append(Elemental(location: self.location!, picture: self.picture!, notes: self.notes!))
+                println(self.location)
+            }
+            coreRemoveElements()
+            coreSaveElements()
         } else {
             coreSaveSite()
             jsonElements()
         }
-        println("ss")
-        if (uniqueID != nil) {println("jj")}
-
     }
     
     override func didReceiveMemoryWarning() {
@@ -340,11 +363,11 @@ class elementTable: UITableViewController {
         if (segue.identifier == "backtoSites") {
             var navigationController =  segue.destinationViewController as UINavigationController
             var controller = navigationController.topViewController as tableViewControl
-            //controller.delegate = self
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
             controller.tracking = self.tracking
+            //controller.delegate = self
         } else if (segue.identifier == "detail") {
             var navigationController =  segue.destinationViewController as UINavigationController
             var controller = navigationController.topViewController as detailView
@@ -352,6 +375,10 @@ class elementTable: UITableViewController {
             controller.picture = self.picture
             controller.notes = self.notes
             controller.uniqueID = self.uniqueID
+            controller.username = self.username
+            controller.password = self.password
+            controller.site = self.site
+            controller.tracking = self.tracking
         }
     }
     
@@ -360,17 +387,18 @@ class elementTable: UITableViewController {
     }
     
     
-    @IBAction func saveDetail(segue:UIStoryboardSegue) {
+    /*@IBAction func saveDetail(segue:UIStoryboardSegue) {
         //dismissViewControllerAnimated(true, completion: nil)
         println("pown")
         println(self.uniqueID)
+        println(self.location)
         
-    }
+    }*/
     
-    @IBAction func cancelDetail(segue:UIStoryboardSegue) {
+    /*@IBAction func cancelDetail(segue:UIStoryboardSegue) {
         //dismissViewControllerAnimated(true, completion: nil)
         //println("yo")
         //println(self.elements)
-    }
+    }*/
 
 }

@@ -171,7 +171,6 @@ class ViewController: UIViewController {
             managedContext.save(nil)
             
         }
-        println(user)
     }
     
     func coreSaveUser() {
