@@ -38,7 +38,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
                 self.site = self.nameData[path]
                 self.tracking = self.trackingData[path]
                 self.continuance = ""
-            self.performSegueWithIdentifier("loadingElements", sender: self)
+                self.performSegueWithIdentifier("loadingElements", sender: self)
                 //println(self.site)
             }
         }))

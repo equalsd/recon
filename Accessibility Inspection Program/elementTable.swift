@@ -35,11 +35,12 @@ class elementTable: UITableViewController {
         }))
         menuAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
-            println("to be uploaded")
+            self.uploadElements()
         }))
         menuAlert.addAction(UIAlertAction(title: "Reload", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
             self.coreRemoveElements()
+            self.elements.removeAll()
             self.jsonElements()
         }))
         
@@ -165,62 +166,39 @@ class elementTable: UITableViewController {
                         //self.pictures = pictures
                         self.elements = elements
                         self.coreSaveElements()
-                        self.tableView!.reloadData()
                     }
+                    
+                    self.tableView!.reloadData()
                 })
             })
             
             }.resume()
     }
-    
-    func coreSaveElements() {
-        println("inserting...Core")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext!
-        
-        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
 
-        
-        //var index = 0
-        for element in elements {
-            //index++
-            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
-            item.setValue(element.location, forKey: "location")
-            item.setValue(element.picture, forKey: "picture")
-            item.setValue(element.notes, forKey: "notes")
-            
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Could not save \(error), \(error?.userInfo)")
-            }
-        }
-    }
     
     func coreRemoveElements() {
-        println("removing...Core")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         
-        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
+            let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
         
-        let entity = NSFetchRequest(entityName: "Elements")
+            let entity = NSFetchRequest(entityName: "Elements")
         
-        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
         
-        var error: NSError? = nil
-        let list = managedContext.executeFetchRequest(entity, error: &error)
+            var error: NSError? = nil
+            let list = managedContext.executeFetchRequest(entity, error: &error)
         
-        if let users = list {
-            var bas: NSManagedObject!
+            if let users = list {
+                var bas: NSManagedObject!
+                
+                for bas: AnyObject in users {
+                    managedContext.deleteObject(bas as NSManagedObject)
+                }
             
-            for bas: AnyObject in users {
-                managedContext.deleteObject(bas as NSManagedObject)
+                managedContext.save(nil)
+            
             }
-            
-            managedContext.save(nil)
-            
-        }
-        //println(user)
+            //println(user)
     }
     
     func coreSaveSite() {
@@ -251,7 +229,8 @@ class elementTable: UITableViewController {
         
         results.setValue(self.password, forKey: "password")
         results.setValue(self.username, forKey: "username")
-        results.setValue(self.tracking, forKey: "site")
+        results.setValue(self.tracking, forKey: "tracking")
+        results.setValue(self.site, forKey: "site")
         
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
@@ -293,7 +272,11 @@ class elementTable: UITableViewController {
                     notes = result.valueForKey("notes") as? String
                     picture = result.valueForKey("picture") as? String
                     
-                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
+                    if (picture == nil) {
+                        elements.append(Elemental(location: location!, picture: "", notes: notes!))
+                    } else {
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
+                    }
                 }
                 
                 self.elements = elements
@@ -325,6 +308,9 @@ class elementTable: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //println(site)
+        println(self.tracking)
+        println(self.username)
+        println(self.password)
         self.navigationItem.title = "\(site)"
         
         
@@ -332,8 +318,8 @@ class elementTable: UITableViewController {
             //either from cancelled detail or from last edit
             coreGetElements()
         } else if (self.continuance == "saveThis") {
-            coreGetElements()
-            if (uniqueID > -1 ) {
+            //coreGetElements()
+            /*if (uniqueID > -1 ) {
                 var path = self.uniqueID
                 let item = self.elements[path]
                 item.location = self.location
@@ -344,9 +330,12 @@ class elementTable: UITableViewController {
                 //add new element from details
                 self.elements.append(Elemental(location: self.location!, picture: self.picture!, notes: self.notes!))
                 println(self.location)
-            }
+            }*/
             coreRemoveElements()
             coreSaveElements()
+            self.tableView.dataSource = self
+            self.tableView.delegate = self
+            tableView.reloadData()
         } else {
             coreSaveSite()
             jsonElements()
@@ -371,14 +360,15 @@ class elementTable: UITableViewController {
         } else if (segue.identifier == "detail") {
             var navigationController =  segue.destinationViewController as UINavigationController
             var controller = navigationController.topViewController as detailView
-            controller.location = self.location
-            controller.picture = self.picture
-            controller.notes = self.notes
+            //controller.location = self.location
+            //controller.picture = self.picture
+            //controller.notes = self.notes
             controller.uniqueID = self.uniqueID
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
             controller.tracking = self.tracking
+            controller.elements = self.elements
         }
     }
     
@@ -400,5 +390,141 @@ class elementTable: UITableViewController {
         //println("yo")
         //println(self.elements)
     }*/
+    
+    func coreSaveElements() {
+        println("inserting...Core")
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
+        
+        
+        //var index = 0
+        for element in elements {
+            //index++
+            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            item.setValue(element.location, forKey: "location")
+            item.setValue(element.picture, forKey: "picture")
+            item.setValue(element.notes, forKey: "notes")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Could not save \(error), \(error?.userInfo)")
+            }
+        }
+    }
+    
+    func compatiblize(elements: [Elemental]) -> NSArray {
+        var returnArray = [NSArray]()
+        
+        for item in elements {
+                returnArray.append([item.location!, item.picture!, item.notes!])
+        }
+        
+        println(returnArray)
+        return returnArray
+}
+    
+    func uploadElements() {
+        println("uploading...")
+        var elements = self.elements
+        var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        var session = NSURLSession(configuration: configuration)
+        
+        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "site": self.tracking]
+        
+        //var testtest = ["wow": "w", "run": ["3", "4"], "pic": ["5", "6"], "d": "7"]
+        var jsonCompatible = compatiblize(elements)
+        
+        let url = NSURL(string: "http://precisreports.com/api/test-json-well.php")
+        let request = NSMutableURLRequest(URL: url!)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        var err: NSError?
+        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.allZeros, error: &err)
+        //println(request.HTTPBody)
+        let task: Void = session.dataTaskWithRequest(request) {
+            data, response, error in
+            
+            if let httpResponse = response as? NSHTTPURLResponse {
+                if httpResponse.statusCode != 200 {
+                    println("response was not 200: \(response)")
+                    return
+                }
+            }
+            
+            if (error != nil) {
+                println("error submitting request: \(error)")
+                return
+            }
+            
+            //println(data)
+            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+            if (err != nil) {
+                println("JSON ERROR \(err!.localizedDescription)")
+            }
+            
+            println(jsonResult)
+            
+            /*
+            for (rootKey, rootValue) in jsonResult {
+                //println(rootValue)
+                //results[rootKey] = Dictionary<String, String>?
+                if (rootKey as NSString != "Status" && rootKey as NSString != "dir") {
+                    for (siteKey, siteValue) in rootValue as NSDictionary {
+                        //println("\(siteKey), \(siteValue)")
+                        if (siteKey as NSString == "location") {
+                            location = siteValue as NSString
+                        } else if (siteKey as NSString == "notes") {
+                            notes = siteValue as NSString
+                        } else if (siteKey as NSString == "picture") {
+                            picture = siteValue as NSString
+                        }
+                        
+                    }
+                    
+                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
+                } else if (rootKey as NSString == "dir") {
+                    self.site = rootValue as NSString
+                }
+            }*/
+            
+            
+            //println(description)
+            //completionHandler(results)
+            
+            
+           /* NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    self.coreRemoveElements()
+                    
+                    if (elements.count == 0) {
+                        var emptyAlert = UIAlertController(title: "Notice", message: "This site has no registered locations", preferredStyle: UIAlertControllerStyle.Alert)
+                        emptyAlert.addAction(UIAlertAction(title: "Acknowledged", style: .Default, handler: {( action: UIAlertAction!) in
+                            //add logic here
+                        }))
+                        
+                        self.presentViewController(emptyAlert, animated: true, completion: nil)
+                        
+                    } else {
+                        
+                        self.tableView.dataSource = self
+                        self.tableView.delegate = self
+                        //self.locations = locations
+                        //self.notes = notes
+                        //self.pictures = pictures
+                        self.elements = elements
+                        self.coreSaveElements()
+                        self.tableView!.reloadData()
+                    }
+                })
+            })*/
+            
+            }.resume()
+
+    }
+
 
 }

@@ -8,17 +8,19 @@
 
 import UIKit
 import AssetsLibrary
+import CoreData
 
 class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UIPopoverControllerDelegate {
     
-    var location: String!
-    var notes: String!
+    //var location: String!
+    //var notes: String!
     var picture: String!
     var uniqueID: Int!
     var username: String!
     var password: String!
     var site: String!
     var tracking: String!
+    var elements: [Elemental] = []
     var picker:UIImagePickerController?=UIImagePickerController()
     
     @IBOutlet weak var locationBar: UITextField!
@@ -47,25 +49,36 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             //UIAlertAction in
             self.openCamera()
         } else {
-            locationBar.text = location
-            notesField.text = notes
+            //locationBar.text = location
+            //notesField.text = notes
             
             //println(picture)
-            let path = NSURL(string: picture)
+            var item = elements[uniqueID]
+            if (item.location != nil) {
+                locationBar.text = item.location
+            }
+            if (item.notes != nil) {
+            } else {
+                notesField.text = item.notes
+            }
+            if (item.picture != nil && item.picture != "") {
+                
+                let path = NSURL(string: item.picture!)
             
-            var orientation:ALAssetOrientation = ALAssetOrientation.Right
-            let library = ALAssetsLibrary()
-            library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
-                var assetRep = asset.defaultRepresentation()
-                var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+                var orientation:ALAssetOrientation = ALAssetOrientation.Right
+                let library = ALAssetsLibrary()
+                library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
+                    var assetRep = asset.defaultRepresentation()
+                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                    var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
 
-                self.pictureField.image = image2
-            }, failureBlock: nil)
+                    self.pictureField.image = image2
+                }, failureBlock: nil)
                     /*var imagePath: NSString = "\(path)"
                     var data:NSData = NSData.dataWithContentsOfMappedFile(imagePath) as NSData
                     var imageData = UIImage(data:data)
                     self.imageView.image = imageData*/
+            }
         }
     }
 
@@ -79,7 +92,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!)
     {
-        picker .dismissViewControllerAnimated(true, completion: nil)
+        picker.dismissViewControllerAnimated(true, completion: nil)
         var image=info[UIImagePickerControllerOriginalImage] as UIImage
         var orientation:ALAssetOrientation = ALAssetOrientation.Right
         
@@ -123,6 +136,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
         println("picker cancel.")
+        picker.dismissViewControllerAnimated(true, completion: nil)
+        self.performSegueWithIdentifier("cancelElements", sender: self)
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -135,6 +151,26 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             var navigationController =  segue.destinationViewController as UINavigationController
             var controller = navigationController.topViewController as elementTable
             //controller.delegate = self
+            
+            if (self.uniqueID > -1 ) {
+                var path = self.uniqueID
+                let item = self.elements[path]
+                item.location = self.locationBar.text
+                item.notes = self.notesField.text
+                item.picture = self.picture
+                //println(self.elements[path].location)
+            } else {
+                //add new element from details
+                
+                if (self.locationBar.text == "") {
+                    var newlocationed: String = newlocation(elements, indexical: 0)
+                    self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text))
+                } else {
+                     self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture!, notes: self.notesField.text))
+                }
+                //println(self.location)
+            }
+            
             controller.uniqueID = self.uniqueID
             controller.location = self.locationBar.text
             controller.picture = self.picture
@@ -144,6 +180,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.password = self.password
             controller.site = self.site
             controller.tracking = self.tracking
+            controller.elements = self.elements
         } else if (segue.identifier == "cancelElements") {
             var navigationController =  segue.destinationViewController as UINavigationController
             var controller = navigationController.topViewController as elementTable
@@ -153,5 +190,43 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.tracking = self.tracking
             controller.continuance = "continue"
         }
+    }
+    
+    func coreSaveElements() {
+        println("inserting...Core")
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
+        
+        
+        //var index = 0
+        for element in elements {
+            //index++
+            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            item.setValue(element.location, forKey: "location")
+            item.setValue(element.picture, forKey: "picture")
+            item.setValue(element.notes, forKey: "notes")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Could not save \(error), \(error?.userInfo)")
+            }
+        }
+    }
+    
+    func newlocation(elements: [Elemental], indexical: Int) -> String {
+        var returnLocation: String = "Location \(indexical)"
+        var newIndex = indexical
+        for item in elements {
+            if (item.location! == returnLocation) {
+                newIndex = newIndex + 1
+                returnLocation = newlocation(elements, indexical: newIndex)
+                return returnLocation
+            }
+        }
+        
+        return returnLocation
     }
 }
