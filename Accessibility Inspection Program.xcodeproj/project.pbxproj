@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		310C51791A96A64F0054B214 /* element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310C51781A96A64F0054B214 /* element.swift */; };
+		310CC4D21AA689C700D7E2E3 /* SRWClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310CC4D11AA689C700D7E2E3 /* SRWClient.swift */; };
 		312E503B1A8D7E9700F880D8 /* elementTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312E503A1A8D7E9700F880D8 /* elementTable.swift */; };
 		3142D46E1A96F0950092BEAB /* detailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3142D46D1A96F0950092BEAB /* detailView.swift */; };
+		31788B191AA270D7005F7DC9 /* uploadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31788B181AA270D7005F7DC9 /* uploadController.swift */; };
+		31FB1C431AA503DF007D7798 /* menuElementController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB1C421AA503DF007D7798 /* menuElementController.swift */; };
 		31FCF0841A87ECEF00390B33 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FCF0831A87ECEF00390B33 /* AppDelegate.swift */; };
 		31FCF0861A87ECEF00390B33 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FCF0851A87ECEF00390B33 /* ViewController.swift */; };
 		31FCF0891A87ECEF00390B33 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 31FCF0871A87ECEF00390B33 /* Main.storyboard */; };
@@ -32,8 +35,11 @@
 
 /* Begin PBXFileReference section */
 		310C51781A96A64F0054B214 /* element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = element.swift; sourceTree = "<group>"; };
+		310CC4D11AA689C700D7E2E3 /* SRWClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRWClient.swift; sourceTree = "<group>"; };
 		312E503A1A8D7E9700F880D8 /* elementTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = elementTable.swift; sourceTree = "<group>"; };
 		3142D46D1A96F0950092BEAB /* detailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = detailView.swift; path = ../detailView.swift; sourceTree = "<group>"; };
+		31788B181AA270D7005F7DC9 /* uploadController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadController.swift; sourceTree = "<group>"; };
+		31FB1C421AA503DF007D7798 /* menuElementController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = menuElementController.swift; sourceTree = "<group>"; };
 		31FCF07E1A87ECEF00390B33 /* Accessibility Inspection Program.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Accessibility Inspection Program.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		31FCF0821A87ECEF00390B33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		31FCF0831A87ECEF00390B33 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -92,7 +98,10 @@
 				31FCF0851A87ECEF00390B33 /* ViewController.swift */,
 				31FCF0A31A8886C200390B33 /* tableViewController.swift */,
 				312E503A1A8D7E9700F880D8 /* elementTable.swift */,
+				31FB1C421AA503DF007D7798 /* menuElementController.swift */,
 				3142D46D1A96F0950092BEAB /* detailView.swift */,
+				31788B181AA270D7005F7DC9 /* uploadController.swift */,
+				310CC4D11AA689C700D7E2E3 /* SRWClient.swift */,
 				31FCF0871A87ECEF00390B33 /* Main.storyboard */,
 				310C51781A96A64F0054B214 /* element.swift */,
 				31FCF08A1A87ECEF00390B33 /* Images.xcassets */,
@@ -228,7 +237,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				31FCF0A41A8886C200390B33 /* tableViewController.swift in Sources */,
+				31FB1C431AA503DF007D7798 /* menuElementController.swift in Sources */,
 				31FCF0A71A889E9100390B33 /* recon.xcdatamodeld in Sources */,
+				310CC4D21AA689C700D7E2E3 /* SRWClient.swift in Sources */,
+				31788B191AA270D7005F7DC9 /* uploadController.swift in Sources */,
 				3142D46E1A96F0950092BEAB /* detailView.swift in Sources */,
 				31FCF0861A87ECEF00390B33 /* ViewController.swift in Sources */,
 				31FCF0841A87ECEF00390B33 /* AppDelegate.swift in Sources */,

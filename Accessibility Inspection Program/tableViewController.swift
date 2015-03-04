@@ -243,7 +243,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
         //println(segue.identifier)
     }
     
-    @IBAction func siteList(segue:UIStoryboardSegue) {
+    @IBAction func elementList(segue:UIStoryboardSegue) {
         dismissViewControllerAnimated(true, completion: nil)
         println("listElements")
     }

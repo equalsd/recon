@@ -28,14 +28,15 @@ class elementTable: UITableViewController {
     //var existingUser = [NSManagedObject]()
     
     @IBAction func cancelElementList(sender: AnyObject) {
-        var menuAlert = UIAlertController(title: "Options", message: "Cancel to return to site list.  Reload to lose all changes not on server.  Or select Upload to save to server", preferredStyle: UIAlertControllerStyle.Alert)
+        /*var menuAlert = UIAlertController(title: "Options", message: "Cancel to return to site list.  Reload to lose all changes not on server.  Or select Upload to save to server", preferredStyle: UIAlertControllerStyle.Alert)
         menuAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
             self.performSegueWithIdentifier("backtoSites", sender: self)
         }))
         menuAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
-            self.uploadElements()
+            //self.uploadElements()
+            self.performSegueWithIdentifier("uploader", sender: self)
         }))
         menuAlert.addAction(UIAlertAction(title: "Reload", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
@@ -44,8 +45,9 @@ class elementTable: UITableViewController {
             self.jsonElements()
         }))
         
-        self.presentViewController(menuAlert, animated: true, completion: nil)
-        
+        self.presentViewController(menuAlert, animated: true, completion: nil)*/
+        self.performSegueWithIdentifier("menuElementShow", sender: self)
+        //println("nothing")
     }
     
     @IBAction func newItem(sender: AnyObject) {
@@ -69,9 +71,13 @@ class elementTable: UITableViewController {
             }
             if let picture = item.picture {
                 self.picture = picture
+            } else {
+                self.picture = ""
             }
             if let notes = item.notes {
                 self.notes = notes
+            } else {
+                self.notes = ""
             }
             self.performSegueWithIdentifier("detail", sender: self)
         }
@@ -308,9 +314,9 @@ class elementTable: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //println(site)
-        println(self.tracking)
-        println(self.username)
-        println(self.password)
+        //println(self.tracking)
+        //println(self.username)
+        //println(self.password)
         self.navigationItem.title = "\(site)"
         
         
@@ -369,6 +375,15 @@ class elementTable: UITableViewController {
             controller.site = self.site
             controller.tracking = self.tracking
             controller.elements = self.elements
+        } else if (segue.identifier == "menuElementShow") {
+            //var navigationController = segue.destinationViewController as UINavigationController
+            //var controller = navigationController.topViewController as menuElementController
+            var controller = segue.destinationViewController as menuElementController
+            controller.username = self.username
+            controller.password = self.password
+            controller.site = self.site
+            controller.tracking = self.tracking
+            controller.elements = self.elements
         }
     }
     
@@ -415,16 +430,21 @@ class elementTable: UITableViewController {
         }
     }
     
+    
     func compatiblize(elements: [Elemental]) -> NSArray {
         var returnArray = [NSArray]()
         
+        returnArray.append([self.username!, self.password!, self.tracking!])
+        
+        
         for item in elements {
-                returnArray.append([item.location!, item.picture!, item.notes!])
+            
+            returnArray.append([item.location!, item.picture!, item.notes!])
         }
         
         println(returnArray)
         return returnArray
-}
+    }
     
     func uploadElements() {
         println("uploading...")
@@ -434,15 +454,15 @@ class elementTable: UITableViewController {
         
         let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "site": self.tracking]
         
-        //var testtest = ["wow": "w", "run": ["3", "4"], "pic": ["5", "6"], "d": "7"]
+        //var testtest = [["4", "5"], ["3", "4"]]
         var jsonCompatible = compatiblize(elements)
         
-        let url = NSURL(string: "http://precisreports.com/api/test-json-well.php")
+        let url = NSURL(string: "http://precisreports.com/api/put-json-elements.php")
         let request = NSMutableURLRequest(URL: url!)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
         var err: NSError?
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.allZeros, error: &err)
+        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(jsonCompatible, options: NSJSONWritingOptions.allZeros, error: &err)
         //println(request.HTTPBody)
         let task: Void = session.dataTaskWithRequest(request) {
             data, response, error in
@@ -495,32 +515,12 @@ class elementTable: UITableViewController {
             //completionHandler(results)
             
             
-           /* NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+           NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                 dispatch_async(dispatch_get_main_queue(), {
                     
-                    self.coreRemoveElements()
                     
-                    if (elements.count == 0) {
-                        var emptyAlert = UIAlertController(title: "Notice", message: "This site has no registered locations", preferredStyle: UIAlertControllerStyle.Alert)
-                        emptyAlert.addAction(UIAlertAction(title: "Acknowledged", style: .Default, handler: {( action: UIAlertAction!) in
-                            //add logic here
-                        }))
-                        
-                        self.presentViewController(emptyAlert, animated: true, completion: nil)
-                        
-                    } else {
-                        
-                        self.tableView.dataSource = self
-                        self.tableView.delegate = self
-                        //self.locations = locations
-                        //self.notes = notes
-                        //self.pictures = pictures
-                        self.elements = elements
-                        self.coreSaveElements()
-                        self.tableView!.reloadData()
-                    }
                 })
-            })*/
+            })
             
             }.resume()
 

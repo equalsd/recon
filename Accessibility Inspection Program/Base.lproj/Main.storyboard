@@ -255,12 +255,11 @@
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Idm-lv-S5J">
                                 <rect key="frame" x="-23" y="-15" width="133" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Upload/Cancel">
+                                <state key="normal" title="Menu">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="cancelElementList:" destination="nyw-go-gmY" eventType="touchUpInside" id="rgV-PD-swd"/>
-                                    <segue destination="k4e-ho-XCu" kind="show" identifier="backtoSites" id="q9S-k2-Bps"/>
                                 </connections>
                             </button>
                         </barButtonItem>
@@ -272,6 +271,7 @@
                     </navigationItem>
                     <connections>
                         <segue destination="RSa-ue-BsR" kind="show" identifier="detail" id="Zpq-35-I4m"/>
+                        <segue destination="pM4-5v-5Ov" kind="presentation" identifier="menuElementShow" modalPresentationStyle="overFullScreen" id="nWC-hq-u6I"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zbp-TM-aWw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -364,6 +364,174 @@
             </objects>
             <point key="canvasLocation" x="2845" y="355"/>
         </scene>
+        <!--Menu Element Controller-->
+        <scene sceneID="ujh-fH-EZW">
+            <objects>
+                <viewController id="pM4-5v-5Ov" customClass="menuElementController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XOu-dy-uye"/>
+                        <viewControllerLayoutGuide type="bottom" id="3Uf-9h-uPB"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="qE9-kH-gX6">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Menu" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QaM-pX-AeZ">
+                                <rect key="frame" x="279" y="28" width="44" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="3Eh-PV-cKn"/>
+                                    <constraint firstAttribute="width" constant="44" id="aC8-QN-6Gi"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SlM-rh-jAo">
+                                <rect key="frame" x="277" y="176" width="49" height="30"/>
+                                <state key="normal" title="Reload">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="toReload:" destination="pM4-5v-5Ov" eventType="touchUpInside" id="kY0-f1-1t6"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Svo-WM-O34">
+                                <rect key="frame" x="255" y="242" width="91" height="30"/>
+                                <state key="normal" title="Cancel Menu">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="toCancel:" destination="pM4-5v-5Ov" eventType="touchUpInside" id="cnR-Ba-Pk0"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9pV-Rx-EIA">
+                                <rect key="frame" x="275" y="107" width="50" height="30"/>
+                                <state key="normal" title="Upload">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="toUpload:" destination="pM4-5v-5Ov" eventType="touchUpInside" id="l6d-6w-pBA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fjq-ce-1HN">
+                                <rect key="frame" x="252" y="297" width="98" height="30"/>
+                                <state key="normal" title="Go to Site List">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="toSiteList:" destination="pM4-5v-5Ov" eventType="touchUpInside" id="yCx-w9-PGI"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="QaM-pX-AeZ" firstAttribute="top" secondItem="XOu-dy-uye" secondAttribute="bottom" constant="8" symbolic="YES" id="BAr-pm-5lA"/>
+                            <constraint firstItem="Fjq-ce-1HN" firstAttribute="top" secondItem="Svo-WM-O34" secondAttribute="bottom" constant="25" id="Euc-uM-wqr"/>
+                            <constraint firstItem="SlM-rh-jAo" firstAttribute="centerX" secondItem="qE9-kH-gX6" secondAttribute="centerX" constant="1.5" id="Euo-TN-sdI"/>
+                            <constraint firstItem="QaM-pX-AeZ" firstAttribute="centerX" secondItem="SlM-rh-jAo" secondAttribute="centerX" id="PuB-Al-CXt"/>
+                            <constraint firstItem="9pV-Rx-EIA" firstAttribute="trailing" secondItem="Svo-WM-O34" secondAttribute="trailing" constant="-21" id="QjS-2X-T1h"/>
+                            <constraint firstItem="9pV-Rx-EIA" firstAttribute="top" secondItem="QaM-pX-AeZ" secondAttribute="bottom" constant="58" id="XZB-Ep-laU"/>
+                            <constraint firstItem="Svo-WM-O34" firstAttribute="top" secondItem="SlM-rh-jAo" secondAttribute="bottom" constant="36" id="hQz-Js-Xfs"/>
+                            <constraint firstItem="Svo-WM-O34" firstAttribute="trailing" secondItem="SlM-rh-jAo" secondAttribute="trailing" constant="20" id="lzs-kv-o0M"/>
+                            <constraint firstItem="SlM-rh-jAo" firstAttribute="top" secondItem="9pV-Rx-EIA" secondAttribute="bottom" constant="39" id="mGK-cD-Qn9"/>
+                            <constraint firstItem="Fjq-ce-1HN" firstAttribute="centerX" secondItem="SlM-rh-jAo" secondAttribute="centerX" id="mlh-52-0SZ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="d0r-RZ-aUh">
+                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="cancel" id="U4K-ff-ct9"/>
+                    </navigationItem>
+                    <connections>
+                        <segue destination="2Dr-wh-klX" kind="show" identifier="returnToElements" id="zlv-97-M5Q"/>
+                        <segue destination="7DH-3Q-b3j" kind="show" identifier="uploader" id="oqE-oW-iWo"/>
+                        <segue destination="k4e-ho-XCu" kind="show" identifier="toSiteList" id="oKf-Rq-gUL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zKn-2j-XLW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2139" y="1158"/>
+        </scene>
+        <!--Upload Controller-->
+        <scene sceneID="c8q-5n-jGS">
+            <objects>
+                <viewController id="7DH-3Q-b3j" customClass="uploadController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="T0I-KV-DWQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="The-Hl-gig"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="aMn-WX-HKP">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Dhu-MK-fr0">
+                                <rect key="frame" x="194" y="114" width="213" height="2"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="213" id="zdn-HB-m8d"/>
+                                </constraints>
+                            </progressView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTL-kN-RUI">
+                                <rect key="frame" x="194" y="131" width="213" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="213" id="SfP-FI-jia"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GWl-Y7-owg">
+                                <rect key="frame" x="246" y="204" width="108" height="30"/>
+                                <state key="normal" title="Start Uploading">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="uploadStart:" destination="7DH-3Q-b3j" eventType="touchUpInside" id="a7p-7o-30d"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6n-lq-M0w">
+                                <rect key="frame" x="277" y="249" width="46" height="30"/>
+                                <state key="normal" title="Return">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="returnToElements:" destination="7DH-3Q-b3j" eventType="touchUpInside" id="039-ic-n2X"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="q6n-lq-M0w" firstAttribute="centerX" secondItem="GWl-Y7-owg" secondAttribute="centerX" id="1HK-jG-vSz"/>
+                            <constraint firstItem="Dhu-MK-fr0" firstAttribute="top" secondItem="T0I-KV-DWQ" secondAttribute="bottom" constant="94" id="6XF-Wx-Ma7"/>
+                            <constraint firstItem="GWl-Y7-owg" firstAttribute="centerX" secondItem="aMn-WX-HKP" secondAttribute="centerX" id="EbM-OP-3lF"/>
+                            <constraint firstItem="GWl-Y7-owg" firstAttribute="centerX" secondItem="Dhu-MK-fr0" secondAttribute="centerX" id="TwU-07-xun"/>
+                            <constraint firstItem="GWl-Y7-owg" firstAttribute="top" secondItem="Dhu-MK-fr0" secondAttribute="bottom" constant="88" id="act-vh-4Vr"/>
+                            <constraint firstItem="JTL-kN-RUI" firstAttribute="centerX" secondItem="Dhu-MK-fr0" secondAttribute="centerX" id="cZJ-5l-BjH"/>
+                            <constraint firstItem="GWl-Y7-owg" firstAttribute="top" secondItem="JTL-kN-RUI" secondAttribute="bottom" constant="52" id="rTC-Ye-6DJ"/>
+                            <constraint firstItem="JTL-kN-RUI" firstAttribute="top" secondItem="Dhu-MK-fr0" secondAttribute="bottom" constant="15" id="rtI-h0-Ni8"/>
+                            <constraint firstItem="q6n-lq-M0w" firstAttribute="top" secondItem="GWl-Y7-owg" secondAttribute="bottom" constant="15" id="wHp-a0-T0S"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="FNp-wd-xfo">
+                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="cancel" id="BaG-cs-vq8">
+                            <connections>
+                                <segue destination="i5n-7S-32H" kind="unwind" unwindAction="elementList:" id="e6F-j2-QZP"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="progressLabel" destination="JTL-kN-RUI" id="IFV-jq-hIg"/>
+                        <outlet property="progressView" destination="Dhu-MK-fr0" id="lgW-v1-3Ck"/>
+                        <outlet property="uploadButton" destination="GWl-Y7-owg" id="6N8-6B-Usd"/>
+                        <segue destination="2Dr-wh-klX" kind="show" identifier="doneUploading" id="kxe-aT-KQA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FIb-GV-uKU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="i5n-7S-32H" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2139" y="1772"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="eVq-TV-CBN">
             <objects>
@@ -420,7 +588,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="q9S-k2-Bps"/>
-        <segue reference="NQA-Vx-c2q"/>
+        <segue reference="oKf-Rq-gUL"/>
+        <segue reference="zlv-97-M5Q"/>
     </inferredMetricsTieBreakers>
 </document>
