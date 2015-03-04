@@ -16,14 +16,13 @@ class uploadController: UIViewController {
     var site: String!
     var tracking: String!
     var elements: [Elemental] = []
-    var pictures: [String] = []
+    var pictures: [NSArray] = []
     //var total: Int = 1
     var on: Int = 0
     var number: Int!
     
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var progressLabel: UILabel!
-
     @IBOutlet weak var uploadButton: UIButton!
     
     @IBAction func returnToElements(sender: AnyObject) {
@@ -31,8 +30,7 @@ class uploadController: UIViewController {
     }
     
     @IBAction func uploadStart(sender: AnyObject) {
-        progressLabel.text = "Uploading "
-        /*self.counter = 0
+       /*self.counter = 0
         for i in 0..<100 {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
                 sleep(1)
@@ -70,13 +68,17 @@ class uploadController: UIViewController {
     
     func compatiblize(elements: [Elemental]) -> NSArray {
         var returnArray = [NSArray]()
+        self.pictures.removeAll()
         
-        returnArray.append([self.username!, self.password!, self.tracking!])
+        let date = NSDate()
+        var timestamp = Int(date.timeIntervalSince1970)
+        
+        returnArray.append([self.username!, self.password!, self.tracking!, ""])
         
         for item in elements {
-        
-            returnArray.append([item.location!, "placeholder", item.notes!])
-            self.pictures.append(item.picture!)
+            timestamp = timestamp + 1
+            returnArray.append([item.location!, "placeholder", item.notes!, "\(timestamp)"])
+            self.pictures.append([item.picture!, "\(timestamp)"])
             //returnArray.append([item.location!, "", item.notes!])
             //println(item.picture!)
             //if (item.picture != "") {
@@ -91,6 +93,10 @@ class uploadController: UIViewController {
     
     func uploadElements() {
         println("uploading...")
+        self.uploadButton.enabled = false
+        self.progressView.setProgress(0.0, animated: false)
+        self.on = 0
+        self.progressLabel.text = "Uploading..."
         //self.on = 1
         var elements = self.elements
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -242,7 +248,6 @@ class uploadController: UIViewController {
         println("last")*/
         
         task.resume()
-        
         uploadPictures()
         
     }
@@ -253,19 +258,21 @@ class uploadController: UIViewController {
         for picture in pictures {
             //var orientation:ALAssetOrientation = ALAssetOrientation.Right
             let library = ALAssetsLibrary()
-            let path = NSURL(string: picture)
+            var key: String = picture[0] as String
+            let path = NSURL(string: key)
             
             library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
                 var assetRep = asset.defaultRepresentation()
                 var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Up)
+                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
                 var data = UIImageJPEGRepresentation(image2, 1.0)
                 var name = "picture \(index)"
                 
-                    SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
-                        .datar(data, fieldName: "file", data:["days": "1", "title": name])
+                    //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
+                    SRWebClient.POST("http://precisreports.com/api/put-picture.php")
+                        .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": picture[1] as String])
                         .send({(response:AnyObject!, status:Int) -> Void in println(response)
-                            println("okay..")
+                            //println("okay..")
                             self.progressBar()
                         }, failure:{
                             (error:NSError!) -> Void in (println(error.code))
@@ -279,13 +286,14 @@ class uploadController: UIViewController {
 
     
     func progressBar() {
-        println("running")
+        println("updating progress bar")
         self.on  = self.on + 1
         var fractionalProgress: Float = Float(self.on) / Float(self.number)
         self.progressView.setProgress(fractionalProgress, animated: true)
         var counter:Int = Int(fractionalProgress * 100.0)
         if (on == number) {
-            self.progressLabel.text = "Done.";
+            self.progressLabel.text = "Done."
+            self.uploadButton.enabled = true
         } else {
             self.progressLabel.text = "Uploading \(on) of \(self.number)"
         }

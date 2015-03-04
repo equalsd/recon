@@ -648,11 +648,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "393"
-            endingLineNumber = "393"
+            startingLineNumber = "401"
+            endingLineNumber = "401"
             landmarkName = "uploadController"
             landmarkType = "3">
          </BreakpointContent>
@@ -664,11 +664,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "uploadElements()"
             landmarkType = "5">
          </BreakpointContent>
@@ -680,11 +680,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "uploadElements()"
             landmarkType = "5">
             <Locations>
@@ -726,11 +726,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "uploadElements()"
             landmarkType = "5">
             <Locations>
@@ -772,11 +772,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "214"
-            endingLineNumber = "214"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
             landmarkName = "uploadElements()"
             landmarkType = "5">
          </BreakpointContent>
@@ -788,11 +788,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "327"
-            endingLineNumber = "327"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "uploadController"
             landmarkType = "3">
          </BreakpointContent>
@@ -804,39 +804,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "343"
-            endingLineNumber = "343"
-            landmarkName = "uploadController"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "348"
-            endingLineNumber = "348"
-            landmarkName = "uploadController"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "351"
@@ -852,11 +820,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "388"
-            endingLineNumber = "388"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
             landmarkName = "uploadController"
             landmarkType = "3">
          </BreakpointContent>
@@ -868,11 +836,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
+            landmarkName = "uploadController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "396"
+            endingLineNumber = "396"
+            landmarkName = "uploadController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
             landmarkName = "compatiblize(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -884,11 +884,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "compatiblize(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -900,11 +900,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "uploadElements()"
             landmarkType = "5">
          </BreakpointContent>
@@ -916,11 +916,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
             landmarkName = "uploadElements()"
             landmarkType = "5">
          </BreakpointContent>
@@ -928,11 +928,103 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
+            landmarkName = "uploadPictures()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "267"
+            endingLineNumber = "267"
+            landmarkName = "uploadPictures()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "uploadPictures()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Accessibility_Inspection_Program.uploadController.uploadPictures (Accessibility_Inspection_Program.uploadController)() -&gt; ()"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447190052.902709"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "261"
+                  endingLineNumber = "261"
+                  offsetFromSymbolStart = "688">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Accessibility_Inspection_Program.uploadController.(uploadPictures (Accessibility_Inspection_Program.uploadController) -&gt; () -&gt; ()).(closure #1)"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447190052.902827"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "261"
+                  endingLineNumber = "261"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "reabstraction thunk helper from @callee_owned (@owned Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.ALAsset&gt;) -&gt; (@unowned ()) to @callee_unowned @objc_block (@unowned Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.ALAsset&gt;) -&gt; (@unowned ())"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447190052.902924"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "261"
+                  endingLineNumber = "261"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "262"
@@ -944,16 +1036,124 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "uploadElements()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Accessibility_Inspection_Program.uploadController.uploadElements (Accessibility_Inspection_Program.uploadController)() -&gt; ()"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447190375.751271"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "928">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Accessibility_Inspection_Program.uploadController.(uploadElements (Accessibility_Inspection_Program.uploadController) -&gt; () -&gt; ()).(closure #1)"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447190375.751445"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "115"
+                  endingLineNumber = "115"
+                  offsetFromSymbolStart = "40">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "261"
-            endingLineNumber = "261"
-            landmarkName = "uploadPictures()"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "uploadElements()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "uploadElements()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Accessibility_Inspection_Program.uploadController.uploadElements (Accessibility_Inspection_Program.uploadController)() -&gt; ()"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447191255.472622"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "928">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Accessibility_Inspection_Program.uploadController.(uploadElements (Accessibility_Inspection_Program.uploadController) -&gt; () -&gt; ()).(closure #1)"
+                  moduleName = "Accessibility Inspection Program"
+                  urlString = "file:///Users/generic/Desktop/Xcode/Accessibility%20Inspection%20Program/Accessibility%20Inspection%20Program/uploadController.swift"
+                  timestampString = "447191255.472809"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "115"
+                  endingLineNumber = "115"
+                  offsetFromSymbolStart = "40">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accessibility Inspection Program/uploadController.swift"
+            timestampString = "447193451.516859"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "uploadElements()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -964,12 +1164,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accessibility Inspection Program/uploadController.swift"
-            timestampString = "447131668.647091"
+            timestampString = "447193451.516859"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
-            landmarkName = "uploadPictures()"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "uploadElements()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
