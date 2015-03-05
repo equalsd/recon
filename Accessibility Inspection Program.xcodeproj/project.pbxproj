@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		310C51791A96A64F0054B214 /* element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310C51781A96A64F0054B214 /* element.swift */; };
 		310CC4D21AA689C700D7E2E3 /* SRWClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310CC4D11AA689C700D7E2E3 /* SRWClient.swift */; };
+		310CC4D41AA7E33900D7E2E3 /* menuLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310CC4D31AA7E33900D7E2E3 /* menuLocationController.swift */; };
 		312E503B1A8D7E9700F880D8 /* elementTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312E503A1A8D7E9700F880D8 /* elementTable.swift */; };
 		3142D46E1A96F0950092BEAB /* detailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3142D46D1A96F0950092BEAB /* detailView.swift */; };
 		31788B191AA270D7005F7DC9 /* uploadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31788B181AA270D7005F7DC9 /* uploadController.swift */; };
@@ -36,6 +37,7 @@
 /* Begin PBXFileReference section */
 		310C51781A96A64F0054B214 /* element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = element.swift; sourceTree = "<group>"; };
 		310CC4D11AA689C700D7E2E3 /* SRWClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRWClient.swift; sourceTree = "<group>"; };
+		310CC4D31AA7E33900D7E2E3 /* menuLocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = menuLocationController.swift; sourceTree = "<group>"; };
 		312E503A1A8D7E9700F880D8 /* elementTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = elementTable.swift; sourceTree = "<group>"; };
 		3142D46D1A96F0950092BEAB /* detailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = detailView.swift; path = ../detailView.swift; sourceTree = "<group>"; };
 		31788B181AA270D7005F7DC9 /* uploadController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadController.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				31FB1C421AA503DF007D7798 /* menuElementController.swift */,
 				3142D46D1A96F0950092BEAB /* detailView.swift */,
 				31788B181AA270D7005F7DC9 /* uploadController.swift */,
+				310CC4D31AA7E33900D7E2E3 /* menuLocationController.swift */,
 				310CC4D11AA689C700D7E2E3 /* SRWClient.swift */,
 				31FCF0871A87ECEF00390B33 /* Main.storyboard */,
 				310C51781A96A64F0054B214 /* element.swift */,
@@ -239,6 +242,7 @@
 				31FCF0A41A8886C200390B33 /* tableViewController.swift in Sources */,
 				31FB1C431AA503DF007D7798 /* menuElementController.swift in Sources */,
 				31FCF0A71A889E9100390B33 /* recon.xcdatamodeld in Sources */,
+				310CC4D41AA7E33900D7E2E3 /* menuLocationController.swift in Sources */,
 				310CC4D21AA689C700D7E2E3 /* SRWClient.swift in Sources */,
 				31788B191AA270D7005F7DC9 /* uploadController.swift in Sources */,
 				3142D46E1A96F0950092BEAB /* detailView.swift in Sources */,

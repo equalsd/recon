@@ -15,7 +15,7 @@ class menuElementController: UIViewController {
     var tracking: String!
     var elements: [Elemental] = []
     var continuance: String!
-    var nsdata: String!
+    //var nsdata: String!
     
     @IBAction func toSiteList(sender: AnyObject) {
         self.performSegueWithIdentifier("toSiteList", sender: self)
@@ -68,9 +68,9 @@ class menuElementController: UIViewController {
             controller.elements = self.elements
         }
         else if (segue.identifier == "toSiteList") {
-            //var navigationController = segue.destinationViewController as UINavigationController
-            //var controller = navigationController.topViewController as menuElementController
-            var controller = segue.destinationViewController as tableViewControl
+            var navigationController = segue.destinationViewController as UINavigationController
+            var controller = navigationController.topViewController as tableViewControl
+            //var controller = segue.destinationViewController as tableViewControl
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site

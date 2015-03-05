@@ -99,7 +99,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
         
-        let params:[String: AnyObject] = ["username" : username, "password" : password]
+        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password]
         
         let url = NSURL(string: "http://precisreports.com/api/get-sites-json.php")
         let request = NSMutableURLRequest(URL: url!)

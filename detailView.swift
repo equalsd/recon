@@ -22,22 +22,36 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     var tracking: String!
     var elements: [Elemental] = []
     var picker:UIImagePickerController?=UIImagePickerController()
+    var keyboardShowing = false
+    var multiple = false
+    var roll: [String] = []
     
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var locationBar: UITextField!
-    @IBOutlet weak var notesField: UITextView!
     @IBOutlet weak var pictureField: UIImageView!
-    
+    @IBOutlet weak var notesField: UITextView!
     @IBAction func cancelButton(sender: AnyObject) {
          self.performSegueWithIdentifier("cancelElements", sender: self)
+    }
+    
+    @IBAction func addButton(sender: AnyObject) {
+        println("add")
+        self.multiple = true
+        saveElementsForReturn()
+        self.openCamera()
+    }
+    @IBAction func viewTapped(sender: AnyObject) {
+        notesField.resignFirstResponder()
+        locationBar.resignFirstResponder()
     }
     
     @IBAction func saveButton(sender: AnyObject) {
         self.performSegueWithIdentifier("returnElements", sender: self)
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    /*override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         self.view.endEditing(true)
-    }
+    }*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,11 +72,11 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                 locationBar.text = item.location
             }
             if (item.notes != nil) {
-            } else {
                 notesField.text = item.notes
             }
             if (item.picture != nil && item.picture != "") {
                 
+                self.picture = item.picture
                 let path = NSURL(string: item.picture!)
             
                 var orientation:ALAssetOrientation = ALAssetOrientation.Right
@@ -78,8 +92,33 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                     var data:NSData = NSData.dataWithContentsOfMappedFile(imagePath) as NSData
                     var imageData = UIImage(data:data)
                     self.imageView.image = imageData*/
+            } else {
+                picture == ""
             }
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardHide:", name: UIKeyboardWillHideNotification, object: nil)
+
+    }
+    
+    func keyboardShow(n:NSNotification) {
+        /*self.keyboardShowing = true
+        
+        let d = n.userInfo!
+        var r = (d[UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()
+        r = self.notesField.convertRect(r, fromView:nil)
+        self.notesField.contentInset.bottom = r.size.height
+        self.notesField.scrollIndicatorInsets.bottom = r.size.height
+        println("s")*/
+        animateViewMoving(true, moveValue: 220)
+    }
+    
+    func keyboardHide(n:NSNotification) {
+        /*self.keyboardShowing = false
+        self.notesField.contentInset = UIEdgeInsetsZero
+        self.notesField.scrollIndicatorInsets = UIEdgeInsetsZero*/
+        animateViewMoving(false, moveValue: 220)
     }
 
     func openCamera() {
@@ -103,20 +142,20 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             println(path)
             self.picture = "\(path)"
             
-            library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
-                var assetRep = asset.defaultRepresentation()
-                var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+            if (self.multiple == false) {
+                library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
+                    var assetRep = asset.defaultRepresentation()
+                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                    var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
                 
-                self.pictureField.image = image2
+                    self.pictureField.image = image2
                 
-                }, failureBlock: nil)
-            /*var imagePath: NSString = "\(path)"
-            var data:NSData = NSData.dataWithContentsOfMappedFile(imagePath) as NSData
-            var imageData = UIImage(data:data)
-            self.imageView.image = imageData*/
+                    }, failureBlock: nil)
+            } else {
+                self.roll.append(self.picture)
+                self.openCamera()
+            }
         })
-        
         
         //var stringly = info[UIImagePickerControllerOriginalImage] as String
         
@@ -126,7 +165,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         //upload(image)
         //var alert:UIAlertController=UIAlertController(title: "Success", message: "ok", preferredStyle: UIAlertControllerStyle.ActionSheet)
         //self.presentViewController(alert, animated: true, completion: nil)
-        println("sd")
+        
         
     }
     
@@ -137,7 +176,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
         println("picker cancel.")
         picker.dismissViewControllerAnimated(true, completion: nil)
-        self.performSegueWithIdentifier("cancelElements", sender: self)
+        if (multiple == false) {
+            self.performSegueWithIdentifier("cancelElements", sender: self)
+        } else {
+            //saved when hit save for one last chance to mod data
+            //println(self.roll)
+        }
         
     }
     
@@ -152,23 +196,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             var controller = navigationController.topViewController as elementTable
             //controller.delegate = self
             
-            if (self.uniqueID > -1 ) {
-                var path = self.uniqueID
-                let item = self.elements[path]
-                item.location = self.locationBar.text
-                item.notes = self.notesField.text
-                item.picture = self.picture
-                //println(self.elements[path].location)
+            if (multiple) {
+                    saveRoll()
             } else {
-                //add new element from details
-                
-                if (self.locationBar.text == "") {
-                    var newlocationed: String = newlocation(elements, indexical: 0)
-                    self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text))
-                } else {
-                     self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture!, notes: self.notesField.text))
-                }
-                //println(self.location)
+                saveElementsForReturn()
             }
             
             controller.uniqueID = self.uniqueID
@@ -189,7 +220,39 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.site = self.site
             controller.tracking = self.tracking
             controller.continuance = "continue"
+            //println("cancelled")
         }
+    }
+    
+    func saveElementsForReturn() {
+        if (self.uniqueID > -1 ) {
+            var path = self.uniqueID
+            let item = self.elements[path]
+            item.location = self.locationBar.text
+            item.notes = self.notesField.text
+            item.picture = self.picture
+            //println(self.elements[path].location)
+        } else {
+            if (self.locationBar.text == "") {
+                var newlocationed: String = newlocation(elements, indexical: 0)
+                self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text))
+                self.locationBar.text = newlocationed
+            } else {
+                self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text))
+            }
+        }
+        
+        //println(self.picture)
+        println("saving element...")
+    }
+    
+    func saveRoll() {
+        for photo in self.roll {
+            self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text))
+        }
+        
+        self.roll.removeAll()
+        println("saving roll...")
     }
     
     func coreSaveElements() {
@@ -228,5 +291,15 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
         
         return returnLocation
+    }
+    
+    func animateViewMoving (up:Bool, moveValue :CGFloat){
+        var movementDuration:NSTimeInterval = 0.3
+        var movement:CGFloat = ( up ? -moveValue : moveValue)
+        UIView.beginAnimations( "animateView", context: nil)
+        UIView.setAnimationBeginsFromCurrentState(true)
+        UIView.setAnimationDuration(movementDuration )
+        self.view.frame = CGRectOffset(self.view.frame, 0,  movement)
+        UIView.commitAnimations()
     }
 }

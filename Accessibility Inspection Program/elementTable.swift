@@ -58,6 +58,9 @@ class elementTable: UITableViewController {
         self.performSegueWithIdentifier("detail", sender: self)
     }
     
+    @IBAction func deleteClick(sender: AnyObject) {
+        println("delete")
+    }
     @IBAction func detailClick(sender: UIButton) {
         let pointInTable = sender.convertPoint(sender.bounds.origin, toView: self.tableView)
         let myIndexPath = self.tableView.indexPathForRowAtPoint(pointInTable)
@@ -65,19 +68,24 @@ class elementTable: UITableViewController {
         if let path = myIndexPath?.indexAtPosition(1) {
             //println(self.nameData[path])
             self.uniqueID = path
+            println(path)
             var item = self.elements[path]
             if let location = item.location {
                 self.location = location
             }
             if let picture = item.picture {
                 self.picture = picture
+                //println(picture)
             } else {
                 self.picture = ""
+                //println("picture is null")
             }
             if let notes = item.notes {
                 self.notes = notes
+                //println(notes)
             } else {
                 self.notes = ""
+                //println("notes is null")
             }
             self.performSegueWithIdentifier("detail", sender: self)
         }
@@ -343,6 +351,7 @@ class elementTable: UITableViewController {
             self.tableView.delegate = self
             tableView.reloadData()
         } else {
+            //this is from site list...
             coreSaveSite()
             jsonElements()
         }
@@ -407,7 +416,7 @@ class elementTable: UITableViewController {
     }*/
     
     func coreSaveElements() {
-        println("inserting...Core")
+        println("inserting...Core//elements")
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
@@ -427,6 +436,8 @@ class elementTable: UITableViewController {
             if !managedContext.save(&error) {
                 println("Could not save \(error), \(error?.userInfo)")
             }
+            //println(index)
+            //println(element.picture)
         }
     }
     
