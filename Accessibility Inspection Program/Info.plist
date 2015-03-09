@@ -22,6 +22,12 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Always Using</string>
+	<key>NSLocationUsageDescription</key>
+	<string>your message</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Only When Using</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

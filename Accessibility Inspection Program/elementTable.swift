@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import AssetsLibrary
 
 class elementTable: UITableViewController {
     
@@ -75,10 +76,10 @@ class elementTable: UITableViewController {
             }
             if let picture = item.picture {
                 self.picture = picture
-                //println(picture)
+                println(picture)
             } else {
                 self.picture = ""
-                //println("picture is null")
+                println("picture is null")
             }
             if let notes = item.notes {
                 self.notes = notes
@@ -310,17 +311,47 @@ class elementTable: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier("elementItem") as UITableViewCell
         let item = self.elements[indexPath.row]
         //cell.textLabel.text = location
+
         
-        if let locationLabel = cell.viewWithTag(100) as? UILabel{
+        if let locationLabel = cell.viewWithTag(100) as? UILabel {
             locationLabel.text = item.location
         }
         
+        if let thumbnailView = cell.viewWithTag(200) as? UIImageView {
+            //println(indexPath.row)
+            //println(item.picture)
+            if (item.picture != nil && item.picture != "" && item.picture != "0") {
+                
+                var image: UIImage
+                var orientation:ALAssetOrientation = ALAssetOrientation.Right
+                let library = ALAssetsLibrary()
+                var photo = NSURL(string: item.picture!)
+
+                library.assetForURL(photo, resultBlock: { (asset: ALAsset!) in
+                    var assetRep = asset.defaultRepresentation()
+                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                    var image = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+                
+                    thumbnailView.image = image
+                }, failureBlock: nil)
+            } else {
+                //var image.image = UIImage(named: "noimg.png")
+                var thumbnailView = cell.viewWithTag(200) as UIImageView!
+                thumbnailView.image = UIImage(named: "noimg.png")
+                //thumbnailView.frame = CGRect(x: 0, y: 0, width: 61, height: 44)
+                //thumbnailView.addSubview(image)
+            }
+            
+        }
+    
         return cell
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        self.tableView.rowHeight = 60.0
         //println(site)
         //println(self.tracking)
         //println(self.username)
@@ -457,7 +488,7 @@ class elementTable: UITableViewController {
         return returnArray
     }
     
-    func uploadElements() {
+    /*func uploadElements() {
         println("uploading...")
         var elements = self.elements
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -535,7 +566,7 @@ class elementTable: UITableViewController {
             
             }.resume()
 
-    }
+    }*/
 
 
 }

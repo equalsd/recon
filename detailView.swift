@@ -10,7 +10,7 @@ import UIKit
 import AssetsLibrary
 import CoreData
 
-class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UIPopoverControllerDelegate {
+class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UIPopoverControllerDelegate, UITextFieldDelegate {
     
     //var location: String!
     //var notes: String!
@@ -26,8 +26,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     var multiple = false
     var roll: [String] = []
     
+    var location: String!
+    var notes: String!
+    
+    @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var locationBar: UITextField!
+    @IBOutlet weak var locationBar: UITextField! = nil
     @IBOutlet weak var pictureField: UIImageView!
     @IBOutlet weak var notesField: UITextView!
     @IBAction func cancelButton(sender: AnyObject) {
@@ -37,7 +41,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     @IBAction func addButton(sender: AnyObject) {
         println("add")
         self.multiple = true
-        saveElementsForReturn()
         self.openCamera()
     }
     @IBAction func viewTapped(sender: AnyObject) {
@@ -50,13 +53,16 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
     
     /*override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        locationBar.resignFirstResponder()
         self.view.endEditing(true)
     }*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
+        scrollView.frame.size.width = UIScreen.mainScreen().bounds.width
+        // Do any additional setup after loading the view, typically from a nib.
+        //saveButton.enabled = false
         picker!.delegate=self
         //println(location)
         if (self.uniqueID == -1) {
@@ -67,39 +73,104 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             //notesField.text = notes
             
             //println(picture)
-            var item = elements[uniqueID]
-            if (item.location != nil) {
-                locationBar.text = item.location
-            }
-            if (item.notes != nil) {
-                notesField.text = item.notes
-            }
-            if (item.picture != nil && item.picture != "") {
-                
-                self.picture = item.picture
-                let path = NSURL(string: item.picture!)
-            
-                var orientation:ALAssetOrientation = ALAssetOrientation.Right
-                let library = ALAssetsLibrary()
-                library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
-                    var assetRep = asset.defaultRepresentation()
-                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                    var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
-
-                    self.pictureField.image = image2
-                }, failureBlock: nil)
-                    /*var imagePath: NSString = "\(path)"
-                    var data:NSData = NSData.dataWithContentsOfMappedFile(imagePath) as NSData
-                    var imageData = UIImage(data:data)
-                    self.imageView.image = imageData*/
-            } else {
-                picture == ""
-            }
+            setupDetail()
         }
-        
+    
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardHide:", name: UIKeyboardWillHideNotification, object: nil)
+        
+        locationBar.delegate = self
+        
+        if (location != nil) {
+            locationBar.text = self.location
+        }
+        
+        if (notes != nil) {
+            notesField.text = self.notes
+        }
+        
+        var leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        var rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        
+        leftSwipe.direction = .Left
+        rightSwipe.direction = .Right
+        
+        view.addGestureRecognizer(leftSwipe)
+        view.addGestureRecognizer(rightSwipe)
+    }
+    
+    func handleSwipes(sender:UISwipeGestureRecognizer) {
+        if (self.uniqueID == -1) {
+            saveElementsForReturn()
+        }
+        
+        if (!roll.isEmpty) {
+            saveRoll()
+        }
+        
+        if (self.uniqueID == -1 ) {
+            self.uniqueID = self.elements.count - 1
+        }
+        
+        if (sender.direction == .Left) {
+            println("Swipe Left")
+            self.uniqueID = self.uniqueID - 1
+        }
+        
+        if (sender.direction == .Right) {
+            println("Swipe Right")
+            self.uniqueID = self.uniqueID + 1
+        }
+        
+        if (self.uniqueID >= self.elements.count) {
+            self.uniqueID = 0
+        } else if (self.uniqueID < 0) {
+            self.uniqueID = self.elements.count + self.uniqueID
+        }
+        
+        setupDetail()
+    }
 
+    
+    func setupDetail() {
+        var item = elements[uniqueID]
+        if (item.location != nil) {
+            locationBar.text = item.location
+        } else {
+            locationBar.text = ""
+        }
+        if (item.notes != nil) {
+            notesField.text = item.notes
+        } else {
+            notesField.text = ""
+        }
+        var photo = item.picture
+        self.picture = photo
+        if (photo != nil && photo != "") {
+            //println("s");
+            let path = NSURL(string: photo!)
+            
+            var orientation:ALAssetOrientation = ALAssetOrientation.Right
+            let library = ALAssetsLibrary()
+            library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
+                var assetRep = asset.defaultRepresentation()
+                var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+                
+                self.pictureField.image = image2
+                }, failureBlock: nil)
+        } else {
+            self.picture == ""
+            self.pictureField.image = UIImage(named: "noimg.png")
+            //println("d")
+        }
+        //saveButton.enabled = true
+    }
+    
+    func textFieldShouldBeginEditing(textField: UITextField!) -> Bool {
+        //println("just")
+        self.performSegueWithIdentifier("getLocation", sender: self)
+        return false
     }
     
     func keyboardShow(n:NSNotification) {
@@ -176,12 +247,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
         println("picker cancel.")
         picker.dismissViewControllerAnimated(true, completion: nil)
-        if (multiple == false) {
-            self.performSegueWithIdentifier("cancelElements", sender: self)
-        } else {
+        //if (multiple == false) {
+        //    self.performSegueWithIdentifier("cancelElements", sender: self)
+        //} else {
             //saved when hit save for one last chance to mod data
             //println(self.roll)
-        }
+        //}
         
     }
     
@@ -221,6 +292,18 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.tracking = self.tracking
             controller.continuance = "continue"
             //println("cancelled")
+        } else if (segue.identifier == "getLocation") {
+            var controller = segue.destinationViewController as menuLocationController
+            controller.username = self.username
+            controller.password = self.password
+            controller.site = self.site
+            controller.tracking = self.tracking
+            controller.location = self.locationBar.text
+            controller.elements = self.elements
+            controller.picture = self.picture
+            controller.notes = self.notesField.text
+            controller.uniqueID = self.uniqueID
+            controller.roll = self.roll
         }
     }
     
@@ -247,6 +330,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
     
     func saveRoll() {
+        saveElementsForReturn()
+        
         for photo in self.roll {
             self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text))
         }
@@ -302,4 +387,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         self.view.frame = CGRectOffset(self.view.frame, 0,  movement)
         UIView.commitAnimations()
     }
+    
+    /*@IBAction func getLocation(sender: AnyObject) {
+        self.view.endEditing(false);
+        println("none")
+    }*/
 }

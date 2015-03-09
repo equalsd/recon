@@ -311,6 +311,11 @@ class uploadController: UIViewController {
         }
     }
     
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
     /*func createRequest (elements: [Elemental]) -> NSURLRequest {
         /*var params = [NSArray]()
         var pictures = [String]()
