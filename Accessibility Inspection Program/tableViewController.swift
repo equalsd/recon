@@ -216,7 +216,6 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "login" {
-            //player = Player(name: self.nameTextField.text, game: "Chess", rating: 1)
             let loginViewController = segue.destinationViewController as UIViewController
             println("login")
             //gamePickerViewController.selectedGame = game

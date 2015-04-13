@@ -80,7 +80,11 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         //let descriptionData = self.descriptionData[indexPath.row] as String
         
         //cell.textLabel.text = rowData["tracking"] as? String
-        cell.textLabel.text = location
+        //cell.textLabel.text = location
+        
+        if let locationLabel = cell.viewWithTag(150) as? UILabel {
+            locationLabel.text = location
+        }
         
         //if let descriptionLabel = cell.viewWithTag(101) as? UILabel{
         //    descriptionLabel.text = descriptionData

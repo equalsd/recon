@@ -54,6 +54,7 @@ class ViewController: UIViewController {
                 self.tracking = user.valueForKey("tracking") as? String
 
             }
+            jsonLogin()
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
         }
@@ -140,7 +141,7 @@ class ViewController: UIViewController {
                     //}
                     
                     self.warning.text = ""
-                    self.performSegueWithIdentifier("sites", sender: self)
+                    self.performSegueWithIdentifier("toSiteCategory", sender: self)
                     self.activityIndicatorView.stopAnimating()
                 })
             }
@@ -208,7 +209,7 @@ class ViewController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
             var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as tableViewControl
+            var controller = navigationController.topViewController as siteCategoryController
             //controller.delegate = self
             controller.username = self.username.text
             controller.password = self.password.text
