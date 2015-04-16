@@ -74,7 +74,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         //label.text = "Hello Man"
         //cell.addSubview(label)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! UITableViewCell
         
         let location = self.locations[indexPath.row] as String
         //let descriptionData = self.descriptionData[indexPath.row] as String
@@ -117,8 +117,8 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         var locations: [String] = []
         
         for item in elements {
-            if (!contains(locations, item.location!)) {
-                locations.append(item.location!)
+            if (!contains(locations, item.location! as String)) {
+                locations.append(item.location! as String)
             }
         }
         
@@ -146,7 +146,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
             }
             
             if placemarks.count > 0 {
-                let pm = placemarks[0] as CLPlacemark
+                let pm = placemarks[0] as! CLPlacemark
                 self.displayLocationInfo(pm)
             } else {
                 println("Problem with the data recieved from geocoder")
@@ -202,8 +202,8 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var navigationController =  segue.destinationViewController as UINavigationController
-        var controller = navigationController.topViewController as detailView
+        var navigationController =  segue.destinationViewController as! UINavigationController
+        var controller = navigationController.topViewController as! detailView
         //controller.delegate = self
             
         controller.uniqueID = self.uniqueID

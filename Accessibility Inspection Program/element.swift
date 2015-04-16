@@ -12,11 +12,13 @@ class Elemental: NSObject {
     var location: NSString?
     var picture: NSString?
     var notes: NSString?
+    var category: NSString?
     
-    init(location: NSString, picture: NSString, notes: NSString) {
+    init(location: NSString, picture: NSString, notes: NSString, category: NSString) {
         self.location = location
         self.picture = picture
         self.notes = notes
+        self.category = category
         super.init()
     }
 

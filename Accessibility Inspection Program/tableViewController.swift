@@ -126,7 +126,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
                 return
             }
             
-            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as! NSDictionary
             if (err != nil) {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
@@ -134,14 +134,14 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
             for (rootKey, rootValue) in jsonResult {
                 //println(rootValue)
                 //results[rootKey] = Dictionary<String, String>?
-                for (siteKey, siteValue) in rootValue as NSDictionary {
+                for (siteKey, siteValue) in rootValue as! NSDictionary {
                     //println("\(siteKey), \(siteValue)")
-                    if (siteKey as NSString == "tracking") {
-                        tracking.append(siteValue as NSString)
-                    } else if (siteKey as NSString == "info") {
-                        name.append(siteValue as NSString)
-                    } else if (siteKey as NSString == "description") {
-                        description.append(siteValue as NSString)
+                    if (siteKey as! NSString == "tracking") {
+                        tracking.append(siteValue as! String)
+                    } else if (siteKey as! NSString == "info") {
+                        name.append(siteValue as! String)
+                    } else if (siteKey as! NSString == "description") {
+                        description.append(siteValue as! String)
                     }
                 }
             }
@@ -178,7 +178,7 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
         //label.text = "Hello Man"
         //cell.addSubview(label)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as! UITableViewCell
         
         let nameData = self.nameData[indexPath.row] as String
         let descriptionData = self.descriptionData[indexPath.row] as String
@@ -216,12 +216,12 @@ class tableViewControl: UITableViewController, UITableViewDelegate, UITableViewD
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "login" {
-            let loginViewController = segue.destinationViewController as UIViewController
+            let loginViewController = segue.destinationViewController as! UIViewController
             println("login")
             //gamePickerViewController.selectedGame = game
         } else if (segue.identifier == "loadingElements") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as elementTable
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementTable
 
             controller.username = self.username
             controller.password = self.password

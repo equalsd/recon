@@ -1,0 +1,221 @@
+//
+//  LocationController.swift
+//  Accessibility Inspection Program
+//
+//  Created by generic on 4/14/15.
+//  Copyright (c) 2015 generic. All rights reserved.
+//
+
+import UIKit
+
+let sectionInsets = UIEdgeInsets(top: 10.0, left: 20.0, bottom: 10.0, right: 20.0)
+
+class locationController: UICollectionViewController, UICollectionViewDelegate {
+    
+    var username: String!
+    var password: String!
+    var category: String!
+    var site: String!
+    var tracking: String!
+    var elements: [Elemental] = []
+    var locations: [String] = []
+    var pictures: [String] = []
+    let reuseIdentifier = "Cell"
+    var selectedLocation: String!
+    var locationCount = Dictionary<String, Int>()
+
+    @IBAction func addLocation(sender: AnyObject) {
+        println("new Location")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        getItemsByCategory()
+        self.title = self.category!
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Register cell classes
+        //self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+
+        // Do any additional setup after loading the view.
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+
+
+    // MARK: UICollectionViewDataSource
+
+    override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
+    }
+
+
+    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //println(locations.count)
+        return locations.count
+    }
+
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! LocationViewCell
+    
+        // Configure the cell
+        //cell.backgroundColor = UIColor.blackColor()
+        let labelText = self.locations[indexPath.row]
+        let number = self.locationCount[labelText]!
+        cell.label.text = labelText + " (\(number))"
+        
+        
+        //check if needing assetLibrary....
+        let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(self.pictures[indexPath.row]).jpg"
+        
+        //image
+        let url = NSURL(string: imageText)
+        let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
+        var image = UIImage(data: data!)
+        
+        let size = CGSizeMake(120, 90)
+        let scale: CGFloat = 0.0
+        let hasAlpha = false
+        
+        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+        image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+        
+        cell.imageView.image = image
+        
+        return cell
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+            return CGSize(width: 120, height: 150)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+            return sectionInsets
+    }
+    
+    func getItemsByCategory () {
+        var elements = self.elements
+        
+        var locations: [String] = []
+        var pictures: [String] = []
+        
+        for item in elements {
+            if (item.category == self.category) {
+                if (!contains(locations, item.location! as String)) {
+                    locations.append(item.location! as String)
+                    pictures.append(item.picture! as String)
+                    locationCount[item.location! as String] = 1
+                } else {
+                    locationCount[item.location! as String] = locationCount[item.location! as String]! + 1
+                }
+            }
+        }
+        
+        self.locations = locations
+        self.pictures = pictures
+        //self.tableView.reloadData()
+    }
+    
+    /*override func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
+            //1
+            switch kind {
+                //2
+            case UICollectionElementKindSectionHeader:
+                //3
+                let headerView =
+                collectionView.dequeueReusableSupplementaryViewOfKind(kind,
+                    withReuseIdentifier: "locationReusableView",
+                    forIndexPath: indexPath)
+                    as! locationReusableView
+                headerView.headerTitle.text = self.category!
+                return headerView
+            default:
+                //4
+                assert(false, "Unexpected element kind")
+            }
+    }*/
+
+    // MARK: UICollectionViewDelegate
+
+    /*
+    // Uncomment this method to specify if the specified item should be highlighted during tracking
+    override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    */
+
+    
+    // Uncomment this method to specify if the specified item should be selected
+    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        //println(self.locations[indexPath.row])
+        self.selectedLocation = self.locations[indexPath.row]
+        
+        self.performSegueWithIdentifier("toPicture", sender: self)
+        //println("monkey")
+        return false
+    }
+    
+
+    /*
+    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
+    override func collectionView(collectionView: UICollectionView, shouldShowMenuForItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return false
+    }
+
+    override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
+        println("okay")
+        return false
+    }
+
+    override func collectionView(collectionView: UICollectionView, performAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) {
+        println(self.locations[indexPath.row])
+    }
+    */
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "toPicture" {
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            let controller = navigationController.topViewController as! pictureViewController
+            
+            controller.username = self.username
+            controller.password = self.password
+            controller.tracking = self.tracking
+            controller.site = self.site
+            controller.category = self.category
+            controller.elements = self.elements
+            controller.selectedLocation = self.selectedLocation
+            
+        } else if (segue.identifier == "toSiteList") {
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! siteListController
+            
+            controller.username = self.username
+            controller.password = self.password
+            controller.tracking = self.tracking
+            controller.site = self.site
+            //controller.category = self.category
+            /*controller.continuance = self.continuance*/
+            
+            /*let myIndexPath = self.tableView.indexPathForSelectedRow()
+            if (myIndexPath != nil) {
+            
+            let row = myIndexPath?.row
+            controller.site = nameData[row!]
+            controller.tracking = trackingData[row!]
+            controller.continuance = ""
+            }*/
+        } else if (segue.identifier == "toNew") {
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! siteNewController
+            //println("sobeit")
+            //println(segue.identifier)
+        }
+    }
+
+}

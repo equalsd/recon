@@ -72,17 +72,17 @@ class elementTable: UITableViewController {
             println(path)
             var item = self.elements[path]
             if let location = item.location {
-                self.location = location
+                self.location = location as String
             }
             if let picture = item.picture {
-                self.picture = picture
+                self.picture = picture as String
                 println(picture)
             } else {
                 self.picture = ""
                 println("picture is null")
             }
             if let notes = item.notes {
-                self.notes = notes
+                self.notes = notes as String
                 //println(notes)
             } else {
                 self.notes = ""
@@ -125,7 +125,7 @@ class elementTable: UITableViewController {
                 return
             }
             
-            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as! NSDictionary
             if (err != nil) {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
@@ -135,22 +135,22 @@ class elementTable: UITableViewController {
             for (rootKey, rootValue) in jsonResult {
                 //println(rootValue)
                 //results[rootKey] = Dictionary<String, String>?
-                if (rootKey as NSString != "Status" && rootKey as NSString != "dir") {
-                    for (siteKey, siteValue) in rootValue as NSDictionary {
+                if (rootKey as! NSString != "Status" && rootKey as! NSString != "dir") {
+                    for (siteKey, siteValue) in rootValue as! NSDictionary {
                         //println("\(siteKey), \(siteValue)")
-                        if (siteKey as NSString == "location") {
-                            location = siteValue as NSString
-                        } else if (siteKey as NSString == "notes") {
-                            notes = siteValue as NSString
-                        } else if (siteKey as NSString == "picture") {
-                            picture = siteValue as NSString
+                        if (siteKey as! NSString == "location") {
+                            location = siteValue as? String
+                        } else if (siteKey as! NSString == "notes") {
+                            notes = siteValue as? String
+                        } else if (siteKey as! NSString == "picture") {
+                            picture = siteValue as? String
                         }
                         
                     }
                     
-                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
-                } else if (rootKey as NSString == "dir") {
-                    self.site = rootValue as NSString
+                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: ""))
+                } else if (rootKey as! NSString == "dir") {
+                    self.site = rootValue as! String
                 }
             }
             
@@ -192,7 +192,7 @@ class elementTable: UITableViewController {
 
     
     func coreRemoveElements() {
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
             let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
         
@@ -207,7 +207,7 @@ class elementTable: UITableViewController {
                 var bas: NSManagedObject!
                 
                 for bas: AnyObject in users {
-                    managedContext.deleteObject(bas as NSManagedObject)
+                    managedContext.deleteObject(bas as! NSManagedObject)
                 }
             
                 managedContext.save(nil)
@@ -217,7 +217,7 @@ class elementTable: UITableViewController {
     }
     
     func coreSaveSite() {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
         
@@ -232,7 +232,7 @@ class elementTable: UITableViewController {
             var bas: NSManagedObject!
             
             for bas: AnyObject in users {
-                managedContext.deleteObject(bas as NSManagedObject)
+                managedContext.deleteObject(bas as! NSManagedObject)
             }
             
             managedContext.save(nil)
@@ -254,7 +254,7 @@ class elementTable: UITableViewController {
     
     func coreGetElements() {
         println("getting...Core")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
         
@@ -262,7 +262,7 @@ class elementTable: UITableViewController {
         
         var error: NSError?
         
-        let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as![NSManagedObject]?
         
         if let results = fetchedResults {
             //do something if its empty...
@@ -288,9 +288,9 @@ class elementTable: UITableViewController {
                     picture = result.valueForKey("picture") as? String
                     
                     if (picture == nil) {
-                        elements.append(Elemental(location: location!, picture: "", notes: notes!))
+                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: ""))
                     } else {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!))
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: ""))
                     }
                 }
                 
@@ -308,13 +308,13 @@ class elementTable: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("elementItem") as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("elementItem") as! UITableViewCell
         let item = self.elements[indexPath.row]
         //cell.textLabel.text = location
 
         
         if let locationLabel = cell.viewWithTag(100) as? UILabel {
-            locationLabel.text = item.location
+            locationLabel.text = item.location as? String
         }
         
         if let thumbnailView = cell.viewWithTag(200) as? UIImageView {
@@ -325,7 +325,7 @@ class elementTable: UITableViewController {
                 var image: UIImage
                 var orientation:ALAssetOrientation = ALAssetOrientation.Right
                 let library = ALAssetsLibrary()
-                var photo = NSURL(string: item.picture!)
+                var photo = NSURL(string: item.picture! as String)
 
                 library.assetForURL(photo, resultBlock: { (asset: ALAsset!) in
                     var assetRep = asset.defaultRepresentation()
@@ -336,7 +336,7 @@ class elementTable: UITableViewController {
                 }, failureBlock: nil)
             } else {
                 //var image.image = UIImage(named: "noimg.png")
-                var thumbnailView = cell.viewWithTag(200) as UIImageView!
+                var thumbnailView = cell.viewWithTag(200) as! UIImageView!
                 thumbnailView.image = UIImage(named: "noimg.png")
                 //thumbnailView.frame = CGRect(x: 0, y: 0, width: 61, height: 44)
                 //thumbnailView.addSubview(image)
@@ -396,16 +396,16 @@ class elementTable: UITableViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "backtoSites") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as tableViewControl
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! tableViewControl
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
             controller.tracking = self.tracking
             //controller.delegate = self
         } else if (segue.identifier == "detail") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as detailView
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! detailView
             //controller.location = self.location
             //controller.picture = self.picture
             //controller.notes = self.notes
@@ -418,7 +418,7 @@ class elementTable: UITableViewController {
         } else if (segue.identifier == "menuElementShow") {
             //var navigationController = segue.destinationViewController as UINavigationController
             //var controller = navigationController.topViewController as menuElementController
-            var controller = segue.destinationViewController as menuElementController
+            var controller = segue.destinationViewController as! menuElementController
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
@@ -448,7 +448,7 @@ class elementTable: UITableViewController {
     
     func coreSaveElements() {
         println("inserting...Core//elements")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
         

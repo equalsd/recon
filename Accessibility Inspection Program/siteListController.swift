@@ -57,7 +57,7 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
         //label.text = "Hello Man"
         //cell.addSubview(label)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as! UITableViewCell
         
         let nameData = self.nameData[indexPath.row] as String
         let descriptionData = self.descriptionData[indexPath.row] as String
@@ -125,15 +125,6 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
     }
     */
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
     func jsonGetSites() {
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
@@ -167,28 +158,28 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
                 return
             }
             
-            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as! NSDictionary
             if (err != nil) {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
             
             for (rootKey, rootValue) in jsonResult {
                 //results[rootKey] = Dictionary<String, String>?
-                if (rootKey as NSString == "result") {
-                    if (rootValue as NSString == "Nothing Found") {
+                if (rootKey as! NSString == "result") {
+                    if (rootValue as! NSString == "Nothing Found") {
                         split = true
                     }
                 } else {
-                    for (siteKey, siteValue) in rootValue as NSDictionary {
+                    for (siteKey, siteValue) in rootValue as! NSDictionary {
                         //println("\(siteKey), \(siteValue)")
-                        if (siteKey as NSString == "tracking") {
-                            tracking.append(siteValue as NSString)
-                        } else if (siteKey as NSString == "info") {
-                            name.append(siteValue as NSString)
-                        } else if (siteKey as NSString == "description") {
-                            description.append(siteValue as NSString)
-                        } else if (siteKey as NSString == "type") {
-                            type.append(siteValue as NSString)
+                        if (siteKey as! NSString == "tracking") {
+                            tracking.append(siteValue as! String)
+                        } else if (siteKey as! NSString == "info") {
+                            name.append(siteValue as! String)
+                        } else if (siteKey as! NSString == "description") {
+                            description.append(siteValue as! String)
+                        } else if (siteKey as! NSString == "type") {
+                            type.append(siteValue as! String)
                         }
                     }
                 }
@@ -211,9 +202,8 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
                     self.nameData = name
                     self.descriptionData = description
                     self.trackingData = tracking
-                    self.typeData =  type
+                    self.typeData = type
                     self.tableView!.reloadData()
-                    //println(self.nameData)
                 }
             })
             
@@ -226,14 +216,15 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toElementCatFromList" {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as ElementCategoryControllerTableViewController
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementCategoryController
             
             controller.username = self.username
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
-            controller.site = self.type
+            controller.type = self.type
+            controller.continuance = false
             /*controller.continuance = self.continuance*/
             
             /*let myIndexPath = self.tableView.indexPathForSelectedRow()

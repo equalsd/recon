@@ -50,8 +50,8 @@ class menuElementController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "returnToElements") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as elementTable
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementTable
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
@@ -60,15 +60,15 @@ class menuElementController: UIViewController {
         } else if (segue.identifier == "uploader") {
             //var navigationController = segue.destinationViewController as UINavigationController
             //var controller = navigationController.topViewController as menuElementController
-            var controller = segue.destinationViewController as uploadController
+            var controller = segue.destinationViewController as! uploadController
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
             controller.tracking = self.tracking
             controller.elements = self.elements
         } else if (segue.identifier == "toSiteList") {
-            var navigationController = segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as tableViewControl
+            var navigationController = segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! tableViewControl
             //var controller = segue.destinationViewController as tableViewControl
             controller.username = self.username
             controller.password = self.password

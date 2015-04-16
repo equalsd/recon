@@ -10,7 +10,8 @@ import UIKit
 
 class siteCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "None", "Restaurant", "Strip Mall"]
+    //var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "None", "Restaurant", "Strip Mall"]
+        var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "Restaurant", "Strip Mall"]
     var siteSelected: String!
     var username: String!
     var password: String!
@@ -47,7 +48,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
         //label.text = "Hello Man"
         //cell.addSubview(label)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as! UITableViewCell
         
         let siteType = self.siteType[indexPath.row] as String
         
@@ -77,17 +78,25 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
         if (self.siteSelected != "Add New Site") {
             self.performSegueWithIdentifier("toSiteList", sender: self)
         } else {
-            self.performSegueWithIdentifier("toNew", sender: self)
+            var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
+            emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
+                self.performSegueWithIdentifier("toNew", sender: self)
+            }))
+            emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+                //add logic here
+            }))
+            
+            self.presentViewController(emptyAlert, animated: true, completion: nil)
         }
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toLogin" {
-            let loginViewController = segue.destinationViewController as ViewController
+            let loginViewController = segue.destinationViewController as! ViewController
             println("login")
         } else if (segue.identifier == "toSiteList") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as siteListController
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! siteListController
             
             controller.username = self.username
             controller.password = self.password
@@ -105,18 +114,22 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             controller.continuance = ""
             }*/
         } else if (segue.identifier == "toNew") {
-            var navigationController = segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as siteNewController
-            //println("sobeit")
-            //println(segue.identifier)
-        } else if (segue.identifier == "toElementCatFromCont") {
-            var navigationController = segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as ElementCategoryControllerTableViewController
+            var navigationController = segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! siteNewController
             
             controller.username = self.username
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
+        } else if (segue.identifier == "toElementCatFromCont") {
+            var navigationController = segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementCategoryController
+            
+            controller.username = self.username
+            controller.password = self.password
+            controller.tracking = self.tracking
+            controller.site = self.site
+            controller.continuance = true
             
         }
     }

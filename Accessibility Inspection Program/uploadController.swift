@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 generic. All rights reserved.
 //
 
-import UIKIt
+import UIKit
 import AssetsLibrary
 
 class uploadController: UIViewController {
@@ -130,7 +130,7 @@ class uploadController: UIViewController {
             }
             
             //println(data)
-            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as! NSDictionary
             if (err != nil) {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
@@ -258,7 +258,7 @@ class uploadController: UIViewController {
         for picture in pictures {
             //var orientation:ALAssetOrientation = ALAssetOrientation.Right
             let library = ALAssetsLibrary()
-            var key: String = picture[0] as String
+            var key: String = picture[0] as! String
             let path = NSURL(string: key)
             
             library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
@@ -270,7 +270,7 @@ class uploadController: UIViewController {
                 
                     //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
                     SRWebClient.POST("http://precisreports.com/api/put-picture.php")
-                        .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": picture[1] as String])
+                        .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": picture[1] as! String])
                         .send({(response:AnyObject!, status:Int) -> Void in println(response)
                             //println("okay..")
                             self.progressBar()
@@ -301,8 +301,8 @@ class uploadController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "doneUploading") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as elementTable
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementTable
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site

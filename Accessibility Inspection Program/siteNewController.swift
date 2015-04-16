@@ -26,7 +26,15 @@ class siteNewController: UIViewController {
     @IBOutlet weak var siteAddress: UITextField!
     
     @IBAction func done(sender: AnyObject) {
-        jsonNewSite()
+        if (siteName.text == "" || siteAddress.text == "") {
+            var emptyAlert = UIAlertController(title: "Notice", message: "Name and address of site must be selected.", preferredStyle: UIAlertControllerStyle.Alert)
+            emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
+            }))
+            
+            self.presentViewController(emptyAlert, animated: true, completion: nil)
+        } else {
+            jsonNewSite()
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,12 +49,12 @@ class siteNewController: UIViewController {
         var type = ""
         
         if (switchBank.on) {type = "Bank"}
-        if (switchGas.on) {if (type != "") {type += "|GasStation"} else {type = "GasStation"}}
+        if (switchGas.on) {if (type != "") {type += "|Gas Station"} else {type = "Gas Station"}}
         if (switchHotel.on) {if (type != "") {type += "|Hotel"} else {type = "Hotel"}}
         if (switchRestaurant.on) {if (type != "") {type += "|Restaurant"} else {type = "Restaurant"}}
-        if (switchStripMall.on) {if (type != "") {type += "|StripMall"} else {type = "StripMall"}}
+        if (switchStripMall.on) {if (type != "") {type += "|Strip Mall"} else {type = "Strip Mall"}}
         
-        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "name": self.siteName, "description": self.siteAddress, "type": type]
+        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "name": self.siteName.text, "description": self.siteAddress.text, "type": type]
         
         let url = NSURL(string: "http://precisreports.com/api/new-site-json.php")
         let request = NSMutableURLRequest(URL: url!)
@@ -69,7 +77,7 @@ class siteNewController: UIViewController {
                 return
             }
             
-            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+            var jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as! NSDictionary
             if (err != nil) {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
@@ -98,7 +106,7 @@ class siteNewController: UIViewController {
                 }
             }*/
             
-            self.tracking = jsonResult["site"] as NSString
+            self.tracking = jsonResult["site"] as! NSString as String
             self.type = type
             
             //println(description)
@@ -138,7 +146,7 @@ class siteNewController: UIViewController {
     }
     
     func coreSaveSite() {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
         
@@ -153,7 +161,7 @@ class siteNewController: UIViewController {
             var bas: NSManagedObject!
             
             for bas: AnyObject in users {
-                managedContext.deleteObject(bas as NSManagedObject)
+                managedContext.deleteObject(bas as! NSManagedObject)
             }
             
             managedContext.save(nil)
@@ -164,7 +172,7 @@ class siteNewController: UIViewController {
         let results = NSManagedObject(entity: newEntity!, insertIntoManagedObjectContext:managedContext)
         
         results.setValue(self.tracking, forKey: "tracking")
-        results.setValue(self.siteName, forKey: "site")
+        results.setValue(self.siteName.text, forKey: "site")
         results.setValue(self.username, forKey: "username")
         results.setValue(self.password, forKey: "password")
         
@@ -181,14 +189,15 @@ class siteNewController: UIViewController {
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "toElementCatFromNew") {
-            var navigationController = segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as ElementCategoryControllerTableViewController
+            var navigationController = segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementCategoryController
             
             controller.username = self.username
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
             controller.type = self.type
+            controller.continuance = false
         }
 
     }

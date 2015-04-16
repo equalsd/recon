@@ -18,6 +18,9 @@
 		31788B191AA270D7005F7DC9 /* uploadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31788B181AA270D7005F7DC9 /* uploadController.swift */; };
 		31884F3F1AAA32BA00E76832 /* noimg.png in Resources */ = {isa = PBXBuildFile; fileRef = 31884F3E1AAA32BA00E76832 /* noimg.png */; };
 		318A645F1ADB24FF000FA8D2 /* ElementCategoryControllerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318A645E1ADB24FF000FA8D2 /* ElementCategoryControllerTableViewController.swift */; };
+		31F6DC8E1ADDF21D00E587CD /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F6DC8D1ADDF21D00E587CD /* LocationController.swift */; };
+		31F6DC901ADEF79500E587CD /* LocationViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F6DC8F1ADEF79500E587CD /* LocationViewCell.swift */; };
+		31F6DC941ADF0D7100E587CD /* pictureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F6DC931ADF0D7100E587CD /* pictureViewController.swift */; };
 		31FB1C431AA503DF007D7798 /* menuElementController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB1C421AA503DF007D7798 /* menuElementController.swift */; };
 		31FCF0841A87ECEF00390B33 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FCF0831A87ECEF00390B33 /* AppDelegate.swift */; };
 		31FCF0861A87ECEF00390B33 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FCF0851A87ECEF00390B33 /* ViewController.swift */; };
@@ -51,6 +54,9 @@
 		31788B181AA270D7005F7DC9 /* uploadController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadController.swift; sourceTree = "<group>"; };
 		31884F3E1AAA32BA00E76832 /* noimg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = noimg.png; path = ../noimg.png; sourceTree = "<group>"; };
 		318A645E1ADB24FF000FA8D2 /* ElementCategoryControllerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementCategoryControllerTableViewController.swift; sourceTree = "<group>"; };
+		31F6DC8D1ADDF21D00E587CD /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationController.swift; sourceTree = "<group>"; };
+		31F6DC8F1ADEF79500E587CD /* LocationViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationViewCell.swift; sourceTree = "<group>"; };
+		31F6DC931ADF0D7100E587CD /* pictureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pictureViewController.swift; sourceTree = "<group>"; };
 		31FB1C421AA503DF007D7798 /* menuElementController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = menuElementController.swift; sourceTree = "<group>"; };
 		31FCF07E1A87ECEF00390B33 /* Accessibility Inspection Program.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Accessibility Inspection Program.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		31FCF0821A87ECEF00390B33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -117,6 +123,9 @@
 				310CC4D31AA7E33900D7E2E3 /* menuLocationController.swift */,
 				310CC4D11AA689C700D7E2E3 /* SRWClient.swift */,
 				31FCF0871A87ECEF00390B33 /* Main.storyboard */,
+				31F6DC931ADF0D7100E587CD /* pictureViewController.swift */,
+				31F6DC8F1ADEF79500E587CD /* LocationViewCell.swift */,
+				31F6DC8D1ADDF21D00E587CD /* LocationController.swift */,
 				318A645E1ADB24FF000FA8D2 /* ElementCategoryControllerTableViewController.swift */,
 				312FA9511ADAF673004B57E2 /* siteNewController.swift */,
 				312FA94F1ADAF47E004B57E2 /* siteListController.swift */,
@@ -255,10 +264,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31F6DC8E1ADDF21D00E587CD /* LocationController.swift in Sources */,
 				31FCF0A41A8886C200390B33 /* tableViewController.swift in Sources */,
 				31FB1C431AA503DF007D7798 /* menuElementController.swift in Sources */,
+				31F6DC941ADF0D7100E587CD /* pictureViewController.swift in Sources */,
 				312FA94E1ADAEA2F004B57E2 /* siteCategoryController.swift in Sources */,
 				31FCF0A71A889E9100390B33 /* recon.xcdatamodeld in Sources */,
+				31F6DC901ADEF79500E587CD /* LocationViewCell.swift in Sources */,
 				310CC4D41AA7E33900D7E2E3 /* menuLocationController.swift in Sources */,
 				310CC4D21AA689C700D7E2E3 /* SRWClient.swift in Sources */,
 				31788B191AA270D7005F7DC9 /* uploadController.swift in Sources */,
@@ -345,7 +357,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -381,7 +393,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

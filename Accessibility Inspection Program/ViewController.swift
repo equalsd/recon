@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
     
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
     
         var error: NSError?
         
-        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]?
         
         if let results = fetchedResults {
             println(results.count)
@@ -52,9 +52,8 @@ class ViewController: UIViewController {
                 self.password.text = user.valueForKey("password") as? String
                 self.site = user.valueForKey("site") as? String
                 self.tracking = user.valueForKey("tracking") as? String
-
+                jsonLogin()
             }
-            jsonLogin()
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
         }
@@ -84,9 +83,9 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    /*override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         self.view.endEditing(true)
-    }
+    }*/
     
     func jsonLogin() {
         activityIndicatorView.startAnimating()
@@ -119,9 +118,9 @@ class ViewController: UIViewController {
                 return
             }
             
-            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+            var result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSDictionary
             //println(result)
-            let loginStatus: String! = result["status"] as NSString
+            let loginStatus: String! = result["status"] as! String
             if (loginStatus == "error") {
                 NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                         self.warning.text = "Error: Bad username or password"
@@ -151,7 +150,7 @@ class ViewController: UIViewController {
     
     func coreRemoveUser() {
         println("removing...")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
         
@@ -166,7 +165,7 @@ class ViewController: UIViewController {
             var bas: NSManagedObject!
             
             for bas: AnyObject in users {
-                managedContext.deleteObject(bas as NSManagedObject)
+                managedContext.deleteObject(bas as! NSManagedObject)
             }
             
             managedContext.save(nil)
@@ -176,7 +175,7 @@ class ViewController: UIViewController {
     
     func coreSaveUser() {
         println("saving...")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             
         let managedContext = appDelegate.managedObjectContext!
         
@@ -208,8 +207,8 @@ class ViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as siteCategoryController
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! siteCategoryController
             //controller.delegate = self
             controller.username = self.username.text
             controller.password = self.password.text
@@ -222,4 +221,3 @@ class ViewController: UIViewController {
         println("logiwn")
     }
 }
-

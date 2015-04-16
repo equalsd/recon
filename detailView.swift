@@ -24,6 +24,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     var picker:UIImagePickerController?=UIImagePickerController()
     var keyboardShowing = false
     var multiple = false
+    var category: String!
     var roll: [String] = []
     
     var location: String!
@@ -135,20 +136,20 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     func setupDetail() {
         var item = elements[uniqueID]
         if (item.location != nil) {
-            locationBar.text = item.location
+            locationBar.text = item.location as! String
         } else {
             locationBar.text = ""
         }
         if (item.notes != nil) {
-            notesField.text = item.notes
+            notesField.text = item.notes as! String
         } else {
             notesField.text = ""
         }
         var photo = item.picture
-        self.picture = photo
+        self.picture = photo as! String
         if (photo != nil && photo != "") {
             //println("s");
-            let path = NSURL(string: photo!)
+            let path = NSURL(fileURLWithPath: photo! as String)
             
             var orientation:ALAssetOrientation = ALAssetOrientation.Right
             let library = ALAssetsLibrary()
@@ -167,7 +168,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         //saveButton.enabled = true
     }
     
-    func textFieldShouldBeginEditing(textField: UITextField!) -> Bool {
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         //println("just")
         self.performSegueWithIdentifier("getLocation", sender: self)
         return false
@@ -200,10 +201,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
     }
     
-    func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!)
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject])
     {
         picker.dismissViewControllerAnimated(true, completion: nil)
-        var image=info[UIImagePickerControllerOriginalImage] as UIImage
+        var image=info[UIImagePickerControllerOriginalImage] as! UIImage
         var orientation:ALAssetOrientation = ALAssetOrientation.Right
         
         //imageView.image=image
@@ -244,7 +245,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         println("nuts")
     }
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         println("picker cancel.")
         picker.dismissViewControllerAnimated(true, completion: nil)
         //if (multiple == false) {
@@ -263,8 +264,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "returnElements") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as elementTable
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementTable
             //controller.delegate = self
             
             if (multiple) {
@@ -284,8 +285,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.tracking = self.tracking
             controller.elements = self.elements
         } else if (segue.identifier == "cancelElements") {
-            var navigationController =  segue.destinationViewController as UINavigationController
-            var controller = navigationController.topViewController as elementTable
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementTable
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
@@ -293,7 +294,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.continuance = "continue"
             //println("cancelled")
         } else if (segue.identifier == "getLocation") {
-            var controller = segue.destinationViewController as menuLocationController
+            var controller = segue.destinationViewController as! menuLocationController
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
@@ -318,10 +319,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         } else {
             if (self.locationBar.text == "") {
                 var newlocationed: String = newlocation(elements, indexical: 0)
-                self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text))
+                self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text, category: self.category))
                 self.locationBar.text = newlocationed
             } else {
-                self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text))
+                self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.category))
             }
         }
         
@@ -333,7 +334,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         saveElementsForReturn()
         
         for photo in self.roll {
-            self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text))
+            self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text, category: category))
         }
         
         self.roll.removeAll()
@@ -342,7 +343,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     func coreSaveElements() {
         println("inserting...Core")
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
         
