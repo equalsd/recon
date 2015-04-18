@@ -16,6 +16,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     var password: String!
     var category: String!
     var site: String!
+    var type: String!
     var tracking: String!
     var elements: [Elemental] = []
     var locations: [String] = []
@@ -25,7 +26,8 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     var locationCount = Dictionary<String, Int>()
 
     @IBAction func addLocation(sender: AnyObject) {
-        println("new Location")
+        //println("new Location")
+        self.performSegueWithIdentifier("toGetLocation", sender: self)
     }
     
     override func viewDidLoad() {
@@ -116,7 +118,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
                 }
             }
         }
-        
+                
         self.locations = locations
         self.pictures = pictures
         //self.tableView.reloadData()
@@ -156,7 +158,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         //println(self.locations[indexPath.row])
         self.selectedLocation = self.locations[indexPath.row]
         
-        self.performSegueWithIdentifier("toPicture", sender: self)
+        self.performSegueWithIdentifier("locationToPicture", sender: self)
         //println("monkey")
         return false
     }
@@ -179,7 +181,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     */
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toPicture" {
+        if segue.identifier == "locationToPicture" {
             var navigationController =  segue.destinationViewController as! UINavigationController
             let controller = navigationController.topViewController as! pictureViewController
             
@@ -187,6 +189,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
+            controller.type = self.type
             controller.category = self.category
             controller.elements = self.elements
             controller.selectedLocation = self.selectedLocation
@@ -199,6 +202,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
+            controller.type = self.type
             //controller.category = self.category
             /*controller.continuance = self.continuance*/
             
@@ -210,12 +214,18 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             controller.tracking = trackingData[row!]
             controller.continuance = ""
             }*/
-        } else if (segue.identifier == "toNew") {
+        } else if (segue.identifier == "toGetLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
-            var controller = navigationController.topViewController as! siteNewController
-            //println("sobeit")
-            //println(segue.identifier)
-        }
+            var controller = navigationController.topViewController as! menuLocationController
+            controller.username = self.username
+            controller.password = self.password
+            controller.tracking = self.tracking
+            controller.site = self.site
+            controller.type = self.type
+            controller.category = self.category
+            controller.elements = self.elements
+            controller.selectedLocation = self.selectedLocation
+        } 
     }
 
 }

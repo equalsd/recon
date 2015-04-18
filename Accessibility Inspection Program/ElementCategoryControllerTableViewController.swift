@@ -22,11 +22,14 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     var continuance: Bool!
     var locationCount = Dictionary<String, Int>()
 
+    @IBAction func menuButton(sender: AnyObject) {
+        self.performSegueWithIdentifier("toMenu", sender: self)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        println(tracking)
-
+        println(type)
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -52,9 +55,12 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         
         sort(&elementCategories)
         
-        if (continuance == true) {
+        //println("\(tracking) ok")
+        
+        if (self.continuance == true) {
             coreGetElements()
         } else {
+            coreSaveSite()
             jsonElements()
         }
         
@@ -106,20 +112,20 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.category = self.elementCategories[indexPath.row] as String
-            self.performSegueWithIdentifier("toLocation", sender: self)
+        self.performSegueWithIdentifier("toLocation", sender: self)
         println(self.category)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toLocation" {
-            var navigationController =  segue.destinationViewController as! UINavigationController
-            let controller = navigationController.topViewController as! locationController
+        if segue.identifier == "toMenu" {
+            var controller =  segue.destinationViewController as! menuElementController
+            //let controller = navigationController.topViewController as! locationController
             
             controller.username = self.username
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
-            controller.category = self.category
+            controller.type = self.type
             controller.elements = self.elements
             
         } else if (segue.identifier == "toSiteList") {
@@ -130,6 +136,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
+            controller.type = self.type
             //controller.category = self.category
             /*controller.continuance = self.continuance*/
             
@@ -141,11 +148,16 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             controller.tracking = trackingData[row!]
             controller.continuance = ""
             }*/
-        } else if (segue.identifier == "toNew") {
+        } else if (segue.identifier == "toLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
-            var controller = navigationController.topViewController as! siteNewController
-            //println("sobeit")
-            //println(segue.identifier)
+            var controller = navigationController.topViewController as! locationController
+            controller.username = self.username
+            controller.password = self.password
+            controller.tracking = self.tracking
+            controller.site = self.site
+            controller.type = self.type
+            controller.elements = self.elements
+            controller.category = self.category
         }
     }
     
@@ -193,7 +205,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             for (rootKey, rootValue) in jsonResult {
                 //println(rootValue)
                 //results[rootKey] = Dictionary<String, String>?
-                if (rootKey as! NSString != "Status" && rootKey as! NSString != "dir") {
+                if (rootKey as! NSString != "Status" && rootKey as! NSString != "dir" && rootKey as! NSString != "type") {
                     for (siteKey, siteValue) in rootValue as! NSDictionary {
                         //println("\(siteKey), \(siteValue)")
                         if (siteKey as! NSString == "location") {
@@ -210,6 +222,10 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!))
                 } else if (rootKey as! NSString == "dir") {
                     self.site = rootValue as! String
+                    //println(self.site)
+                } else if (rootKey as! NSString == "type") {
+                    self.type = rootValue as! String
+                    //println(self.type)
                 }
             }
             
@@ -315,6 +331,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         results.setValue(self.username, forKey: "username")
         results.setValue(self.tracking, forKey: "tracking")
         results.setValue(self.site, forKey: "site")
+        results.setValue(self.type, forKey: "type")
         
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
@@ -341,6 +358,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             var picture: String?
             var notes: String?
             var location: String?
+            var category: String?
             var elements: [Elemental] = []
             
             if (results.count == 0) {
@@ -355,6 +373,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     location = result.valueForKey("location") as? String
                     notes = result.valueForKey("notes") as? String
                     picture = result.valueForKey("picture") as? String
+                    category =  result.valueForKey("category") as? String
                     
                     if (picture == nil) {
                         elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!))
@@ -397,6 +416,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             item.setValue(element.location, forKey: "location")
             item.setValue(element.picture, forKey: "picture")
             item.setValue(element.notes, forKey: "notes")
+            item.setValue(element.category, forKey: "category")
             
             var error: NSError?
             if !managedContext.save(&error) {

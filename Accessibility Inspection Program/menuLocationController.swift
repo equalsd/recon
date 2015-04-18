@@ -16,11 +16,13 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     var username: String!
     var password: String!
     var site: String!
+    var type: String!
     var tracking: String!
     var elements: [Elemental] = []
+    var category: String!
+    var selectedLocation: String!
     var location: String!
     var notes: String!
-    var roll: [String] = []
     var locations: [String] = []
     var locationStatus: NSString = "Not Started"
     var locationManager: CLLocationManager!
@@ -44,7 +46,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     }
     
     @IBAction func doneButton(sender: AnyObject) {
-        self.performSegueWithIdentifier("returnDetail", sender: self)
+        self.performSegueWithIdentifier("locationToDetail", sender: self)
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -108,9 +110,9 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     
     // UITableViewDelegate Functions
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    /*func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 44
-    }
+    }*/
     
     func getLocations() {
         var elements = self.elements
@@ -201,20 +203,51 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
+    func keyboardShow(n:NSNotification) {
+        /*self.keyboardShowing = true
+        
+        let d = n.userInfo!
+        var r = (d[UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()
+        r = self.notesField.convertRect(r, fromView:nil)
+        self.notesField.contentInset.bottom = r.size.height
+        self.notesField.scrollIndicatorInsets.bottom = r.size.height
+        println("s")*/
+        animateViewMoving(true, moveValue: 220)
+    }
+    
+    func keyboardHide(n:NSNotification) {
+        /*self.keyboardShowing = false
+        self.notesField.contentInset = UIEdgeInsetsZero
+        self.notesField.scrollIndicatorInsets = UIEdgeInsetsZero*/
+        animateViewMoving(false, moveValue: 220)
+    }
+    
+    func animateViewMoving (up:Bool, moveValue :CGFloat){
+        var movementDuration:NSTimeInterval = 0.3
+        var movement:CGFloat = ( up ? -moveValue : moveValue)
+        UIView.beginAnimations( "animateView", context: nil)
+        UIView.setAnimationBeginsFromCurrentState(true)
+        UIView.setAnimationDuration(movementDuration )
+        self.view.frame = CGRectOffset(self.view.frame, 0,  movement)
+        UIView.commitAnimations()
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         var navigationController =  segue.destinationViewController as! UINavigationController
         var controller = navigationController.topViewController as! detailView
         //controller.delegate = self
             
-        controller.uniqueID = self.uniqueID
-        controller.location = self.locationBar.text
-        controller.picture = self.picture
-        controller.notes = self.notes
+        //controller.uniqueID = self.uniqueID
+        //controller.location = self.locationBar.text
+        //controller.picture = self.picture
+        //controller.notes = self.notes
         controller.username = self.username
         controller.password = self.password
         controller.site = self.site
         controller.tracking = self.tracking
+        controller.type = self.type
         controller.elements = self.elements
-        controller.roll = self.roll
+        //controller.selectedLocation = self.selectedLocation
+        controller.category = self.category
     }
 }

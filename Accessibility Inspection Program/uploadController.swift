@@ -26,7 +26,7 @@ class uploadController: UIViewController {
     @IBOutlet weak var uploadButton: UIButton!
     
     @IBAction func returnToElements(sender: AnyObject) {
-        self.performSegueWithIdentifier("doneUploading", sender: self)
+        self.performSegueWithIdentifier("uploaderToOrganize", sender: self)
     }
     
     @IBAction func uploadStart(sender: AnyObject) {
@@ -300,7 +300,7 @@ class uploadController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if (segue.identifier == "doneUploading") {
+        if (segue.identifier == "uploaderToOrganize") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementTable
             controller.username = self.username

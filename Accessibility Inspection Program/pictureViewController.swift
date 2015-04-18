@@ -16,15 +16,21 @@ class pictureViewController: UICollectionViewController {
     var site: String!
     var tracking: String!
     var elements: [Elemental] = []
-    var locations: [String] = []
+    var notes: [String] = []
     var pictures: [String] = []
     let reuseIdentifier = "Cell"
     var selectedLocation: String!
+    var type: String!
+    
+    @IBAction func addButton(sender: AnyObject) {
+        self.performSegueWithIdentifier("pictureToDetail", sender: self)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.title = selectedLocation
+        getItemsByLocation()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -59,33 +65,59 @@ class pictureViewController: UICollectionViewController {
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //#warning Incomplete method implementation -- Return the number of items in the section
-        return 0
+        return pictures.count
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! UICollectionViewCell
-    
-        // Configure the cell
-    
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! LocationViewCell
+        
+        let labelText = self.notes[indexPath.row]
+        cell.label.text = labelText
+        
+        
+        //check if needing assetLibrary....
+        let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(self.pictures[indexPath.row]).jpg"
+        
+        //image
+        let url = NSURL(string: imageText)
+        let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
+        var image = UIImage(data: data!)
+        
+        let size = CGSizeMake(120, 90)
+        let scale: CGFloat = 0.0
+        let hasAlpha = false
+        
+        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+        image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+        
+        cell.imageView.image = image
+        
         return cell
     }
     
-    func getItemsByLocation () {
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        return CGSize(width: 120, height: 150)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return sectionInsets
+    }
+    
+    func getItemsByLocation() {
         var elements = self.elements
         
-        var locations: [String] = []
+        var notes: [String] = []
         var pictures: [String] = []
         
         for item in elements {
-            if (item.location == self.category) {
-                if (!contains(locations, item.location! as String)) {
-                    locations.append(item.location! as String)
-                    pictures.append(item.picture! as String)
-                }
+            if (item.location == self.selectedLocation) {
+                notes.append(item.notes! as String)
+                pictures.append(item.picture! as String)
             }
         }
         
-        self.locations = locations
+        self.notes = notes
         self.pictures = pictures
         //self.tableView.reloadData()
     }
@@ -122,23 +154,25 @@ class pictureViewController: UICollectionViewController {
     */
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toPicture" {
+        if segue.identifier == "pictureToDetail" {
             var navigationController =  segue.destinationViewController as! UINavigationController
-            let controller = navigationController.topViewController as! pictureViewController
+            let controller = navigationController.topViewController as! detailView
             
             controller.username = self.username
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
             controller.category = self.category
+            controller.type = self.type
             controller.elements = self.elements
             
-        } else if (segue.identifier == "toSiteList") {
+        } /*else if (segue.identifier == "toSiteList") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! siteListController
             
             controller.username = self.username
             controller.password = self.password
+            controller.type = self.type
             controller.tracking = self.tracking
             controller.site = self.site
             //controller.category = self.category
@@ -157,7 +191,7 @@ class pictureViewController: UICollectionViewController {
             var controller = navigationController.topViewController as! siteNewController
             //println("sobeit")
             //println(segue.identifier)
-        }
+        }*/
     }
 
 }

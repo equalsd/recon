@@ -26,11 +26,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     var multiple = false
     var category: String!
     var roll: [String] = []
+    var type: String!
+    var selectedLocation: String!
     
     var location: String!
     var notes: String!
     
-    @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var locationBar: UITextField! = nil
     @IBOutlet weak var pictureField: UIImageView!
@@ -41,16 +42,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     @IBAction func addButton(sender: AnyObject) {
         println("add")
-        self.multiple = true
-        self.openCamera()
+        //self.multiple = true
+        //self.openCamera()
     }
     @IBAction func viewTapped(sender: AnyObject) {
         notesField.resignFirstResponder()
         locationBar.resignFirstResponder()
-    }
-    
-    @IBAction func saveButton(sender: AnyObject) {
-        self.performSegueWithIdentifier("returnElements", sender: self)
     }
     
     /*override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
@@ -66,21 +63,21 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         //saveButton.enabled = false
         picker!.delegate=self
         //println(location)
-        if (self.uniqueID == -1) {
+        /*if (self.uniqueID == -1) {
             //UIAlertAction in
-            self.openCamera()
+            //self.openCamera()
         } else {
             //locationBar.text = location
             //notesField.text = notes
             
             //println(picture)
-            setupDetail()
-        }
+            //setupDetail()
+        }*/
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        locationBar.delegate = self
+        /*locationBar.delegate = self
         
         if (location != nil) {
             locationBar.text = self.location
@@ -97,7 +94,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         rightSwipe.direction = .Right
         
         view.addGestureRecognizer(leftSwipe)
-        view.addGestureRecognizer(rightSwipe)
+        view.addGestureRecognizer(rightSwipe) */
     }
     
     func handleSwipes(sender:UISwipeGestureRecognizer) {
@@ -263,9 +260,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if (segue.identifier == "returnElements") {
+        if (segue.identifier == "detailToLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
-            var controller = navigationController.topViewController as! elementTable
+            var controller = navigationController.topViewController as! locationController
             //controller.delegate = self
             
             if (multiple) {
@@ -274,11 +271,11 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                 saveElementsForReturn()
             }
             
-            controller.uniqueID = self.uniqueID
-            controller.location = self.locationBar.text
-            controller.picture = self.picture
-            controller.notes = self.notesField.text
-            controller.continuance = "saveThis"
+            //controller.uniqueID = self.uniqueID
+            //controller.location = self.locationBar.text
+            //controller.picture = self.picture
+            //controller.notes = self.notesField.text
+            controller.type = self.type
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
@@ -304,7 +301,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.picture = self.picture
             controller.notes = self.notesField.text
             controller.uniqueID = self.uniqueID
-            controller.roll = self.roll
+            //controller.roll = self.roll
         }
     }
     

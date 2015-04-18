@@ -17,6 +17,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
     var password: String!
     var tracking: String!
     var site: String!
+    var type: String!
 
     @IBAction func toLogin(sender: AnyObject) {
         //self.performSegueWithIdentifier("toLogin", sender: self)
@@ -31,6 +32,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        println(type)
     }
 
     override func didReceiveMemoryWarning() {
@@ -102,6 +104,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
+            controller.type = self.type
             controller.siteSelected = self.siteSelected
             /*controller.continuance = self.continuance*/
             
@@ -121,6 +124,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             controller.password = self.password
             controller.tracking = self.tracking
             controller.site = self.site
+            controller.type = self.type
         } else if (segue.identifier == "toElementCatFromCont") {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
@@ -130,6 +134,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             controller.tracking = self.tracking
             controller.site = self.site
             controller.continuance = true
+            controller.type = self.type
             
         }
     }

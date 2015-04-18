@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var warning: UILabel!
     var site: String?
     var tracking: String?
+    var type: String?
     
     //var existingUser = [NSManagedObject]()
     
@@ -52,6 +53,7 @@ class ViewController: UIViewController {
                 self.password.text = user.valueForKey("password") as? String
                 self.site = user.valueForKey("site") as? String
                 self.tracking = user.valueForKey("tracking") as? String
+                self.type = user.valueForKey("type") as? String
                 jsonLogin()
             }
         } else {
@@ -197,7 +199,14 @@ class ViewController: UIViewController {
             var tracking = self.tracking
         }
         
+        if (self.type == nil) {
+            var type = ""
+        } else {
+            var type = self.type
+        }
+        
         results.setValue(site, forKey: "site")
+        results.setValue(type, forKey: "type")
         results.setValue(tracking, forKey: "tracking")
         
         var error: NSError?
@@ -214,6 +223,7 @@ class ViewController: UIViewController {
             controller.password = self.password.text
             controller.site = self.site
             controller.tracking = self.tracking
+            controller.type = self.type
     }
     
     @IBAction func cancelToLogin(segue:UIStoryboardSegue) {
