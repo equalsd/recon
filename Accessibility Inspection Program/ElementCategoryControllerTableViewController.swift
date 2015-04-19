@@ -113,7 +113,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.category = self.elementCategories[indexPath.row] as String
         self.performSegueWithIdentifier("toLocation", sender: self)
-        println(self.category)
+        //println(self.category)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -201,7 +201,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             }
             
             //println(jsonResult)
-            
+            var index: Int = 0
             for (rootKey, rootValue) in jsonResult {
                 //println(rootValue)
                 //results[rootKey] = Dictionary<String, String>?
@@ -219,7 +219,8 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                         }
                     }
                     
-                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!))
+                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
+                    index = index + 1
                 } else if (rootKey as! NSString == "dir") {
                     self.site = rootValue as! String
                     //println(self.site)
@@ -369,6 +370,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 
                 self.presentViewController(emptyAlert, animated: true, completion: nil)
             } else {
+                var index: Int = 0
                 for result in results {
                     location = result.valueForKey("location") as? String
                     notes = result.valueForKey("notes") as? String
@@ -376,10 +378,11 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     category =  result.valueForKey("category") as? String
                     
                     if (picture == nil) {
-                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!))
+                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!, uniqueID: index))
                     } else {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!))
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
                     }
+                    index = index + 1
                 }
                 
                 for item in elements {

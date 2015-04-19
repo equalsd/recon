@@ -249,5 +249,6 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         controller.elements = self.elements
         //controller.selectedLocation = self.selectedLocation
         controller.category = self.category
+        controller.location = self.locationBar.text
     }
 }

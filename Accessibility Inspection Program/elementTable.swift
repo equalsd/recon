@@ -148,7 +148,7 @@ class elementTable: UITableViewController {
                         
                     }
                     
-                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: ""))
+                    //elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: ""))
                 } else if (rootKey as! NSString == "dir") {
                     self.site = rootValue as! String
                 }
@@ -288,9 +288,9 @@ class elementTable: UITableViewController {
                     picture = result.valueForKey("picture") as? String
                     
                     if (picture == nil) {
-                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: ""))
+                        //elements.append(Elemental(location: location!, picture: "", notes: notes!, category: ""))
                     } else {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: ""))
+                        //elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: ""))
                     }
                 }
                 

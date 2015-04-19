@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AssetsLibrary
 
 let sectionInsets = UIEdgeInsets(top: 10.0, left: 20.0, bottom: 10.0, right: 20.0)
 
@@ -73,7 +74,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         
         
         //check if needing assetLibrary....
-        let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(self.pictures[indexPath.row]).jpg"
+        /*let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(self.pictures[indexPath.row]).jpg"
         
         //image
         let url = NSURL(string: imageText)
@@ -87,7 +88,52 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
         image!.drawInRect(CGRect(origin: CGPointZero, size: size))
         
-        cell.imageView.image = image
+        cell.imageView.image = image*/
+        
+        var photo: String = self.pictures[indexPath.row]
+        
+        //check if needing assetLibrary....
+        if (photo == "") {
+            cell.imageView.image = UIImage(named: "noimg.png")
+            //println("d")
+        } else if (photo.lowercaseString.rangeOfString("asset") != nil) {
+            //println("s");
+            let path = NSURL(fileURLWithPath: photo as String)
+            
+            var orientation:ALAssetOrientation = ALAssetOrientation.Right
+            let library = ALAssetsLibrary()
+            library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
+                var assetRep = asset.defaultRepresentation()
+                var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+                
+                let size = CGSizeMake(120, 90)
+                let scale: CGFloat = 0.0
+                let hasAlpha = false
+                
+                UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                
+                cell.imageView.image = image2
+                }, failureBlock: nil)
+        } else {
+            let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo).jpg"
+            
+            //image
+            let url = NSURL(string: imageText)
+            let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
+            var image = UIImage(data: data!)
+            
+            let size = CGSizeMake(120, 90)
+            let scale: CGFloat = 0.0
+            let hasAlpha = false
+            
+            UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+            image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+            
+            cell.imageView.image = image
+            
+        }
         
         return cell
     }
@@ -225,6 +271,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             controller.category = self.category
             controller.elements = self.elements
             controller.selectedLocation = self.selectedLocation
+            controller.uniqueID = -1
         } 
     }
 

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AssetsLibrary
 
 class pictureViewController: UICollectionViewController {
     
@@ -21,8 +22,13 @@ class pictureViewController: UICollectionViewController {
     let reuseIdentifier = "Cell"
     var selectedLocation: String!
     var type: String!
+    var uniqueIDs: [Int] = []
+    var selectedID: Int!
+    var selectedNote: String!
     
     @IBAction func addButton(sender: AnyObject) {
+        self.selectedID = -1
+        self.selectedNote = ""
         self.performSegueWithIdentifier("pictureToDetail", sender: self)
     }
     
@@ -73,24 +79,50 @@ class pictureViewController: UICollectionViewController {
         
         let labelText = self.notes[indexPath.row]
         cell.label.text = labelText
-        
+        var photo: String = self.pictures[indexPath.row]
         
         //check if needing assetLibrary....
-        let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(self.pictures[indexPath.row]).jpg"
+        if (photo == "") {
+            cell.imageView.image = UIImage(named: "noimg.png")
+            //println("d")
+        } else if (photo.lowercaseString.rangeOfString("asset") != nil) {
+            //println("s");
+            let path = NSURL(fileURLWithPath: photo as String)
+            
+            var orientation:ALAssetOrientation = ALAssetOrientation.Right
+            let library = ALAssetsLibrary()
+            library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
+                var assetRep = asset.defaultRepresentation()
+                var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+                
+                let size = CGSizeMake(120, 90)
+                let scale: CGFloat = 0.0
+                let hasAlpha = false
+                
+                UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                
+                cell.imageView.image = image2
+                }, failureBlock: nil)
+        } else {
+            let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo).jpg"
         
-        //image
-        let url = NSURL(string: imageText)
-        let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
-        var image = UIImage(data: data!)
-        
-        let size = CGSizeMake(120, 90)
-        let scale: CGFloat = 0.0
-        let hasAlpha = false
-        
-        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        image!.drawInRect(CGRect(origin: CGPointZero, size: size))
-        
-        cell.imageView.image = image
+            //image
+            let url = NSURL(string: imageText)
+            let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
+            var image = UIImage(data: data!)
+            
+            let size = CGSizeMake(120, 90)
+            let scale: CGFloat = 0.0
+            let hasAlpha = false
+            
+            UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+            image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+            
+            cell.imageView.image = image
+
+        }
         
         return cell
     }
@@ -109,16 +141,19 @@ class pictureViewController: UICollectionViewController {
         
         var notes: [String] = []
         var pictures: [String] = []
+        var uniqueIDs: [Int] = []
         
         for item in elements {
             if (item.location == self.selectedLocation) {
                 notes.append(item.notes! as String)
                 pictures.append(item.picture! as String)
+                uniqueIDs.append(item.uniqueID! as Int)
             }
         }
         
         self.notes = notes
         self.pictures = pictures
+        self.uniqueIDs = uniqueIDs
         //self.tableView.reloadData()
     }
 
@@ -131,12 +166,15 @@ class pictureViewController: UICollectionViewController {
     }
     */
 
-    /*
+    
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        self.selectedID = self.uniqueIDs[indexPath.row]
+        self.selectedNote = self.notes[indexPath.row]
+        println(self.selectedID)
         return true
     }
-    */
+    
 
     /*
     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
@@ -165,6 +203,9 @@ class pictureViewController: UICollectionViewController {
             controller.category = self.category
             controller.type = self.type
             controller.elements = self.elements
+            controller.uniqueID = self.selectedID
+            controller.location = self.selectedLocation
+            controller.notes = self.selectedNote
             
         } /*else if (segue.identifier == "toSiteList") {
             var navigationController =  segue.destinationViewController as! UINavigationController

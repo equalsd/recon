@@ -43,7 +43,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     @IBAction func addButton(sender: AnyObject) {
         println("add")
         //self.multiple = true
-        //self.openCamera()
+        self.openCamera()
     }
     @IBAction func viewTapped(sender: AnyObject) {
         notesField.resignFirstResponder()
@@ -61,33 +61,29 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         scrollView.frame.size.width = UIScreen.mainScreen().bounds.width
         // Do any additional setup after loading the view, typically from a nib.
         //saveButton.enabled = false
+        
+        
         picker!.delegate=self
-        //println(location)
-        /*if (self.uniqueID == -1) {
-            //UIAlertAction in
-            //self.openCamera()
+        
+        if (self.uniqueID == -1) {
+            self.openCamera()
         } else {
-            //locationBar.text = location
-            //notesField.text = notes
+            notesField.text = self.notes
             
             //println(picture)
             //setupDetail()
-        }*/
+        }
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        /*locationBar.delegate = self
+        locationBar.delegate = self
         
         if (location != nil) {
             locationBar.text = self.location
         }
         
-        if (notes != nil) {
-            notesField.text = self.notes
-        }
-        
-        var leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        /*var leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
         var rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
         
         leftSwipe.direction = .Left
@@ -144,7 +140,11 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
         var photo = item.picture
         self.picture = photo as! String
-        if (photo != nil && photo != "") {
+        if (photo == nil || photo == "") {
+            self.picture == ""
+            self.pictureField.image = UIImage(named: "noimg.png")
+            //println("d")
+        } else if (photo!.lowercaseString.rangeOfString("http") == nil) {
             //println("s");
             let path = NSURL(fileURLWithPath: photo! as String)
             
@@ -155,12 +155,31 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                 var iref = assetRep.fullResolutionImage().takeUnretainedValue()
                 var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
                 
+                let size = CGSizeMake(120, 90)
+                let scale: CGFloat = 0.0
+                let hasAlpha = false
+                
+                UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                
                 self.pictureField.image = image2
                 }, failureBlock: nil)
         } else {
-            self.picture == ""
-            self.pictureField.image = UIImage(named: "noimg.png")
-            //println("d")
+            let path = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo!).jpg"
+            
+            //image
+            let url = NSURL(string: path)
+            let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
+            var image2 = UIImage(data: data!)
+            
+            let size = CGSizeMake(120, 90)
+            let scale: CGFloat = 0.0
+            let hasAlpha = false
+            
+            UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+            image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
+            
+            self.pictureField.image = image2
         }
         //saveButton.enabled = true
     }
@@ -316,10 +335,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         } else {
             if (self.locationBar.text == "") {
                 var newlocationed: String = newlocation(elements, indexical: 0)
-                self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text, category: self.category))
+                self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text, category: self.category, uniqueID: 0))
                 self.locationBar.text = newlocationed
             } else {
-                self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.category))
+                self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.category, uniqueID: 0))
             }
         }
         
@@ -330,8 +349,11 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     func saveRoll() {
         saveElementsForReturn()
         
+        var index = elements.count
+        
         for photo in self.roll {
-            self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text, category: category))
+            index = index + 1
+            self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text, category: category, uniqueID: index))
         }
         
         self.roll.removeAll()
