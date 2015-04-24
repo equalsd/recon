@@ -373,9 +373,13 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 var index: Int = 0
                 for result in results {
                     location = result.valueForKey("location") as? String
+                    //println(location)
                     notes = result.valueForKey("notes") as? String
+                    //println(notes)
                     picture = result.valueForKey("picture") as? String
+                    //println(picture)
                     category =  result.valueForKey("category") as? String
+                    //println(category)
                     
                     if (picture == nil) {
                         elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!, uniqueID: index))
@@ -412,19 +416,20 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
         
         
-        //var index = 0
+        var index = 0
         for element in elements {
-            //index++
             var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
             item.setValue(element.location, forKey: "location")
             item.setValue(element.picture, forKey: "picture")
             item.setValue(element.notes, forKey: "notes")
             item.setValue(element.category, forKey: "category")
+            item.setValue(index, forKey: "uniqueID")
             
             var error: NSError?
             if !managedContext.save(&error) {
                 println("Could not save \(error), \(error?.userInfo)")
             }
+            index++
             //println(index)
             //println(element.picture)
         }

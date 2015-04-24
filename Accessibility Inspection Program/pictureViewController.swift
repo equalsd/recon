@@ -8,6 +8,7 @@
 
 import UIKit
 import AssetsLibrary
+//import Photos
 
 class pictureViewController: UICollectionViewController {
     
@@ -35,8 +36,6 @@ class pictureViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = selectedLocation
-        getItemsByLocation()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -44,6 +43,12 @@ class pictureViewController: UICollectionViewController {
         //self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        self.title = selectedLocation
+        println("checking")
+        getItemsByLocation()
     }
 
     override func didReceiveMemoryWarning() {
@@ -79,7 +84,8 @@ class pictureViewController: UICollectionViewController {
         
         let labelText = self.notes[indexPath.row]
         cell.label.text = labelText
-        var photo: String = self.pictures[indexPath.row]
+        var photo = self.pictures[indexPath.row]
+        println(photo)
         
         //check if needing assetLibrary....
         if (photo == "") {
@@ -87,10 +93,11 @@ class pictureViewController: UICollectionViewController {
             //println("d")
         } else if (photo.lowercaseString.rangeOfString("asset") != nil) {
             //println("s");
-            let path = NSURL(fileURLWithPath: photo as String)
-            
-            var orientation:ALAssetOrientation = ALAssetOrientation.Right
+            /*let path = NSURL(fileURLWithPath: photo as String)
+            var image: UIImage
             let library = ALAssetsLibrary()
+            var orientation:ALAssetOrientation = ALAssetOrientation.Right
+            
             library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
                 var assetRep = asset.defaultRepresentation()
                 var iref = assetRep.fullResolutionImage().takeUnretainedValue()
@@ -104,7 +111,49 @@ class pictureViewController: UICollectionViewController {
                 image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
                 
                 cell.imageView.image = image2
-                }, failureBlock: nil)
+                }, failureBlock: nil)*/
+            /*let path = [NSURL(fileURLWithPath: photo as String)!]
+            
+            let options = PHFetchOptions()
+            //options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+            let results = PHAsset.fetchAssetsWithALAssetURLs(path, options: options)
+            
+            let optioning = PHImageRequestOptions()
+            optioning.deliveryMode = .FastFormat
+            
+            if (results != nil) {
+                if let asset = results[0] as? PHAsset {
+                    let size = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+                    PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: size, contentMode: PHImageContentMode.AspectFill, options: optioning) { (finalResult, _) in
+                        cell.imageView.image = finalResult
+                    }
+                }
+            } else {
+                cell.backgroundColor = UIColor.redColor()
+            }*/
+            
+            let assetsLibrary = ALAssetsLibrary()
+            let url = NSURL(string: photo)
+            
+            var image: UIImage?
+            var loadError: NSError?
+            assetsLibrary.assetForURL(url, resultBlock: {
+                (asset: ALAsset!) -> Void in
+                if (asset != nil) {
+                    var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
+                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                    var image = UIImage(CGImage: iref)
+                    
+                    let size = CGSizeMake(120, 90)
+                    let scale: CGFloat = 0.0
+                    let hasAlpha = false
+                    
+                    UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                    image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                    
+                    cell.imageView.image = image
+                }
+            }, failureBlock: nil)
         } else {
             let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo).jpg"
         
@@ -144,7 +193,7 @@ class pictureViewController: UICollectionViewController {
         var uniqueIDs: [Int] = []
         
         for item in elements {
-            if (item.location == self.selectedLocation) {
+            if (item.location == self.selectedLocation && item.category == self.category) {
                 notes.append(item.notes! as String)
                 pictures.append(item.picture! as String)
                 uniqueIDs.append(item.uniqueID! as Int)
@@ -154,7 +203,7 @@ class pictureViewController: UICollectionViewController {
         self.notes = notes
         self.pictures = pictures
         self.uniqueIDs = uniqueIDs
-        //self.tableView.reloadData()
+        self.collectionView!.reloadData()
     }
 
     // MARK: UICollectionViewDelegate
@@ -170,9 +219,9 @@ class pictureViewController: UICollectionViewController {
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         self.selectedID = self.uniqueIDs[indexPath.row]
-        self.selectedNote = self.notes[indexPath.row]
-        println(self.selectedID)
-        return true
+        self.performSegueWithIdentifier("pictureToDetail", sender: self)
+        
+        return false
     }
     
 

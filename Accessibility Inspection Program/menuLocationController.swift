@@ -250,5 +250,6 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         //controller.selectedLocation = self.selectedLocation
         controller.category = self.category
         controller.location = self.locationBar.text
+        controller.uniqueID = -1
     }
 }
