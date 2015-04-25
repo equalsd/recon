@@ -20,6 +20,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     var type: String!
     var elements: [Elemental] = []
     var continuance: Bool!
+    var reload: Bool!
     var locationCount = Dictionary<String, Int>()
 
     @IBAction func menuButton(sender: AnyObject) {
@@ -57,22 +58,26 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         
         //println("\(tracking) ok")
         
-        if (self.continuance == true) {
-            coreGetElements()
-        } else {
-            coreSaveSite()
-            jsonElements()
-        }
-        
-        /*for item in elements {
-            let location = item.location
-            if (locationCount[location! as String] != nil) {
-                locationCount[location! as String] = locationCount[location! as String]! + 1
+        if (self.continuance != nil) {
+            if (self.continuance == true) {
+                coreGetElements()
             } else {
-                locationCount[location! as String] = 1
-                println(location)
+                coreSaveSite()
+                jsonElements()
             }
-        }*/
+        } else {
+            for item in elements {
+                let location = item.category
+                if (self.locationCount[location! as String] != nil) {
+                    self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
+                } else {
+                    self.locationCount[location! as String] = 1
+                    //println(location)
+                }
+            }
+        
+            self.tableView!.reloadData()
+        }
     }
 
     override func didReceiveMemoryWarning() {

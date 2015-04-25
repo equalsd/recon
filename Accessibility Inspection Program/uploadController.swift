@@ -77,8 +77,13 @@ class uploadController: UIViewController {
         
         for item in elements {
             timestamp = timestamp + 1
-            returnArray.append([item.location!, "placeholder", item.notes!, "\(timestamp)"])
-            self.pictures.append([item.picture!, "\(timestamp)"])
+            if (item.picture!.lowercaseString.rangeOfString("asset") != nil) {
+                self.pictures.append([item.picture!, "\(timestamp)"])
+                returnArray.append([item.location!, item.notes!, "change", "\(timestamp)", item.category!])
+            } else {
+                self.pictures.append([item.picture!, "leave be"])
+                returnArray.append([item.location!, item.notes!, "leave be", item.picture!, item.category!])
+            }
             //returnArray.append([item.location!, "", item.notes!])
             //println(item.picture!)
             //if (item.picture != "") {
@@ -135,8 +140,7 @@ class uploadController: UIViewController {
                 println("JSON ERROR \(err!.localizedDescription)")
             }
             
-            println(jsonResult)
-            
+            //println(jsonResult)
             
             /*
             for (rootKey, rootValue) in jsonResult {
@@ -253,11 +257,12 @@ class uploadController: UIViewController {
     }
     
     func uploadPictures () {
+        println("pictures...")
         var pictures = self.pictures
         var index: Int = 1
         for picture in pictures {
             //var orientation:ALAssetOrientation = ALAssetOrientation.Right
-            let library = ALAssetsLibrary()
+            /*let library = ALAssetsLibrary()
             var key: String = picture[0] as! String
             let path = NSURL(string: key)
             
@@ -266,21 +271,47 @@ class uploadController: UIViewController {
                 var iref = assetRep.fullResolutionImage().takeUnretainedValue()
                 var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
                 var data = UIImageJPEGRepresentation(image2, 1.0)
-                var name = "picture \(index)"
+                var name = "picture \(index)"*/
+            
+            let assetsLibrary = ALAssetsLibrary()
+            let key = picture[0] as! String
+            if (key.lowercaseString.rangeOfString("asset") != nil) {
                 
-                    //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
-                    SRWebClient.POST("http://precisreports.com/api/put-picture.php")
-                        .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": picture[1] as! String])
-                        .send({(response:AnyObject!, status:Int) -> Void in println(response)
-                            //println("okay..")
-                            self.progressBar()
-                        }, failure:{
-                            (error:NSError!) -> Void in (println(error.code))
-                        })
-
-                //self.pictureField.image = image2
-                index = index + 1
+                let url = NSURL(string: key) // relativeToURL: "\(appItem.URLSchema)://")
+                //let url = NSURL(fileURLWithPath: photo)
+            
+                var image: UIImage?
+                var loadError: NSError?
+                assetsLibrary.assetForURL(url, resultBlock: {
+                    (asset: ALAsset!) -> Void in
+                    if (asset != nil) {
+                        var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
+                        var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                        var image = UIImage(CGImage: iref)
+                        var name = "picture \(index)"
+                        let data = UIImageJPEGRepresentation(image, 1.0)
+                
+                        //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
+                        SRWebClient.POST("http://precisreports.com/api/put-picture.php")
+                            .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": picture[1] as! String])
+                            .send({(response:AnyObject!, status:Int) -> Void in println(response)
+                                //println("okay..")
+                                self.progressBar()
+                                }, failure:{
+                                    (error:NSError!) -> Void in (println(error.code))
+                            })
+                    } else {
+                        println("asset nil for \(key)")
+                        self.progressBar()
+                    }
+                    //self.pictureField.image = image2
+                    index = index + 1
                 }, failureBlock: nil)
+            } else {
+                self.progressBar()
+                index = index + 1
+                println("asset already online")
+            }
         }
     }
 
@@ -302,12 +333,12 @@ class uploadController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "uploaderToOrganize") {
             var navigationController =  segue.destinationViewController as! UINavigationController
-            var controller = navigationController.topViewController as! elementTable
+            var controller = navigationController.topViewController as! elementCategoryController
             controller.username = self.username
             controller.password = self.password
             controller.site = self.site
             controller.tracking = self.tracking
-            controller.continuance = "continue"
+            controller.continuance = true
         }
     }
     

@@ -31,6 +31,10 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         self.performSegueWithIdentifier("toGetLocation", sender: self)
     }
     
+    @IBAction func locationToOrganizer(sender: AnyObject) {
+        self.performSegueWithIdentifier("locationToOrganizer", sender: self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -98,24 +102,52 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             //println("d")
         } else if (photo.lowercaseString.rangeOfString("asset") != nil) {
             //println("s");
-            let path = NSURL(fileURLWithPath: photo as String)
+            /*let path = NSURL(fileURLWithPath: photo as String)
+            println(path)
             
-            var orientation:ALAssetOrientation = ALAssetOrientation.Right
+            //var orientation:ALAssetOrientation = ALAssetOrientation.Right
             let library = ALAssetsLibrary()
             library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
                 var assetRep = asset.defaultRepresentation()
-                var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
+                if (assetRep != nil) {
+                    println(assetRep)
+                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                    var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
                 
-                let size = CGSizeMake(120, 90)
-                let scale: CGFloat = 0.0
-                let hasAlpha = false
+                    let size = CGSizeMake(120, 90)
+                    let scale: CGFloat = 0.0
+                    let hasAlpha = false
                 
-                UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-                image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                    UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                    image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
                 
-                cell.imageView.image = image2
-                }, failureBlock: nil)
+                    cell.imageView.image = image2
+                } else {
+                    cell.imageView.image = UIImage(named: "noimg.png")
+                }
+            }, failureBlock: nil)*/
+            let assetsLibrary = ALAssetsLibrary()
+            let url = NSURL(string: photo)
+            
+            var image: UIImage?
+            var loadError: NSError?
+            assetsLibrary.assetForURL(url, resultBlock: {
+                (asset: ALAsset!) -> Void in
+                if (asset != nil) {
+                    var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
+                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                    var image = UIImage(CGImage: iref)
+                    
+                    let size = CGSizeMake(120, 90)
+                    let scale: CGFloat = 0.0
+                    let hasAlpha = false
+                    
+                    UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                    image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                    
+                    cell.imageView.image = image
+                }
+            }, failureBlock: nil)
         } else {
             let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo).jpg"
             
@@ -272,7 +304,17 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             controller.elements = self.elements
             controller.selectedLocation = self.selectedLocation
             controller.uniqueID = -1
-        } 
+        } else if (segue.identifier == "locationToOrganizer") {
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! elementCategoryController
+            controller.username = self.username
+            controller.password = self.password
+            controller.tracking = self.tracking
+            controller.site = self.site
+            controller.type = self.type
+            controller.category = self.category
+            controller.elements = self.elements
+        }
     }
 
 }

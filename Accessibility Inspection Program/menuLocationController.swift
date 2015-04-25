@@ -59,9 +59,9 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.8)
         
-        if (location != nil) {
-            locationBar.text = location
-        }
+        //if (location != nil) {
+            locationBar.text = selectedLocation
+        //}
         
         getLocations()
     }
@@ -249,7 +249,8 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         controller.elements = self.elements
         //controller.selectedLocation = self.selectedLocation
         controller.category = self.category
-        controller.location = self.locationBar.text
-        controller.uniqueID = -1
+        controller.selectedLocation = self.locationBar.text
+        println(locationBar.text)
+        controller.uniqueID = self.uniqueID
     }
 }

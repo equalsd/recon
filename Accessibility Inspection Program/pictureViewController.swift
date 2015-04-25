@@ -33,6 +33,9 @@ class pictureViewController: UICollectionViewController {
         self.performSegueWithIdentifier("pictureToDetail", sender: self)
     }
     
+    @IBAction func pictureToLocation(sender: AnyObject) {
+        self.performSegueWithIdentifier("pictureToLocations", sender: self)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -219,6 +222,7 @@ class pictureViewController: UICollectionViewController {
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         self.selectedID = self.uniqueIDs[indexPath.row]
+        //self.selectedLocation =
         self.performSegueWithIdentifier("pictureToDetail", sender: self)
         
         return false
@@ -253,30 +257,23 @@ class pictureViewController: UICollectionViewController {
             controller.type = self.type
             controller.elements = self.elements
             controller.uniqueID = self.selectedID
-            controller.location = self.selectedLocation
+            controller.selectedLocation = self.selectedLocation
             controller.notes = self.selectedNote
             
-        } /*else if (segue.identifier == "toSiteList") {
+        } else if (segue.identifier == "pictureToLocations") {
             var navigationController =  segue.destinationViewController as! UINavigationController
-            var controller = navigationController.topViewController as! siteListController
+            var controller = navigationController.topViewController as! locationController
             
             controller.username = self.username
             controller.password = self.password
-            controller.type = self.type
             controller.tracking = self.tracking
             controller.site = self.site
-            //controller.category = self.category
-            /*controller.continuance = self.continuance*/
+            controller.category = self.category
+            controller.type = self.type
+            controller.elements = self.elements
+            controller.selectedLocation = self.selectedLocation
             
-            /*let myIndexPath = self.tableView.indexPathForSelectedRow()
-            if (myIndexPath != nil) {
-            
-            let row = myIndexPath?.row
-            controller.site = nameData[row!]
-            controller.tracking = trackingData[row!]
-            controller.continuance = ""
-            }*/
-        } else if (segue.identifier == "toNew") {
+        } /*else if (segue.identifier == "toNew") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! siteNewController
             //println("sobeit")
