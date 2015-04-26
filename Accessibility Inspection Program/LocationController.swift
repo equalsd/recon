@@ -71,28 +71,9 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! LocationViewCell
     
         // Configure the cell
-        //cell.backgroundColor = UIColor.blackColor()
         let labelText = self.locations[indexPath.row]
         let number = self.locationCount[labelText]!
         cell.label.text = labelText + " (\(number))"
-        
-        
-        //check if needing assetLibrary....
-        /*let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(self.pictures[indexPath.row]).jpg"
-        
-        //image
-        let url = NSURL(string: imageText)
-        let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
-        var image = UIImage(data: data!)
-        
-        let size = CGSizeMake(120, 90)
-        let scale: CGFloat = 0.0
-        let hasAlpha = false
-        
-        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        image!.drawInRect(CGRect(origin: CGPointZero, size: size))
-        
-        cell.imageView.image = image*/
         
         var photo: String = self.pictures[indexPath.row]
         
@@ -101,31 +82,6 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             cell.imageView.image = UIImage(named: "noimg.png")
             //println("d")
         } else if (photo.lowercaseString.rangeOfString("asset") != nil) {
-            //println("s");
-            /*let path = NSURL(fileURLWithPath: photo as String)
-            println(path)
-            
-            //var orientation:ALAssetOrientation = ALAssetOrientation.Right
-            let library = ALAssetsLibrary()
-            library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
-                var assetRep = asset.defaultRepresentation()
-                if (assetRep != nil) {
-                    println(assetRep)
-                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                    var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
-                
-                    let size = CGSizeMake(120, 90)
-                    let scale: CGFloat = 0.0
-                    let hasAlpha = false
-                
-                    UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-                    image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
-                
-                    cell.imageView.image = image2
-                } else {
-                    cell.imageView.image = UIImage(named: "noimg.png")
-                }
-            }, failureBlock: nil)*/
             let assetsLibrary = ALAssetsLibrary()
             let url = NSURL(string: photo)
             

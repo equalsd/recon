@@ -68,6 +68,7 @@ class menuElementController: UIViewController {
             controller.site = self.site
             controller.tracking = self.tracking
             controller.elements = self.elements
+            controller.type = self.type
         } /*else if (segue.identifier == "toSiteList") {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! tableViewControl

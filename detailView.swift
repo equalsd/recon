@@ -273,6 +273,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             
             var number = self.elements.count
             self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.category, uniqueID: number))
+            self.uniqueID = number
             println(self.elements.count)
         })
         
