@@ -9,11 +9,7 @@
 import UIKit
 
 class menuElementController: UIViewController {
-    var username: String!
-    var password: String!
-    var site: String!
-    var tracking: String!
-    var type: String!
+    var state: position!
     var elements: [Elemental] = []
     var continuance: Bool!
     //var nsdata: String!
@@ -39,7 +35,7 @@ class menuElementController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        println(self.tracking)
+        println(self.state.tracking)
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.8)
         
     }
@@ -53,22 +49,14 @@ class menuElementController: UIViewController {
         if (segue.identifier == "menuToOrganize") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
-            controller.username = self.username
-            controller.password = self.password
-            controller.site = self.site
-            controller.tracking = self.tracking
+            controller.state = self.state
             controller.continuance = self.continuance
-            controller.type = self.type
         } else if (segue.identifier == "uploader") {
             //var navigationController = segue.destinationViewController as UINavigationController
             //var controller = navigationController.topViewController as menuElementController
             var controller = segue.destinationViewController as! uploadController
-            controller.username = self.username
-            controller.password = self.password
-            controller.site = self.site
-            controller.tracking = self.tracking
+            controller.state = self.state
             controller.elements = self.elements
-            controller.type = self.type
         } /*else if (segue.identifier == "toSiteList") {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! tableViewControl

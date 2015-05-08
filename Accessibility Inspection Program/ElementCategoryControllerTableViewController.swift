@@ -11,52 +11,30 @@ import CoreData
 
 class elementCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource  {
     
-    var elementCategories:[String] = ["Parking", "Exterior", "Egress Doors", "Interior", "Support Areas", "Restroom"]
-    var category: String!
-    var username: String!
-    var password: String!
-    var tracking: String!
-    var site: String!
-    var type: String!
+    var elementCategories:[String] = ["Add Location"]
     var elements: [Elemental] = []
+    var state: position!
     var continuance: Bool!
     var reload: Bool!
     var locationCount = Dictionary<String, Int>()
+    var pictures = false
 
     @IBAction func menuButton(sender: AnyObject) {
         self.performSegueWithIdentifier("toMenu", sender: self)
     }
+    
+    @IBAction func backButton(sender: AnyObject) {
+        let viewController : ViewController = ViewController()
+        
+        var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+        state.pop()
+        vc.elements = self.elements
+        vc.state = self.state
+        self.navigationController!.pushViewController(vc, animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        println(type)
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-
-        if (type.lowercaseString.rangeOfString("bank") != nil) {
-            elementCategories.append("Bank")
-        }
-        if (type.lowercaseString.rangeOfString("gas station") != nil) {
-            elementCategories.append("Gas Station")
-            println("okay")
-        }
-        if (type.lowercaseString.rangeOfString("restaurant") != nil) {
-            elementCategories.append("Restaurant")
-        }
-        if (type.lowercaseString.rangeOfString("hotel") != nil) {
-            elementCategories.append("Hotel")
-        }
-        if (type.lowercaseString.rangeOfString("strip mall") != nil) {
-            elementCategories.append("Strip Mall")
-        }
-        
-        sort(&elementCategories)
-        
-        //println("\(tracking) ok")
         
         if (self.continuance != nil) {
             if (self.continuance == true) {
@@ -66,17 +44,107 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 jsonElements()
             }
         } else {
-            for item in elements {
-                let location = item.category
-                if (self.locationCount[location! as String] != nil) {
-                    self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
-                } else {
-                    self.locationCount[location! as String] = 1
-                    //println(location)
+            
+        }
+        
+        for item in self.elements {
+            let location = item.category
+            if (self.locationCount[location! as String] != nil) {
+                self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
+            } else {
+                self.locationCount[location! as String] = 1
+                //println(location)
+            }
+        }
+        
+        switch self.state.current() {
+        case "Parking":
+            var extended = categorizer("Parking")
+            self.elementCategories.extend(extended)
+        case "Primary Function Areas":
+            var extended = categorizer("Primary Function Areas")
+            self.elementCategories.extend(extended)
+        case "Interior Path of Travel":
+            var extended = categorizer("Interior Path of Travel")
+            self.elementCategories.extend(extended)
+        default:
+            if (self.state.current() == "empty") {
+                var extended = categorizer("Root")
+                self.elementCategories.extend(extended)
+            } else {
+                //println("get locations in this category")
+                getLocationsbyCategory()
+                self.pictures = true
+            }
+        }
+        
+        counter()
+        self.tableView!.reloadData()
+    }
+    
+    func categorizer(parent: String) -> [String] {
+        var typeArray = split(state.type) {$0 == "|"}
+        
+        switch parent {
+        case "Parking":
+            return ["Parking Lots", "Passenger Loading Zones"]
+        case "Primary Function Areas":
+            var extended:[String] = []
+            if (contains(typeArray, "Bank")) {
+                extended.extend(["Lobby", "Offices"])
+            }
+            if (contains(typeArray, "Gas Station")) {
+                extended.extend(["Lobby", "Fuel Pumps"])
+            }
+            if (contains(typeArray, "Hotel")) {
+                extended.extend(["Lobby", "Accessible Guest Rooms", "Non-Accessible Guest Rooms"])
+            }
+            if (contains(typeArray, "Restaurant")) {
+                extended.extend(["Lobby", "Dining Areas", "Bars"])
+            }
+            return extended
+        case "Interior Path of Travel":
+            var extended = ["Path", "Telephones and Drinking Fountains", "Restrooms"]
+            if (contains(typeArray, "Hotel")) {
+                extended.extend(["Laundry Room", "Gym", "Locker Rooms"])
+            }
+            
+            return extended
+        case "Root":
+            return ["General Location", "Parking", "Exterior Path of Travel", "Egress/Entries", "Primary Function Areas", "Interior Path of Travel"]
+        default:
+          return []
+        }
+    }
+    
+    //floats counts up.
+    func counter() {
+        var addible = 0
+        for parent in self.elementCategories {
+            var extended = categorizer(parent)
+            for child in extended {
+                if (self.locationCount[child] != nil) {
+                    addible += self.locationCount[child]! //+ addible
+                    println("\(parent) + \(child) \(addible)")
                 }
             }
-        
-            self.tableView!.reloadData()
+            
+            self.locationCount[parent] = addible
+            println("\(parent) \(addible)")
+            addible = 0
+        }
+    }
+    
+    func getLocationsbyCategory() {
+        var current = self.state.current()
+        if (current != "empty") {
+            for item in self.elements {
+                if (item.category == current) {
+                    if (!contains(self.elementCategories, item.location as! String)) {
+                        self.elementCategories.extend([item.location as! String])
+                    }
+                }
+            }
         }
     }
 
@@ -101,24 +169,40 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         
         //cell.textLabel.text = rowData["tracking"] as? String
         if let nameLabel = cell.viewWithTag(100) as? UILabel{
-            var number: Int!
+            var number: String!
             
             if (locationCount[siteType] == nil) {
-                number = 0
+                nameLabel.text = siteType
             } else {
-                number = locationCount[siteType]
+                nameLabel.text = siteType + " (\(locationCount[siteType]!))"
             }
-            
-            nameLabel.text = siteType + " (\(number))"
         }
         
         return cell
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.category = self.elementCategories[indexPath.row] as String
-        self.performSegueWithIdentifier("toLocation", sender: self)
-        //println(self.category)
+        var location = self.elementCategories[indexPath.row] as String
+        if (indexPath.row > 0) {
+            if (!self.pictures) {
+            
+                state.add(location) //unless its a picture thing...
+            //self.performSegueWithIdentifier("toLocation", sender: self)
+            //println(self.category)
+                let viewController : ViewController = ViewController()
+        
+                var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+                vc.state = self.state
+                vc.elements = self.elements
+                self.navigationController!.pushViewController(vc, animated: true)
+            } else {
+            //to pictures
+                println("to pictures")
+            }
+        } else {
+            println(indexPath.row)
+            //go to menuLocation
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -126,22 +210,14 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             var controller =  segue.destinationViewController as! menuElementController
             //let controller = navigationController.topViewController as! locationController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             controller.elements = self.elements
             
         } else if (segue.identifier == "toSiteList") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! siteListController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             //controller.category = self.category
             /*controller.continuance = self.continuance*/
             
@@ -156,13 +232,8 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         } else if (segue.identifier == "toLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! locationController
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             controller.elements = self.elements
-            controller.category = self.category
         }
     }
     
@@ -171,7 +242,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
         
-        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "site": self.tracking]
+        let params:[String: AnyObject] = ["username" : self.state.username, "password" : self.state.password, "site": self.state.tracking]
         
         let url = NSURL(string: "http://precisreports.com/api/get-elements-json.php")
         let request = NSMutableURLRequest(URL: url!)
@@ -227,10 +298,10 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
                     index = index + 1
                 } else if (rootKey as! NSString == "dir") {
-                    self.site = rootValue as! String
+                    self.state.site = rootValue as! String
                     //println(self.site)
                 } else if (rootKey as! NSString == "type") {
-                    self.type = rootValue as! String
+                    self.state.type = rootValue as! String
                     //println(self.type)
                 }
             }
@@ -263,7 +334,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                         self.elements = elements
                         self.coreSaveElements()
                         
-                        for item in elements {
+                        /*for item in elements {
                             let location = item.category
                             if (self.locationCount[location! as String] != nil) {
                                 self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
@@ -271,10 +342,10 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                                 self.locationCount[location! as String] = 1
                                 //println(location)
                             }
-                        }
+                        }*/
                     }
                     
-                    self.tableView!.reloadData()
+                    //self.tableView!.reloadData()
                 })
             })
             
@@ -333,11 +404,11 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         
         let results = NSManagedObject(entity: newEntity!, insertIntoManagedObjectContext:managedContext)
         
-        results.setValue(self.password, forKey: "password")
-        results.setValue(self.username, forKey: "username")
-        results.setValue(self.tracking, forKey: "tracking")
-        results.setValue(self.site, forKey: "site")
-        results.setValue(self.type, forKey: "type")
+        results.setValue(self.state.password, forKey: "password")
+        results.setValue(self.state.username, forKey: "username")
+        results.setValue(self.state.tracking, forKey: "tracking")
+        results.setValue(self.state.site, forKey: "site")
+        results.setValue(self.state.type, forKey: "type")
         
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
@@ -394,7 +465,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     index = index + 1
                 }
                 
-                for item in elements {
+                /*for item in elements {
                     let location = item.category
                     if (self.locationCount[location! as String] != nil) {
                         self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
@@ -402,10 +473,10 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                         self.locationCount[location! as String] = 1
                         //println(location)
                     }
-                }
+                }*/
                 
                 self.elements = elements
-                self.tableView!.reloadData()
+                //self.tableView!.reloadData()
             }
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")

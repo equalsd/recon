@@ -14,9 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var warning: UILabel!
-    var site: String?
-    var tracking: String?
-    var type: String?
+    var state = position()
     
     //var existingUser = [NSManagedObject]()
     
@@ -51,9 +49,9 @@ class ViewController: UIViewController {
                 let user = results[0]
                 self.username.text = user.valueForKey("username") as? String
                 self.password.text = user.valueForKey("password") as? String
-                self.site = user.valueForKey("site") as? String
-                self.tracking = user.valueForKey("tracking") as? String
-                self.type = user.valueForKey("type") as? String
+                self.state.site = user.valueForKey("site") as? String
+                self.state.tracking = user.valueForKey("tracking") as? String
+                self.state.type = user.valueForKey("type") as? String
                 jsonLogin()
             }
         } else {
@@ -187,27 +185,27 @@ class ViewController: UIViewController {
         
         results.setValue(self.password.text, forKey: "password")
         results.setValue(self.username.text, forKey: "username")
-        if (self.site == nil) {
+        if (self.state.site == nil) {
             var site = ""
         } else {
-            var site = self.site
+            var site = self.state.site
         }
         
-        if (self.tracking == nil) {
+        if (self.state.tracking == nil) {
             var tracking = ""
         } else {
-            var tracking = self.tracking
+            var tracking = self.state.tracking
         }
         
-        if (self.type == nil) {
+        if (self.state.type == nil) {
             var type = ""
         } else {
-            var type = self.type
+            var type = self.state.type
         }
         
-        results.setValue(site, forKey: "site")
-        results.setValue(type, forKey: "type")
-        results.setValue(tracking, forKey: "tracking")
+        results.setValue(self.state.site, forKey: "site")
+        results.setValue(self.state.type, forKey: "type")
+        results.setValue(self.state.tracking, forKey: "tracking")
         
         var error: NSError?
         if !managedContext.save(&error) {
@@ -216,14 +214,12 @@ class ViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-            var navigationController =  segue.destinationViewController as! UINavigationController
-            var controller = navigationController.topViewController as! siteCategoryController
-            //controller.delegate = self
-            controller.username = self.username.text
-            controller.password = self.password.text
-            controller.site = self.site
-            controller.tracking = self.tracking
-            controller.type = self.type
+        var navigationController =  segue.destinationViewController as! UINavigationController
+        var controller = navigationController.topViewController as! siteCategoryController
+        //controller.delegate = self
+        self.state.username = self.username.text
+        self.state.password = self.password.text
+        controller.state = self.state
     }
     
     @IBAction func cancelToLogin(segue:UIStoryboardSegue) {

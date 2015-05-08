@@ -15,20 +15,15 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     //var location: String!
     //var notes: String!
+    var selectedLocation : String!
+    var selectedID: Int!
     var picture: String!
-    var uniqueID: Int!
-    var username: String!
-    var password: String!
-    var site: String!
-    var type: String!
-    var tracking: String!
     var elements: [Elemental] = []
     var picker:UIImagePickerController?=UIImagePickerController()
     var keyboardShowing = false
     var multiple = false
-    var category: String!
     //var roll: [String] = []
-    var selectedLocation: String!
+    var state: position!
     var swiped = false
     
     var location: String!
@@ -69,14 +64,14 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         
         scrollView.frame.size.width = UIScreen.mainScreen().bounds.width
         self.pictureField.image = UIImage(named: "noimg.png")
-        locationBar.text = self.selectedLocation
+        locationBar.text = self.state.current()
         
         picker!.delegate=self
         
-        if (self.uniqueID == -1) {
+        if (self.state.uniqueID == -1) {
             self.openCamera()
         } else {
-            setupDetail(self.elements[self.uniqueID])
+            setupDetail(self.elements[self.state.uniqueID])
         }
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardShow:", name: UIKeyboardWillShowNotification, object: nil)
@@ -102,10 +97,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         var index: Int = 0
         
         for item in elements {
-            if (item.location == self.selectedLocation) {
+            if (item.location == self.state.current()) {
                 locality.append(item)
-                if (item.uniqueID == self.uniqueID && self.swiped == false) {
-                    self.uniqueID = index
+                if (item.uniqueID == self.state.uniqueID && self.swiped == false) {
+                    self.state.uniqueID = index
                 }
                 index = index + 1
             }
@@ -113,21 +108,21 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
 
         if (sender.direction == .Left) {
             println("Swipe Left")
-            self.uniqueID = self.uniqueID - 1
+            self.state.uniqueID = self.state.uniqueID - 1
         } else if (sender.direction == .Right) {
             println("Swipe Right")
-            self.uniqueID = self.uniqueID + 1
+            self.state.uniqueID = self.state.uniqueID + 1
         }
         
-        if (self.uniqueID >= locality.count) {
-            self.uniqueID = 0
-        } else if (self.uniqueID < 0) {
-            self.uniqueID = locality.count - 1
+        if (self.state.uniqueID >= locality.count) {
+            self.state.uniqueID = 0
+        } else if (self.state.uniqueID < 0) {
+            self.state.uniqueID = locality.count - 1
         }
         
-        println(self.uniqueID)
+        println(self.state.uniqueID)
         self.swiped = true
-        setupDetail(locality[self.uniqueID])
+        setupDetail(locality[self.state.uniqueID])
     }
     
     func lookFor(ID: Int, locality: [Elemental]) -> Int {
@@ -143,7 +138,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
 
     func resolveDetails() {
-        var index = lookFor(self.uniqueID, locality: self.elements)
+        var index = lookFor(self.state.uniqueID, locality: self.elements)
         if (self.notesField.text != nil) {
             self.elements[index].notes = self.notesField.text
         } else {
@@ -160,7 +155,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
     
     func setupDetail(item: Elemental) {
-        var number: Int = lookFor(self.uniqueID, locality: self.elements)
+        var number: Int = lookFor(self.state.uniqueID, locality: self.elements)
         //var item = elements[number]
         if (swiped == false) {
             if (item.location != nil) {
@@ -208,7 +203,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             
             
         } else {
-            let path = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo!).jpg"
+            let path = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/thumbnails/" + "\(photo!).jpg"
             
             //image
             let url = NSURL(string: path)
@@ -271,15 +266,26 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                     }, failureBlock: nil)
             }
             
-            var number = self.elements.count
-            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.category, uniqueID: number))
-            self.uniqueID = number
+            var number = self.greatest()
+            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
+            self.state.uniqueID = number
             println(self.elements.count)
         })
         
         if (self.multiple == true) {
             self.openCamera()
         }
+    }
+    
+    func greatest() -> Int {
+        var largest = 0
+        for item in self.elements {
+            if (item.uniqueID > largest) {
+                largest = item.uniqueID!
+            }
+        }
+        
+        return largest
     }
     
     func imager(image: UIImage, didFinishSavingWithError error: NSErrorPointer, contextInfo: UnsafePointer<(Void)>) {
@@ -302,16 +308,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         if (segue.identifier == "detailToLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! menuLocationController
-            controller.type = self.type
-            controller.username = self.username
-            controller.password = self.password
-            controller.site = self.site
-            controller.tracking = self.tracking
             controller.elements = self.elements
-            controller.type = self.type
-            controller.selectedLocation = self.selectedLocation
-            controller.uniqueID = self.uniqueID
-            controller.category = self.category
+            controller.state = self.state
         /*} else if (segue.identifier == "getLocation") {
             var controller = segue.destinationViewController as! menuLocationController
             controller.username = self.username
@@ -332,13 +330,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             coreRemoveElements()
             coreSaveElements()
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.site = self.site
-            controller.type = self.type
-            controller.tracking = self.tracking
-            controller.selectedLocation = self.locationBar.text
-            controller.category = self.category
+            self.state.pop()
+            //controller.selectedLocation = self.locationBar.text
+            controller.state = self.state
             controller.elements = self.elements
         }
     }

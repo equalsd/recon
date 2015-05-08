@@ -10,11 +10,7 @@ import UIKit
 
 class siteListController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
 
-    var username: String!
-    var password: String!
-    var tracking: String!
-    var site: String!
-    var type: String!
+    var state: position!
     var siteSelected: String!
     
     var nameData = [String]()
@@ -77,9 +73,9 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
         emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
-            self.tracking = self.trackingData[indexPath.row] as String
-            self.site = self.nameData[indexPath.row] as String
-            self.type = self.typeData[indexPath.row] as String
+            self.state.tracking = self.trackingData[indexPath.row] as String
+            self.state.site = self.nameData[indexPath.row] as String
+            self.state.type = self.typeData[indexPath.row] as String
             self.performSegueWithIdentifier("toElementCatFromList", sender: self)
         }))
         emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
@@ -130,7 +126,7 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
         var session = NSURLSession(configuration: configuration)
         
         var split = false
-        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "type" : self.siteSelected]
+        let params:[String: AnyObject] = ["username" : self.state.username, "password" : self.state.password, "type" : self.siteSelected]
         
         let url = NSURL(string: "http://precisreports.com/api/get-sites-type-json.php")
         let request = NSMutableURLRequest(URL: url!)
@@ -219,11 +215,7 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             controller.continuance = false
             /*controller.continuance = self.continuance*/
             

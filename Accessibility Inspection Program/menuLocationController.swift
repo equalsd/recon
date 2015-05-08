@@ -12,20 +12,13 @@ import CoreLocation
 class menuLocationController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
     
     var picture: String!
-    var uniqueID: Int!
-    var username: String!
-    var password: String!
-    var site: String!
-    var type: String!
-    var tracking: String!
     var elements: [Elemental] = []
-    var category: String!
-    var selectedLocation: String!
-    var location: String!
+    var state: position!
     var notes: String!
     var locations: [String] = []
     var locationStatus: NSString = "Not Started"
     var locationManager: CLLocationManager!
+    var selectedLocation: String!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var locationBar: UITextField!
@@ -59,9 +52,11 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.8)
         
-        //if (location != nil) {
-            locationBar.text = selectedLocation
-        //}
+        if (self.selectedLocation != nil) {
+            locationBar.text = self.selectedLocation
+        } else {
+            locationBar.text = self.state.current()
+        }
         
         getLocations()
     }
@@ -241,16 +236,9 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         //controller.location = self.locationBar.text
         //controller.picture = self.picture
         //controller.notes = self.notes
-        controller.username = self.username
-        controller.password = self.password
-        controller.site = self.site
-        controller.tracking = self.tracking
-        controller.type = self.type
-        controller.elements = self.elements
-        //controller.selectedLocation = self.selectedLocation
-        controller.category = self.category
-        controller.selectedLocation = self.locationBar.text
+        controller.state = self.state
+        controller.selectedLocation = self.selectedLocation
+        //controller.selectedLocation = self.selectedLocatio
         println(locationBar.text)
-        controller.uniqueID = self.uniqueID
     }
 }

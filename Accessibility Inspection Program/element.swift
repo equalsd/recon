@@ -25,3 +25,50 @@ class Elemental: NSObject {
     }
 
 }
+
+class position {
+    var category: [String] = []
+    var username: String!
+    var password: String!
+    var tracking: String!
+    var site: String!
+    var type: String!
+    var uniqueID: Int!
+    
+    func add(stringly: String) {
+        category.append(stringly)
+    }
+    
+    func current() -> String {
+        if (category.isEmpty) {
+            return "empty"
+        } else {
+            return category.last!
+        }
+    }
+    
+    func count() -> Int {
+        if (category.isEmpty) {
+            return 0
+        } else {
+            return category.count
+        }
+    }
+    
+    func pop() -> String {
+        var returnable : String!
+        if (category.isEmpty) {
+            returnable = "empty"
+        } else {
+            var count = category.count - 1
+            category.removeAtIndex(count)
+            if (category.isEmpty) {
+                returnable = "empty"
+            } else {
+                returnable = category.last
+            }
+        }
+        
+        return returnable
+    }
+}

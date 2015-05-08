@@ -10,14 +10,9 @@ import UIKit
 
 class siteCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
     
-    //var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "None", "Restaurant", "Strip Mall"]
-        var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "Restaurant", "Strip Mall"]
+    var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "Restaurant", "Strip Mall"]
     var siteSelected: String!
-    var username: String!
-    var password: String!
-    var tracking: String!
-    var site: String!
-    var type: String!
+    var state: position!
 
     @IBAction func toLogin(sender: AnyObject) {
         //self.performSegueWithIdentifier("toLogin", sender: self)
@@ -32,7 +27,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        println(type)
+        println(self.state.type)
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,11 +95,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! siteListController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             controller.siteSelected = self.siteSelected
             /*controller.continuance = self.continuance*/
             
@@ -120,21 +111,13 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! siteNewController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
         } else if (segue.identifier == "toElementCatFromCont") {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
+            controller.state = self.state
             controller.continuance = true
-            controller.type = self.type
             
         }
     }

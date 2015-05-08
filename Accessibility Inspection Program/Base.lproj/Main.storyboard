@@ -571,7 +571,7 @@
         <!--Organizer-->
         <scene sceneID="Fg2-Xe-kPy">
             <objects>
-                <tableViewController id="Ask-CA-mff" customClass="elementCategoryController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="elementBoard" id="Ask-CA-mff" customClass="elementCategoryController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="45W-q9-nBX">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -598,6 +598,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Organizer" id="FxG-Et-COa">
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="7In-9s-W7z">
+                            <connections>
+                                <action selector="backButton:" destination="Ask-CA-mff" id="5XS-hV-FYC"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Menu" id="j7B-0y-jTk">
                             <connections>
                                 <action selector="menuButton:" destination="Ask-CA-mff" id="raI-aQ-t32"/>
@@ -1047,10 +1052,10 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="fPW-OG-tTE"/>
+        <segue reference="FaE-Dq-4pc"/>
         <segue reference="pkY-Hp-d7I"/>
         <segue reference="CpK-kh-2MK"/>
         <segue reference="okl-bh-Fvb"/>
-        <segue reference="nDT-LN-eDI"/>
-        <segue reference="6gw-s9-2m5"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -11,11 +11,7 @@ import CoreData
 
 class siteNewController: UIViewController {
     
-    var username: String!
-    var password: String!
-    var site: String!
-    var tracking: String!
-    var type: String!
+    var state: position!
     
     @IBOutlet weak var switchBank: UISwitch!
     @IBOutlet weak var switchGas: UISwitch!
@@ -54,7 +50,7 @@ class siteNewController: UIViewController {
         if (switchRestaurant.on) {if (type != "") {type += "|Restaurant"} else {type = "Restaurant"}}
         if (switchStripMall.on) {if (type != "") {type += "|Strip Mall"} else {type = "Strip Mall"}}
         
-        let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "name": self.siteName.text, "description": self.siteAddress.text, "type": type]
+        let params:[String: AnyObject] = ["username" : self.state.username, "password" : self.state.password, "name": self.siteName.text, "description": self.siteAddress.text, "type": type]
         
         let url = NSURL(string: "http://precisreports.com/api/new-site-json.php")
         let request = NSMutableURLRequest(URL: url!)
@@ -106,8 +102,8 @@ class siteNewController: UIViewController {
                 }
             }*/
             
-            self.tracking = jsonResult["site"] as! NSString as String
-            self.type = type
+            self.state.tracking = jsonResult["site"] as! NSString as String
+            self.state.type = type
             
             //println(description)
             //completionHandler(results)
@@ -171,10 +167,10 @@ class siteNewController: UIViewController {
         
         let results = NSManagedObject(entity: newEntity!, insertIntoManagedObjectContext:managedContext)
         
-        results.setValue(self.tracking, forKey: "tracking")
+        results.setValue(self.state.tracking, forKey: "tracking")
         results.setValue(self.siteName.text, forKey: "site")
-        results.setValue(self.username, forKey: "username")
-        results.setValue(self.password, forKey: "password")
+        results.setValue(self.state.username, forKey: "username")
+        results.setValue(self.state.password, forKey: "password")
         
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
@@ -192,11 +188,7 @@ class siteNewController: UIViewController {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             controller.continuance = false
         }
 

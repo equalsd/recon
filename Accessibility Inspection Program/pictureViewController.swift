@@ -12,20 +12,14 @@ import AssetsLibrary
 
 class pictureViewController: UICollectionViewController {
     
-    var username: String!
-    var password: String!
-    var category: String!
-    var site: String!
-    var tracking: String!
     var elements: [Elemental] = []
     var notes: [String] = []
     var pictures: [String] = []
     let reuseIdentifier = "Cell"
-    var selectedLocation: String!
-    var type: String!
     var uniqueIDs: [Int] = []
     var selectedID: Int!
     var selectedNote: String!
+    var state: position!
     
     @IBAction func addButton(sender: AnyObject) {
         self.selectedID = -1
@@ -49,7 +43,7 @@ class pictureViewController: UICollectionViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        self.title = selectedLocation
+        self.title = self.state.current()
         getItemsByLocation()
     }
 
@@ -117,7 +111,7 @@ class pictureViewController: UICollectionViewController {
                 }
             }, failureBlock: nil)
         } else {
-            let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo).jpg"
+            let imageText = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/thumbnails/" + "\(photo).jpg"
             println(imageText)
             
             //image
@@ -156,7 +150,7 @@ class pictureViewController: UICollectionViewController {
         var uniqueIDs: [Int] = []
         
         for item in elements {
-            if (item.location == self.selectedLocation && item.category == self.category) {
+            if (item.location == self.state.current()) {
                 notes.append(item.notes! as String)
                 pictures.append(item.picture! as String)
                 uniqueIDs.append(item.uniqueID! as Int)
@@ -209,29 +203,19 @@ class pictureViewController: UICollectionViewController {
             var navigationController =  segue.destinationViewController as! UINavigationController
             let controller = navigationController.topViewController as! detailView
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.category = self.category
-            controller.type = self.type
             controller.elements = self.elements
-            controller.uniqueID = self.selectedID
-            controller.selectedLocation = self.selectedLocation
+            controller.selectedID = self.selectedID
+            controller.selectedLocation = self.state.current()
             controller.notes = self.selectedNote
+            controller.state = self.state
             
         } else if (segue.identifier == "pictureToLocations") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! locationController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.category = self.category
-            controller.type = self.type
+            controller.state = self.state
             controller.elements = self.elements
-            controller.selectedLocation = self.selectedLocation
+            self.state.pop()
             
         } /*else if (segue.identifier == "toNew") {
             var navigationController =  segue.destinationViewController as! UINavigationController

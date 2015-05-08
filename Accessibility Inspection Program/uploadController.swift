@@ -11,11 +11,7 @@ import AssetsLibrary
 
 class uploadController: UIViewController {
     
-    var username: String!
-    var password: String!
-    var site: String!
-    var tracking: String!
-    var type: String!
+    var state: position!
     var elements: [Elemental] = []
     var pictures: [NSArray] = []
     //var total: Int = 1
@@ -74,7 +70,7 @@ class uploadController: UIViewController {
         let date = NSDate()
         var timestamp = Int(date.timeIntervalSince1970)
         
-        returnArray.append([self.username!, self.password!, "skip", self.tracking!])
+        returnArray.append([self.state.username!, self.state.password!, "skip", self.state.tracking!])
         
         for item in elements {
             timestamp = timestamp + 1
@@ -98,14 +94,11 @@ class uploadController: UIViewController {
         self.progressView.setProgress(0.0, animated: false)
         self.on = 0
         self.progressLabel.text = "Uploading..."
-        //self.on = 1
+
         var elements = self.elements
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
-        
-        //let params:[String: AnyObject] = ["username" : self.username, "password" : self.password, "site": self.tracking]
-        
-        //var testtest = [["4", "5"], ["3", "4"]]
+
         var jsonCompatible = compatiblize(elements)
         
         let url = NSURL(string: "http://precisreports.com/api/put-json-elements.php")
@@ -147,9 +140,63 @@ class uploadController: UIViewController {
             }
         
         task.resume()
-        uploadPictures()
+        if (self.pictures.isEmpty != true) {
+            uploadPictures()
+        }
         
     }
+    
+    /*func uploadPictures (on: Int) {
+        println("pictures...")
+        var count = self.pictures.count - 1
+        var index: Int = 1
+        if (on <= count) {
+            var item = self.pictures[on]
+            
+            let key = item[0] as! String
+            if (key.lowercaseString.rangeOfString("asset") != nil) {
+                
+                let url = NSURL(string: key) // relativeToURL: "\(appItem.URLSchema)://")
+                //let url = NSURL(fileURLWithPath: photo)
+                
+                var image: UIImage?
+                var loadError: NSError?
+                let assetsLibrary = ALAssetsLibrary()
+                assetsLibrary.assetForURL(url, resultBlock: {
+                    (asset: ALAsset!) -> Void in
+                    if (asset != nil) {
+                        var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
+                        var iref = assetRep.fullResolutionImage().takeUnretainedValue()
+                        image = UIImage(CGImage: iref)
+                        /*var name = "picture \(index)"
+                        let data = UIImageJPEGRepresentation(image, 1.0)
+                        println(item[1])
+                        
+                        //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
+                        SRWebClient.POST("http://precisreports.com/api/put-picture.php")
+                            .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": item[1] as! String])
+                            .send({(response:AnyObject!, status:Int) -> Void in println(response)
+                                //println("okay..")
+                                //println(response)
+                                self.progressBar()
+                                self.uploadPictures(on + 1)
+                                }, failure:{
+                                    (error:NSError!) -> Void in (println(error.code))
+                            })*/
+                    } else {
+                        println("asset nil for \(key)")
+                        self.progressBar()
+                    }
+                    //self.pictureField.image = image2
+                    index = index + 1
+                    }, failureBlock: nil)
+            } else {
+                self.progressBar()
+                index = index + 1
+                println("asset already online")
+            }
+        }
+    }*/
     
     func uploadPictures () {
         println("pictures...")
@@ -178,7 +225,7 @@ class uploadController: UIViewController {
                 
                         //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
                         SRWebClient.POST("http://precisreports.com/api/put-picture.php")
-                            .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": picture[1] as! String])
+                            .datar(data, fieldName: "file", data:["site": self.state.tracking, "title": name, "key": picture[1] as! String])
                             .send({(response:AnyObject!, status:Int) -> Void in println(response)
                                 //println("okay..")
                                 //println(response)
@@ -203,8 +250,8 @@ class uploadController: UIViewController {
 
     
     func progressBar() {
-        println("updating progress bar")
         self.on  = self.on + 1
+        println("updating progress bar \(self.on)")
         var fractionalProgress: Float = Float(self.on) / Float(self.number)
         self.progressView.setProgress(fractionalProgress, animated: true)
         var counter:Int = Int(fractionalProgress * 100.0)
@@ -220,12 +267,8 @@ class uploadController: UIViewController {
         if (segue.identifier == "uploaderToOrganize") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
-            controller.username = self.username
-            controller.password = self.password
-            controller.site = self.site
-            controller.tracking = self.tracking
+            controller.state = self.state
             controller.continuance = true
-            controller.type = self.type
         }
     }
     

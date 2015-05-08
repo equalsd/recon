@@ -13,17 +13,11 @@ let sectionInsets = UIEdgeInsets(top: 10.0, left: 20.0, bottom: 10.0, right: 20.
 
 class locationController: UICollectionViewController, UICollectionViewDelegate {
     
-    var username: String!
-    var password: String!
-    var category: String!
-    var site: String!
-    var type: String!
-    var tracking: String!
     var elements: [Elemental] = []
     var locations: [String] = []
+    var state: position!
     var pictures: [String] = []
     let reuseIdentifier = "Cell"
-    var selectedLocation: String!
     var locationCount = Dictionary<String, Int>()
 
     @IBAction func addLocation(sender: AnyObject) {
@@ -32,6 +26,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     }
     
     @IBAction func locationToOrganizer(sender: AnyObject) {
+        self.state.pop()
         self.performSegueWithIdentifier("locationToOrganizer", sender: self)
     }
     
@@ -39,7 +34,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         super.viewDidLoad()
 
         getItemsByCategory()
-        self.title = self.category!
+        self.title = self.state.current()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -105,7 +100,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
                 }
             }, failureBlock: nil)
         } else {
-            let imageText = "http://precisreports.com/clients/" + "\(self.tracking)" + "/thumbnails/" + "\(photo).jpg"
+            let imageText = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/thumbnails/" + "\(photo).jpg"
             
             //image
             let url = NSURL(string: imageText)
@@ -142,7 +137,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         var pictures: [String] = []
         
         for item in elements {
-            if (item.category == self.category) {
+            if (item.category == self.state.current()) {
                 if (!contains(locations, item.location! as String)) {
                     locations.append(item.location! as String)
                     pictures.append(item.picture! as String)
@@ -190,7 +185,8 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         //println(self.locations[indexPath.row])
-        self.selectedLocation = self.locations[indexPath.row]
+        var stringly = self.locations[indexPath.row]
+        self.state.add(stringly)
         
         self.performSegueWithIdentifier("locationToPicture", sender: self)
         //println("monkey")
@@ -219,24 +215,14 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             var navigationController =  segue.destinationViewController as! UINavigationController
             let controller = navigationController.topViewController as! pictureViewController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
-            controller.category = self.category
+            controller.state = self.state
             controller.elements = self.elements
-            controller.selectedLocation = self.selectedLocation
             
         } else if (segue.identifier == "toSiteList") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! siteListController
             
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
+            controller.state = self.state
             //controller.category = self.category
             /*controller.continuance = self.continuance*/
             
@@ -251,24 +237,13 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         } else if (segue.identifier == "toGetLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! menuLocationController
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
-            controller.category = self.category
+            self.state.uniqueID = -1
+            controller.state = self.state
             controller.elements = self.elements
-            controller.selectedLocation = self.selectedLocation
-            controller.uniqueID = -1
         } else if (segue.identifier == "locationToOrganizer") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
-            controller.username = self.username
-            controller.password = self.password
-            controller.tracking = self.tracking
-            controller.site = self.site
-            controller.type = self.type
-            controller.category = self.category
+            controller.state = self.state
             controller.elements = self.elements
         }
     }
