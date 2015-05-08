@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import CoreData
 
 class menuLocationController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
     
@@ -19,6 +20,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     var locationStatus: NSString = "Not Started"
     var locationManager: CLLocationManager!
     var selectedLocation: String!
+    var done: String!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var locationBar: UITextField!
@@ -39,7 +41,28 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     }
     
     @IBAction func doneButton(sender: AnyObject) {
-        self.performSegueWithIdentifier("locationToDetail", sender: self)
+        if (locationBar.text != "") {
+            if (self.done == "elementCategoryController") {
+                self.elements.append(Elemental(location: self.locationBar.text, picture: "location", notes: "", category: self.state.current(), uniqueID: -2))
+                
+                coreRemoveElements()
+                coreSaveElements()
+                
+                var ecc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+                ecc.state = self.state
+                ecc.elements = self.elements
+                
+                self.navigationController!.pushViewController(ecc, animated: true)
+            } else {
+                self.performSegueWithIdentifier("locationToDetail", sender: self)
+            }
+        } else {
+            var emptyAlert = UIAlertController(title: "Warning", message: "Location must be filled out before continuing!", preferredStyle: UIAlertControllerStyle.Alert)
+            emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
+            }))
+            
+            self.presentViewController(emptyAlert, animated: true, completion: nil)
+        }
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -55,7 +78,12 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         if (self.selectedLocation != nil) {
             locationBar.text = self.selectedLocation
         } else {
-            locationBar.text = self.state.current()
+            var currentLocation = self.state.current()
+            if (currentLocation != "empty") {
+                locationBar.text = currentLocation
+            } else {
+                locationBar.text = ""
+            }
         }
         
         getLocations()
@@ -240,5 +268,56 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         controller.selectedLocation = self.selectedLocation
         //controller.selectedLocation = self.selectedLocatio
         println(locationBar.text)
+    }
+    
+    func coreSaveElements() {
+        println("inserting...Core")
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
+        
+        
+        var index = 0
+        for element in elements {
+            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            item.setValue(element.location, forKey: "location")
+            item.setValue(element.picture, forKey: "picture")
+            item.setValue(element.notes, forKey: "notes")
+            item.setValue(element.category, forKey: "category")
+            item.setValue(index, forKey: "uniqueID")
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Could not save \(error), \(error?.userInfo)")
+            }
+            index++
+        }
+    }
+    
+    func coreRemoveElements() {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
+        
+        let entity = NSFetchRequest(entityName: "Elements")
+        
+        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        
+        var error: NSError? = nil
+        let list = managedContext.executeFetchRequest(entity, error: &error)
+        
+        if let users = list {
+            var bas: NSManagedObject!
+            
+            for bas: AnyObject in users {
+                managedContext.deleteObject(bas as! NSManagedObject)
+            }
+            
+            managedContext.save(nil)
+            
+        }
+        //println(user)
     }
 }

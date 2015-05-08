@@ -48,12 +48,22 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         }
         
         for item in self.elements {
-            let location = item.category
-            if (self.locationCount[location! as String] != nil) {
-                self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
-            } else {
-                self.locationCount[location! as String] = 1
-                //println(location)
+            if (item.picture != "location") {
+                let category = item.category
+                let location = item.location
+                if (self.locationCount[location! as String] != nil) {
+                    self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
+                } else {
+                    self.locationCount[location! as String] = 1
+                    //println(location)
+                }
+            
+                if (self.locationCount[category! as String] != nil) {
+                    self.locationCount[category! as String] = self.locationCount[category! as String]! + 1
+                } else {
+                    self.locationCount[category! as String] = 1
+                    //println(location)
+                }
             }
         }
         
@@ -119,19 +129,23 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     
     //floats counts up.
     func counter() {
-        var addible = 0
+        //var addible = 0
         for parent in self.elementCategories {
             var extended = categorizer(parent)
             for child in extended {
                 if (self.locationCount[child] != nil) {
-                    addible += self.locationCount[child]! //+ addible
-                    println("\(parent) + \(child) \(addible)")
+                    //addible += self.locationCount[child]! //+ addible
+                    if (self.locationCount[parent] == nil) {
+                        self.locationCount[parent] = 0
+                    }
+                    self.locationCount[parent] = self.locationCount[child]! + self.locationCount[parent]!
+                    //println("\(parent) + \(child) \(addible)")
                 }
             }
             
-            self.locationCount[parent] = addible
-            println("\(parent) \(addible)")
-            addible = 0
+            //self.locationCount[parent] = addible
+            //println("\(parent) \(addible)")
+            //addible = 0
         }
     }
     
@@ -171,7 +185,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         if let nameLabel = cell.viewWithTag(100) as? UILabel{
             var number: String!
             
-            if (locationCount[siteType] == nil) {
+            if (self.locationCount[siteType] == nil || self.locationCount[siteType] == 0) {
                 nameLabel.text = siteType
             } else {
                 nameLabel.text = siteType + " (\(locationCount[siteType]!))"
@@ -189,8 +203,6 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 state.add(location) //unless its a picture thing...
             //self.performSegueWithIdentifier("toLocation", sender: self)
             //println(self.category)
-                let viewController : ViewController = ViewController()
-        
                 var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
                 vc.state = self.state
                 vc.elements = self.elements
@@ -200,8 +212,14 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 println("to pictures")
             }
         } else {
-            println(indexPath.row)
+            //println(indexPath.row)
             //go to menuLocation
+            var lm = self.storyboard?.instantiateViewControllerWithIdentifier("locationManager") as! menuLocationController
+            lm.state = self.state
+            lm.elements = self.elements
+            lm.done = "elementCategoryController"
+            
+            self.navigationController!.pushViewController(lm, animated: true)
         }
     }
     

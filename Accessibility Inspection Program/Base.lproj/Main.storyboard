@@ -377,7 +377,7 @@
         <!--Location Manager-->
         <scene sceneID="eir-ff-B1G">
             <objects>
-                <viewController id="4iM-aD-biE" customClass="menuLocationController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="locationManager" id="4iM-aD-biE" customClass="menuLocationController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zuK-Xq-eMH"/>
                         <viewControllerLayoutGuide type="bottom" id="ibn-Ic-ERp"/>
