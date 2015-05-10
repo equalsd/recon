@@ -13,4 +13,6 @@ class LocationViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     
     @IBOutlet weak var label: UILabel!
+    
+    @IBOutlet weak var activity: UIActivityIndicatorView!
 }

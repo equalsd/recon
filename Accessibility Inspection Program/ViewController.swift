@@ -8,6 +8,9 @@
 
 import UIKit
 import CoreData
+import Photos
+
+let albumName = "Accessibility Inspection Photos"
 
 class ViewController: UIViewController {
 
@@ -15,6 +18,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var warning: UILabel!
     var state = position()
+    var albumFound: Bool! = false
     
     //var existingUser = [NSManagedObject]()
     
@@ -59,21 +63,36 @@ class ViewController: UIViewController {
         }
     
         
-        /*let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = NSPredicate(format: "title = %@", albumName)
+        let collection:PHFetchResult = PHAssetCollection.fetchAssetCollectionsWithType(.Album, subtype: .Any, options: fetchOptions)
         
-        
-        
-        if let existingUser = fetchedResults {
-            //println(fetchedResults)
-            if (existingUser.count > 0) {
-                let user = existingUser[0]
-                self.username.text = user.valueForKey("username") as? String
-                self.password.text = user.valueForKey("password") as? String
-                self.site = user.valueForKey("site") as? String
-            }
-        } else {
-            println("Could not fetch \(error), \(error!.userInfo)")
-        }*/
+        if let first_Obj:AnyObject = collection.firstObject{
+            //found the album
+            self.albumFound = true
+            self.state.assetCollection = collection.firstObject as! PHAssetCollection
+        }else{
+            //Album placeholder for the asset collection, used to reference collection in completion handler
+            var albumPlaceholder:PHObjectPlaceholder!
+            //create the folder
+            NSLog("\nFolder \"%@\" does not exist\nCreating now...", albumName)
+            PHPhotoLibrary.sharedPhotoLibrary().performChanges({
+                let request = PHAssetCollectionChangeRequest.creationRequestForAssetCollectionWithTitle(albumName)
+                albumPlaceholder = request.placeholderForCreatedAssetCollection
+                },
+                completionHandler: {(success:Bool, error:NSError!)in
+                    if(success){
+                        println("Successfully created folder")
+                        self.albumFound = true
+                        let collection = PHAssetCollection.fetchAssetCollectionsWithLocalIdentifiers([albumPlaceholder.localIdentifier], options: nil)
+                        self.state.assetCollection = collection?.firstObject as! PHAssetCollection
+                        
+                    } else {
+                        println("Error creating folder")
+                        self.albumFound = false
+                    }
+            })
+        }
     }
 
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!

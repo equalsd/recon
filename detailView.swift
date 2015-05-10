@@ -7,16 +7,15 @@
 //
 
 import UIKit
-import AssetsLibrary
+//import AssetsLibrary
 import CoreData
-//import Photos
+import Photos
 
 class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UIPopoverControllerDelegate, UITextFieldDelegate {
     
     //var location: String!
     //var notes: String!
     var selectedLocation : String!
-    var selectedID: Int!
     var picture: String!
     var elements: [Elemental] = []
     var picker:UIImagePickerController?=UIImagePickerController()
@@ -26,7 +25,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     var state: position!
     var swiped = false
     
-    var location: String!
     var notes: String!
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -156,7 +154,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     
     func setupDetail(item: Elemental) {
         var number: Int = lookFor(self.state.uniqueID, locality: self.elements)
-        //var item = elements[number]
+        self.pictureField.contentMode = .ScaleAspectFit
+        
         if (swiped == false) {
             if (item.location != nil) {
                 self.locationBar.text = item.location as! String
@@ -175,8 +174,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             //self.picture == ""
             //self.pictureField.image = UIImage(named: "noimg.png")
             //println("d")
-        } else if (photo!.lowercaseString.rangeOfString("asset") != nil) {
-            let assetsLibrary = ALAssetsLibrary()
+        } else if (photo!.lowercaseString.rangeOfString("/") != nil) {
+            /*let assetsLibrary = ALAssetsLibrary()
             let url = NSURL(string: item.picture! as String) // relativeToURL: "\(appItem.URLSchema)://")
             //let url = NSURL(fileURLWithPath: photo)
             
@@ -200,24 +199,52 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                     self.pictureField.image = image
                 }
                 }, failureBlock: nil)
+            */
+            //let targetSize = CGSizeMake(300, 225)
+            var targetSize: CGSize!
+            let imageManager = PHImageManager.defaultManager()
+            var location = [self.picture]
+            //println(location)
             
+            let photos = PHAsset.fetchAssetsWithLocalIdentifiers(location, options: nil)
             
+            var asset = photos.firstObject! as! PHAsset
+            
+            if (asset.pixelHeight > asset.pixelWidth) {
+                targetSize = CGSizeMake(225, 300)
+            } else {
+                targetSize = CGSizeMake(300, 225)
+            }
+            
+            var ID = imageManager.requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: nil, resultHandler: {
+                (result, info)->Void in
+                self.pictureField.image = result
+            })
+
         } else {
-            let path = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/thumbnails/" + "\(photo!).jpg"
+            let path = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/" + "\(photo!).jpg"
             
             //image
             let url = NSURL(string: path)
-            let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
-            var image2 = UIImage(data: data!)
-            
-            let size = CGSizeMake(120, 90)
-            let scale: CGFloat = 0.0
-            let hasAlpha = false
-            
-            UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-            image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
-            
-            self.pictureField.image = image2
+            if let data = NSData(contentsOfURL: url!) {//make sure your image in this url does exist, otherwise unwrap in a if let check
+                var image2 = UIImage(data: data)
+                
+                //let size = CGSizeMake(120, 90)
+                var size: CGSize!
+                let scale: CGFloat = 0.0
+                let hasAlpha = false
+                
+                if (image2!.size.height > image2!.size.width) {
+                    size = CGSizeMake(225, 300)
+                } else {
+                    size = CGSizeMake(300, 225)
+                }
+                
+                UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                image2!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                
+                self.pictureField.image = image2
+            }
         }
         //saveButton.enabled = true
     }
@@ -248,7 +275,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     {
         picker.dismissViewControllerAnimated(true, completion: nil)
         var image=info[UIImagePickerControllerOriginalImage] as! UIImage
-        var orientation:ALAssetOrientation = ALAssetOrientation.Right
+        self.pictureField.image = image
+        /*var orientation:ALAssetOrientation = ALAssetOrientation.Right
         
         let library = ALAssetsLibrary()
         library.writeImageToSavedPhotosAlbum(image.CGImage, orientation: orientation, completionBlock: { (path: NSURL!, error: NSError!) -> Void in
@@ -270,11 +298,46 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
             self.state.uniqueID = number
             println(self.elements.count)
-        })
+        })*/
         
-        if (self.multiple == true) {
-            self.openCamera()
-        }
+        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+        dispatch_async(dispatch_get_global_queue(priority, 0), {
+            PHPhotoLibrary.sharedPhotoLibrary().performChanges({
+                let createAssetRequest = PHAssetChangeRequest.creationRequestForAssetFromImage(image)
+                let assetPlaceholder = createAssetRequest.placeholderForCreatedAsset
+                self.picture = assetPlaceholder.localIdentifier
+                println(self.picture)
+                
+                let albumChangeRequest = PHAssetCollectionChangeRequest(forAssetCollection: self.state.assetCollection, assets: nil)
+                albumChangeRequest.addAssets([assetPlaceholder])
+                }, completionHandler: {(success, error)in
+                    dispatch_async(dispatch_get_main_queue(), {
+                        NSLog("Adding Image to Library -> %@", (success ? "Sucess":"Error!"))
+                        
+                        if (success) {
+                            /*let targetSize = CGSizeMake(300, 225)
+                            let imageManager = PHImageManager.defaultManager()
+                            let photos = PHAsset.fetchAssetsWithLocalIdentifiers([self.location], options: nil)
+                            
+                            var asset = photos.firstObject! as! PHAsset
+                            
+                            var ID = imageManager.requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: nil, resultHandler: {
+                                (result, info) -> Void in
+                                self.pictureField.image = result })*/
+                            var number = self.greatest() + 1
+                            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.parent(), uniqueID: number))
+                            self.state.uniqueID = number
+                            picker.dismissViewControllerAnimated(true, completion: nil)
+                            
+                            if (self.multiple == true) {
+                                self.openCamera()
+                            }
+                        }
+                })
+            })
+            
+        })
+
     }
     
     func greatest() -> Int {
@@ -310,19 +373,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             var controller = navigationController.topViewController as! menuLocationController
             controller.elements = self.elements
             controller.state = self.state
-        /*} else if (segue.identifier == "getLocation") {
-            var controller = segue.destinationViewController as! menuLocationController
-            controller.username = self.username
-            controller.password = self.password
-            controller.site = self.site
-            controller.tracking = self.tracking
-            controller.location = self.locationBar.text
-            controller.elements = self.elements
-            controller.picture = self.picture
-            controller.notes = self.notesField.text
-            controller.uniqueID = self.uniqueID
-            controller.type = self.type
-            //controller.roll = self.roll*/
         } else if (segue.identifier == "detailToPicture") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! pictureViewController
@@ -330,48 +380,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             coreRemoveElements()
             coreSaveElements()
             
-            self.state.pop()
-            //controller.selectedLocation = self.locationBar.text
             controller.state = self.state
             controller.elements = self.elements
         }
     }
     
-    /*func saveElementsForReturn() {
-        if (self.uniqueID > -1 ) {
-            var path = self.uniqueID
-            let item = self.elements[path]
-            item.location = self.locationBar.text
-            item.notes = self.notesField.text
-            item.picture = self.picture
-            //println(self.elements[path].location)
-        } else {
-            if (self.locationBar.text == "") {
-                var newlocationed: String = newlocation(elements, indexical: 0)
-                self.elements.append(Elemental(location: newlocationed, picture: self.picture!, notes: self.notesField.text, category: self.category, uniqueID: 0))
-                self.locationBar.text = newlocationed
-            } else {
-                self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.category, uniqueID: 0))
-            }
-        }
-        
-        //println(self.picture)
-        println("saving element...")
-    }*/
-    
-    /*func saveRoll() {
-        saveElementsForReturn()
-        
-        var index = elements.count
-        
-        for photo in self.roll {
-            index = index + 1
-            self.elements.append(Elemental(location: self.locationBar.text, picture: photo, notes: self.notesField.text, category: category, uniqueID: index))
-        }
-        
-        self.roll.removeAll()
-        println("saving roll...")
-    }*/
+
     
     func coreSaveElements() {
         println("inserting...Core")

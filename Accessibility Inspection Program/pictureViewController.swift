@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import AssetsLibrary
-//import Photos
+//import AssetsLibrary
+import Photos
 
 class pictureViewController: UICollectionViewController {
     
@@ -17,18 +17,25 @@ class pictureViewController: UICollectionViewController {
     var pictures: [String] = []
     let reuseIdentifier = "Cell"
     var uniqueIDs: [Int] = []
-    var selectedID: Int!
-    var selectedNote: String!
+    //var selectedNote: String!
     var state: position!
     
+    @IBOutlet weak var activity: UIActivityIndicatorView!
+   
     @IBAction func addButton(sender: AnyObject) {
-        self.selectedID = -1
-        self.selectedNote = ""
+        self.state.uniqueID = -1
+        //self.selectedNote = ""
         self.performSegueWithIdentifier("pictureToDetail", sender: self)
     }
     
     @IBAction func pictureToLocation(sender: AnyObject) {
-        self.performSegueWithIdentifier("pictureToLocations", sender: self)
+        //self.performSegueWithIdentifier("pictureToLocations", sender: self)
+        state.pop()
+        var ecc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+        ecc.elements = self.elements
+        ecc.state = self.state
+        self.navigationController!.pushViewController(ecc, animated: true)
+        
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,6 +85,9 @@ class pictureViewController: UICollectionViewController {
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! LocationViewCell
         
+        cell.activity.startAnimating()
+        cell.imageView.contentMode = .ScaleAspectFit
+        
         let labelText = self.notes[indexPath.row]
         cell.label.text = labelText
         var photo = self.pictures[indexPath.row]
@@ -87,8 +97,8 @@ class pictureViewController: UICollectionViewController {
         if (photo == "") {
             cell.imageView.image = UIImage(named: "noimg.png")
             //println("d")
-        } else if (photo.lowercaseString.rangeOfString("asset") != nil) {
-            let assetsLibrary = ALAssetsLibrary()
+        } else if (photo.lowercaseString.rangeOfString("/") != nil) {
+            /*let assetsLibrary = ALAssetsLibrary()
             let url = NSURL(string: photo)
             
             var image: UIImage?
@@ -109,37 +119,76 @@ class pictureViewController: UICollectionViewController {
                     
                     cell.imageView.image = image
                 }
-            }, failureBlock: nil)
+            }, failureBlock: nil)*/
+            
+            //let targetSize = CGSizeMake(120, 90)
+            var targetSize: CGSize!
+            
+            let imageManager = PHImageManager.defaultManager()
+            var location = [photo]
+            //println(location)
+            
+            let photos = PHAsset.fetchAssetsWithLocalIdentifiers(location, options: nil)
+            
+            var asset = photos.firstObject! as! PHAsset
+            if (asset.pixelHeight > asset.pixelWidth) {
+                targetSize = CGSizeMake(79, 105)
+            } else {
+                targetSize = CGSizeMake(105, 79)
+            }
+            
+            var ID = imageManager.requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: nil, resultHandler: {
+                (result, info)->Void in
+                cell.imageView.image = result
+            })
+
+            
         } else {
             let imageText = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/thumbnails/" + "\(photo).jpg"
-            println(imageText)
             
             //image
             let url = NSURL(string: imageText)
-            let data = NSData(contentsOfURL: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check
-            var image = UIImage(data: data!)
-            
-            let size = CGSizeMake(120, 90)
-            let scale: CGFloat = 0.0
-            let hasAlpha = false
-            
-            UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-            image!.drawInRect(CGRect(origin: CGPointZero, size: size))
-            
-            cell.imageView.image = image
+            if let data = NSData(contentsOfURL: url!) {//make sure your image in this url does exist, otherwise unwrap in a if let check
+                var image = UIImage(data: data)
+                var size: CGSize!
+                
+                if (image!.size.height > image!.size.width) {
+                    size = CGSizeMake(79, 105)
+                } else {
+                    size = CGSizeMake(105, 79)
+                }
 
+                let scale: CGFloat = 0.0
+                let hasAlpha = false
+                
+                UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+                image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+                
+                cell.imageView.image = image
+            } else {
+                cell.imageView.image = UIImage(named: "noimg.png")
+            }
         }
+        
+        cell.activity.stopAnimating()
         
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    /*func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
         return CGSize(width: 120, height: 150)
-    }
+    }*/
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return sectionInsets
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat{
+        return 1
+    }
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat{
+        return 4
     }
     
     func getItemsByLocation() {
@@ -150,7 +199,7 @@ class pictureViewController: UICollectionViewController {
         var uniqueIDs: [Int] = []
         
         for item in elements {
-            if (item.location == self.state.current()) {
+            if (item.location == self.state.current() && item.picture != "location") {
                 notes.append(item.notes! as String)
                 pictures.append(item.picture! as String)
                 uniqueIDs.append(item.uniqueID! as Int)
@@ -175,8 +224,9 @@ class pictureViewController: UICollectionViewController {
     
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        self.selectedID = self.uniqueIDs[indexPath.row]
+        //self.selectedID = self.uniqueIDs[indexPath.row]
         //self.selectedLocation =
+        self.state.uniqueID = self.uniqueIDs[indexPath.row]
         self.performSegueWithIdentifier("pictureToDetail", sender: self)
         
         return false
@@ -204,9 +254,8 @@ class pictureViewController: UICollectionViewController {
             let controller = navigationController.topViewController as! detailView
             
             controller.elements = self.elements
-            controller.selectedID = self.selectedID
             controller.selectedLocation = self.state.current()
-            controller.notes = self.selectedNote
+            //controller.notes = self.selectedNote
             controller.state = self.state
             
         } else if (segue.identifier == "pictureToLocations") {

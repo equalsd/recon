@@ -24,13 +24,11 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     }
     
     @IBAction func backButton(sender: AnyObject) {
-        let viewController : ViewController = ViewController()
-        
-        var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
         state.pop()
-        vc.elements = self.elements
-        vc.state = self.state
-        self.navigationController!.pushViewController(vc, animated: true)
+        var ecc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+        ecc.elements = self.elements
+        ecc.state = self.state
+        self.navigationController!.pushViewController(ecc, animated: true)
     }
     
     override func viewDidLoad() {
@@ -129,23 +127,16 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     
     //floats counts up.
     func counter() {
-        //var addible = 0
         for parent in self.elementCategories {
             var extended = categorizer(parent)
             for child in extended {
                 if (self.locationCount[child] != nil) {
-                    //addible += self.locationCount[child]! //+ addible
                     if (self.locationCount[parent] == nil) {
                         self.locationCount[parent] = 0
                     }
                     self.locationCount[parent] = self.locationCount[child]! + self.locationCount[parent]!
-                    //println("\(parent) + \(child) \(addible)")
                 }
             }
-            
-            //self.locationCount[parent] = addible
-            //println("\(parent) \(addible)")
-            //addible = 0
         }
     }
     
@@ -172,10 +163,6 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) ->   UITableViewCell {
-        //let cell = UITableViewCell()
-        //let label = UILabel(CGRect(x:0, y:0, width:200, height:50))
-        //label.text = "Hello Man"
-        //cell.addSubview(label)
         
         let cell = tableView.dequeueReusableCellWithIdentifier("categoryCell", forIndexPath: indexPath) as! UITableViewCell
         
@@ -201,19 +188,21 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             if (!self.pictures) {
             
                 state.add(location) //unless its a picture thing...
-            //self.performSegueWithIdentifier("toLocation", sender: self)
-            //println(self.category)
                 var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
                 vc.state = self.state
                 vc.elements = self.elements
                 self.navigationController!.pushViewController(vc, animated: true)
             } else {
-            //to pictures
-                println("to pictures")
+                //println("to pictures")
+                state.add(location)
+                
+                var pc = self.storyboard?.instantiateViewControllerWithIdentifier("pictureBoard") as! pictureViewController
+                pc.state = self.state
+                pc.elements = self.elements
+                self.navigationController!.pushViewController(pc, animated: true)
+
             }
         } else {
-            //println(indexPath.row)
-            //go to menuLocation
             var lm = self.storyboard?.instantiateViewControllerWithIdentifier("locationManager") as! menuLocationController
             lm.state = self.state
             lm.elements = self.elements
@@ -346,21 +335,9 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                         
                         self.tableView.dataSource = self
                         self.tableView.delegate = self
-                        //self.locations = locations
-                        //self.notes = notes
-                        //self.pictures = pictures
                         self.elements = elements
                         self.coreSaveElements()
-                        
-                        /*for item in elements {
-                            let location = item.category
-                            if (self.locationCount[location! as String] != nil) {
-                                self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
-                            } else {
-                                self.locationCount[location! as String] = 1
-                                //println(location)
-                            }
-                        }*/
+
                     }
                     
                     //self.tableView!.reloadData()

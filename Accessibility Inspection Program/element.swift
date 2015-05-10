@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Photos
 
 class Elemental: NSObject {
     var location: NSString?
@@ -34,6 +35,16 @@ class position {
     var site: String!
     var type: String!
     var uniqueID: Int!
+    var assetCollection: PHAssetCollection!
+    
+    func parent() -> String {
+        if (category.isEmpty || category.count < 2) {
+            return "**&^"
+        } else {
+            var count = category.count - 2
+            return category[count]
+        }
+    }
     
     func add(stringly: String) {
         category.append(stringly)

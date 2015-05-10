@@ -712,13 +712,13 @@
         <!--Picture View Controller-->
         <scene sceneID="IIa-TO-7Vk">
             <objects>
-                <collectionViewController id="sO3-th-k6x" customClass="pictureViewController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController storyboardIdentifier="pictureBoard" id="sO3-th-k6x" customClass="pictureViewController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="BM8-kh-Pot">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Dmy-sT-UZL">
-                            <size key="itemSize" width="120" height="150"/>
+                            <size key="itemSize" width="105" height="137"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -728,34 +728,43 @@
                                 <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="120" height="150"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="105" height="137"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="i4J-Cz-wrH">
-                                            <rect key="frame" x="0.0" y="0.0" width="120" height="90"/>
-                                        </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A9b-hr-OXO">
-                                            <rect key="frame" x="8" y="98" width="104" height="44"/>
+                                            <rect key="frame" x="0.0" y="106" width="104" height="31"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="44" id="cFU-Ip-lDq"/>
+                                                <constraint firstAttribute="height" constant="31" id="cFU-Ip-lDq"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="gLP-ew-gxA">
+                                            <rect key="frame" x="34" y="56" width="37" height="37"/>
+                                            <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        </activityIndicatorView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="i4J-Cz-wrH">
+                                            <rect key="frame" x="0.0" y="0.0" width="105" height="105"/>
+                                        </imageView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
-                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="leading" secondItem="LOr-v0-2Nj" secondAttribute="leadingMargin" id="A4D-9u-WMH"/>
+                                    <constraint firstAttribute="bottom" secondItem="A9b-hr-OXO" secondAttribute="bottom" id="1fg-sy-gnv"/>
+                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="leading" secondItem="LOr-v0-2Nj" secondAttribute="leadingMargin" constant="-8" id="A4D-9u-WMH"/>
                                     <constraint firstItem="i4J-Cz-wrH" firstAttribute="leading" secondItem="LOr-v0-2Nj" secondAttribute="leading" id="IzL-iM-nTg"/>
-                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="bottom" secondItem="LOr-v0-2Nj" secondAttribute="bottomMargin" id="LXX-F6-kif"/>
+                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="top" secondItem="i4J-Cz-wrH" secondAttribute="bottom" constant="1" id="J8X-rI-Bdc"/>
+                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="bottom" secondItem="LOr-v0-2Nj" secondAttribute="bottomMargin" constant="8" id="LXX-F6-kif"/>
                                     <constraint firstAttribute="trailing" secondItem="i4J-Cz-wrH" secondAttribute="trailing" id="NZ3-sK-KX8"/>
                                     <constraint firstItem="A9b-hr-OXO" firstAttribute="centerX" secondItem="i4J-Cz-wrH" secondAttribute="centerX" id="cWv-Cm-iWe"/>
-                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="top" secondItem="i4J-Cz-wrH" secondAttribute="bottom" constant="8" symbolic="YES" id="iJP-ps-E3e"/>
+                                    <constraint firstItem="gLP-ew-gxA" firstAttribute="centerX" secondItem="A9b-hr-OXO" secondAttribute="centerX" id="e3i-Om-Ww9"/>
+                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="top" secondItem="i4J-Cz-wrH" secondAttribute="bottom" constant="1" id="iJP-ps-E3e"/>
+                                    <constraint firstItem="A9b-hr-OXO" firstAttribute="top" secondItem="gLP-ew-gxA" secondAttribute="bottom" constant="13" id="qRk-eO-lOO"/>
                                     <constraint firstItem="i4J-Cz-wrH" firstAttribute="top" secondItem="LOr-v0-2Nj" secondAttribute="top" id="wMB-7p-LYs"/>
                                 </constraints>
                                 <connections>
+                                    <outlet property="activity" destination="gLP-ew-gxA" id="Gaq-6l-9V4"/>
                                     <outlet property="imageView" destination="i4J-Cz-wrH" id="G7w-bJ-enD"/>
                                     <outlet property="label" destination="A9b-hr-OXO" id="2lf-t1-Kq1"/>
                                 </connections>
@@ -1052,10 +1061,10 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="fPW-OG-tTE"/>
         <segue reference="FaE-Dq-4pc"/>
-        <segue reference="pkY-Hp-d7I"/>
-        <segue reference="CpK-kh-2MK"/>
+        <segue reference="nDT-LN-eDI"/>
         <segue reference="okl-bh-Fvb"/>
+        <segue reference="BBQ-3g-zn4"/>
+        <segue reference="kcb-9w-HH2"/>
     </inferredMetricsTieBreakers>
 </document>
