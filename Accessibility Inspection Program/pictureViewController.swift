@@ -98,30 +98,6 @@ class pictureViewController: UICollectionViewController {
             cell.imageView.image = UIImage(named: "noimg.png")
             //println("d")
         } else if (photo.lowercaseString.rangeOfString("/") != nil) {
-            /*let assetsLibrary = ALAssetsLibrary()
-            let url = NSURL(string: photo)
-            
-            var image: UIImage?
-            var loadError: NSError?
-            assetsLibrary.assetForURL(url, resultBlock: {
-                (asset: ALAsset!) -> Void in
-                if (asset != nil) {
-                    var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
-                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                    var image = UIImage(CGImage: iref)
-                    
-                    let size = CGSizeMake(120, 90)
-                    let scale: CGFloat = 0.0
-                    let hasAlpha = false
-                    
-                    UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-                    image!.drawInRect(CGRect(origin: CGPointZero, size: size))
-                    
-                    cell.imageView.image = image
-                }
-            }, failureBlock: nil)*/
-            
-            //let targetSize = CGSizeMake(120, 90)
             var targetSize: CGSize!
             
             let imageManager = PHImageManager.defaultManager()

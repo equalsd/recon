@@ -7,7 +7,9 @@
 //
 
 import UIKit
-import AssetsLibrary
+//import AssetsLibrary
+import Photos
+import CoreData
 
 class uploadController: UIViewController {
     
@@ -27,34 +29,7 @@ class uploadController: UIViewController {
     }
     
     @IBAction func uploadStart(sender: AnyObject) {
-       /*self.counter = 0
-        for i in 0..<100 {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
-                sleep(1)
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.counter++
-                    return
-                })
-            })
-        }*/
-        //self.counter = 50
         uploadElements()
-        /*for i in 1..<11 {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
-                //sleep(1)
-                dispatch_async(dispatch_get_main_queue(), {
-                    sleep(1)
-                    //self.on = self.on + 1
-                    var fractionalProgress:Float = Float(i) / Float(self.total)
-                    var counter:Int = Int(fractionalProgress * 100.0)
-                    //let animated = counter != 0
-                    self.progressView.setProgress(fractionalProgress, animated: true)
-                    self.progressLabel.text = ("\(counter)%")
-                    println(fractionalProgress)
-                    return
-                })
-            })
-        }*/
     }
     
     override func viewDidLoad() {
@@ -74,17 +49,26 @@ class uploadController: UIViewController {
         
         for item in elements {
             timestamp = timestamp + 1
-            if (item.picture!.lowercaseString.rangeOfString("asset") != nil) {
-                self.pictures.append([item.picture!, "\(timestamp)"])
-                returnArray.append([item.location!, item.notes!, "change", "\(timestamp)", item.category!])
+            println(item.uniqueID!)
+            if (item.picture == "location") {
+                returnArray.append([item.location!, item.notes!, "location", item.uniqueID!, item.category!])
             } else {
-                self.pictures.append([item.picture!, "leave be"])
-                returnArray.append([item.location!, item.notes!, "leave be", item.picture!, item.category!])
+                if (item.uniqueID > 80000) {
+                    returnArray.append([item.location!, item.notes!, "ignore", item.uniqueID!, item.category!])
+                } else {
+                    if (item.picture!.lowercaseString.rangeOfString("/") != nil) {
+                    item.uniqueID = timestamp
+                        self.pictures.append([item.picture!, "\(item.uniqueID!)"])
+                        returnArray.append([item.location!, item.notes!, "change", "\(item.uniqueID!)", item.category!])
+                    } else {
+                    //self.pictures.append([item.picture!, "leave be"])
+                        returnArray.append([item.location!, item.notes!, "leave be", item.picture!, item.category!])
+                    }
+                }
             }
         }
         
-        //println(returnArray)
-        self.number = self.pictures.count + 1
+        self.number = self.pictures.count
         return returnArray
     }
     
@@ -92,14 +76,15 @@ class uploadController: UIViewController {
         println("uploading...")
         self.uploadButton.enabled = false
         self.progressView.setProgress(0.0, animated: false)
-        self.on = 0
-        self.progressLabel.text = "Uploading..."
+        self.progressLabel.text = "Uploading... do not turn off or shut off internet connection"
 
         var elements = self.elements
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         var session = NSURLSession(configuration: configuration)
 
         var jsonCompatible = compatiblize(elements)
+        println(jsonCompatible)
+        println(self.pictures)
         
         let url = NSURL(string: "http://precisreports.com/api/put-json-elements.php")
         let request = NSMutableURLRequest(URL: url!)
@@ -131,135 +116,88 @@ class uploadController: UIViewController {
             
             NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                 dispatch_async(dispatch_get_main_queue(), {
-                    
                     self.progressBar()
-                    
                 })
             })
-            
-            }
+        }
         
         task.resume()
         if (self.pictures.isEmpty != true) {
-            uploadPictures()
+            self.uploadPictures(0)
         }
-        
-    }
-    
-    /*func uploadPictures (on: Int) {
-        println("pictures...")
-        var count = self.pictures.count - 1
-        var index: Int = 1
-        if (on <= count) {
-            var item = self.pictures[on]
-            
-            let key = item[0] as! String
-            if (key.lowercaseString.rangeOfString("asset") != nil) {
-                
-                let url = NSURL(string: key) // relativeToURL: "\(appItem.URLSchema)://")
-                //let url = NSURL(fileURLWithPath: photo)
-                
-                var image: UIImage?
-                var loadError: NSError?
-                let assetsLibrary = ALAssetsLibrary()
-                assetsLibrary.assetForURL(url, resultBlock: {
-                    (asset: ALAsset!) -> Void in
-                    if (asset != nil) {
-                        var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
-                        var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                        image = UIImage(CGImage: iref)
-                        /*var name = "picture \(index)"
-                        let data = UIImageJPEGRepresentation(image, 1.0)
-                        println(item[1])
-                        
-                        //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
-                        SRWebClient.POST("http://precisreports.com/api/put-picture.php")
-                            .datar(data, fieldName: "file", data:["site": self.tracking, "title": name, "key": item[1] as! String])
-                            .send({(response:AnyObject!, status:Int) -> Void in println(response)
-                                //println("okay..")
-                                //println(response)
-                                self.progressBar()
-                                self.uploadPictures(on + 1)
-                                }, failure:{
-                                    (error:NSError!) -> Void in (println(error.code))
-                            })*/
-                    } else {
-                        println("asset nil for \(key)")
-                        self.progressBar()
-                    }
-                    //self.pictureField.image = image2
-                    index = index + 1
-                    }, failureBlock: nil)
-            } else {
-                self.progressBar()
-                index = index + 1
-                println("asset already online")
-            }
-        }
-    }*/
-    
-    func uploadPictures () {
-        println("pictures...")
-        var pictures = self.pictures
-        var index: Int = 1
-        for picture in pictures {
-            
-            let assetsLibrary = ALAssetsLibrary()
-            let key = picture[0] as! String
-            if (key.lowercaseString.rangeOfString("asset") != nil) {
-                
-                let url = NSURL(string: key) // relativeToURL: "\(appItem.URLSchema)://")
-                //let url = NSURL(fileURLWithPath: photo)
-            
-                var image: UIImage?
-                var loadError: NSError?
-                assetsLibrary.assetForURL(url, resultBlock: {
-                    (asset: ALAsset!) -> Void in
-                    if (asset != nil) {
-                        var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
-                        var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                        var image = UIImage(CGImage: iref)
-                        var name = "picture \(index)"
-                        let data = UIImageJPEGRepresentation(image, 1.0)
-                        println(picture[1])
-                
-                        //SRWebClient.POST("http://precisreports.com/temp/yah/upload-file.php")
-                        SRWebClient.POST("http://precisreports.com/api/put-picture.php")
-                            .datar(data, fieldName: "file", data:["site": self.state.tracking, "title": name, "key": picture[1] as! String])
-                            .send({(response:AnyObject!, status:Int) -> Void in println(response)
-                                //println("okay..")
-                                //println(response)
-                                self.progressBar()
-                                }, failure:{
-                                    (error:NSError!) -> Void in (println(error.code))
-                            })
-                    } else {
-                        println("asset nil for \(key)")
-                        self.progressBar()
-                    }
-                    //self.pictureField.image = image2
-                    index = index + 1
-                }, failureBlock: nil)
-            } else {
-                self.progressBar()
-                index = index + 1
-                println("asset already online")
-            }
-        }
+
     }
 
+    func uploadPictures (index: Int) {
+        println("pictures... \(index) of \(self.number)")
+        if (index < self.number) {
+            var picture = self.pictures[index]
+            //println(picture)
+        
+            //let assetsLibrary = ALAssetsLibrary()
+            let key = picture[0] as! String
+            //if (picture[1] as! String != "leave be") {
+                
+                let imageManager = PHImageManager.defaultManager()
+                var targetSize: CGSize!
+                var location = [key]
+                println(key)
+                
+                let photos = PHAsset.fetchAssetsWithLocalIdentifiers(location, options: nil)
+                var asset = photos.firstObject! as! PHAsset
+                var width = CGFloat(asset.pixelWidth)
+                var height = CGFloat(asset.pixelHeight)
+                var turn: String!
+                if (height > width) {
+                    turn = "vertical"
+                } else {
+                    //targetSize = CGSizeMake(height, width)
+                    turn = "horizontal"
+                }
+                targetSize = CGSizeMake(width, height)
+            
+                var ID = imageManager.requestImageDataForAsset(asset, options: nil, resultHandler: {
+                    (imageData, dataUTI, orientation: UIImageOrientation, info: [NSObject : AnyObject]!) -> Void in
+                    var name = "picture_\(index)"
+                    SRWebClient.POST("http://precisreports.com/api/put-picture.php")
+                    .datar(imageData, fieldName: "file", data:["orientation": turn, "site": self.state.tracking, "title": name, "key": picture[1] as! String])
+                        .send({(response: AnyObject!, status:Int) -> Void in //println(response)
+                            //println("okay..")
+                            println("response: \(response)")
+                            println(picture[1])
+                            self.progressBar()
+                            
+                            var next = index + 1
+                            self.uploadPictures(next)
+                            }, failure:{
+                                (error:NSError!) -> Void in (println(error.code))
+                        })
+                    })
+            //} else {
+            /*    self.progressBar()
+                println("asset already online")
+                var next = index + 1
+                uploadPictures(next)
+            }*/
+        } else {
+            self.coreRemoveElements()
+        }
+    }
     
     func progressBar() {
-        self.on  = self.on + 1
+        self.on = self.on + 1
         println("updating progress bar \(self.on)")
-        var fractionalProgress: Float = Float(self.on) / Float(self.number)
-        self.progressView.setProgress(fractionalProgress, animated: true)
-        var counter:Int = Int(fractionalProgress * 100.0)
-        if (on == number) {
+        var total = self.number + 1
+        if (on >= total) {
+            self.progressView.setProgress(100.00, animated: false)
+            self.progressLabel.text = "Saving..."
             self.progressLabel.text = "Done."
             self.uploadButton.enabled = true
+            println("okay")
         } else {
-            self.progressLabel.text = "Uploading \(on) of \(self.number)"
+            var fractionalProgress: Float = Float(self.on) / Float(total)
+            self.progressView.setProgress(fractionalProgress, animated: true)
+            self.progressLabel.text = "Uploading \(on) of \(total)"
         }
     }
     
@@ -268,6 +206,7 @@ class uploadController: UIViewController {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
             controller.state = self.state
+            controller.elements = self.elements
             controller.continuance = true
         }
     }
@@ -277,4 +216,56 @@ class uploadController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func coreSaveElements() {
+        println("inserting...Core")
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext!
+        
+        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
+        
+        
+        //var index = 0
+        for element in elements {
+            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            item.setValue(element.location, forKey: "location")
+            item.setValue(element.picture, forKey: "picture")
+            item.setValue(element.notes, forKey: "notes")
+            item.setValue(element.category, forKey: "category")
+            item.setValue(element.uniqueID!, forKey: "uniqueID")
+            println(element.uniqueID!)
+            
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Could not save \(error), \(error?.userInfo)")
+            }
+            //index++
+        }
+    }
+    
+    func coreRemoveElements() {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
+        
+        let entity = NSFetchRequest(entityName: "Elements")
+        
+        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+        
+        var error: NSError? = nil
+        let list = managedContext.executeFetchRequest(entity, error: &error)
+        
+        if let users = list {
+            var bas: NSManagedObject!
+            
+            for bas: AnyObject in users {
+                managedContext.deleteObject(bas as! NSManagedObject)
+            }
+            
+            managedContext.save(nil)
+            
+        }
+        
+        coreSaveElements()
+    }
 }

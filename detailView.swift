@@ -38,6 +38,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     @IBAction func addButton(sender: AnyObject) {
         println("add")
         self.multiple = true
+        resolveDetails()
         self.openCamera()
     }
     
@@ -175,32 +176,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             //self.pictureField.image = UIImage(named: "noimg.png")
             //println("d")
         } else if (photo!.lowercaseString.rangeOfString("/") != nil) {
-            /*let assetsLibrary = ALAssetsLibrary()
-            let url = NSURL(string: item.picture! as String) // relativeToURL: "\(appItem.URLSchema)://")
-            //let url = NSURL(fileURLWithPath: photo)
-            
-            var image: UIImage?
-            var loadError: NSError?
-            assetsLibrary.assetForURL(url, resultBlock: {
-                (asset: ALAsset!) -> Void in
-                if (asset != nil) {
-                    var assetRep: ALAssetRepresentation = asset.defaultRepresentation()
-                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                    var image = UIImage(CGImage: iref)
-                    
-                    let size = CGSizeMake(300, 225)
-                    let scale: CGFloat = 0.0
-                    let hasAlpha = false
-                    
-                    UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-                    image!.drawInRect(CGRect(origin: CGPointZero, size: size))
-                    
-                    
-                    self.pictureField.image = image
-                }
-                }, failureBlock: nil)
-            */
-            //let targetSize = CGSizeMake(300, 225)
             var targetSize: CGSize!
             let imageManager = PHImageManager.defaultManager()
             var location = [self.picture]
@@ -209,6 +184,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             let photos = PHAsset.fetchAssetsWithLocalIdentifiers(location, options: nil)
             
             var asset = photos.firstObject! as! PHAsset
+            //println("\(asset.pixelWidth) \(asset.pixelHeight)")
             
             if (asset.pixelHeight > asset.pixelWidth) {
                 targetSize = CGSizeMake(225, 300)
@@ -275,30 +251,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     {
         picker.dismissViewControllerAnimated(true, completion: nil)
         var image=info[UIImagePickerControllerOriginalImage] as! UIImage
-        self.pictureField.image = image
-        /*var orientation:ALAssetOrientation = ALAssetOrientation.Right
         
-        let library = ALAssetsLibrary()
-        library.writeImageToSavedPhotosAlbum(image.CGImage, orientation: orientation, completionBlock: { (path: NSURL!, error: NSError!) -> Void in
-            self.picture = "\(path)"
-            println(self.picture)
-            
-            if (self.multiple != true) {
-                library.assetForURL(path, resultBlock: { (asset: ALAsset!) in
-                    var assetRep = asset.defaultRepresentation()
-                    var iref = assetRep.fullResolutionImage().takeUnretainedValue()
-                    var image2 = UIImage(CGImage: iref, scale: CGFloat(1.0), orientation: .Right)
-                
-                    self.pictureField.image = image2
-                
-                    }, failureBlock: nil)
-            }
-            
-            var number = self.greatest()
-            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
-            self.state.uniqueID = number
-            println(self.elements.count)
-        })*/
+        self.pictureField.contentMode = .ScaleAspectFit
+        self.pictureField.image = image
         
         let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
         dispatch_async(dispatch_get_global_queue(priority, 0), {
@@ -315,15 +270,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                         NSLog("Adding Image to Library -> %@", (success ? "Sucess":"Error!"))
                         
                         if (success) {
-                            /*let targetSize = CGSizeMake(300, 225)
-                            let imageManager = PHImageManager.defaultManager()
-                            let photos = PHAsset.fetchAssetsWithLocalIdentifiers([self.location], options: nil)
-                            
-                            var asset = photos.firstObject! as! PHAsset
-                            
-                            var ID = imageManager.requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: nil, resultHandler: {
-                                (result, info) -> Void in
-                                self.pictureField.image = result })*/
                             var number = self.greatest() + 1
                             self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.parent(), uniqueID: number))
                             self.state.uniqueID = number
@@ -343,7 +289,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     func greatest() -> Int {
         var largest = 0
         for item in self.elements {
-            if (item.uniqueID > largest) {
+            if (item.uniqueID > largest && item.uniqueID < 80000) {
                 largest = item.uniqueID!
             }
         }
@@ -367,7 +313,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        resolveDetails()
+        if (self.picture != nil) {
+            resolveDetails()
+        } else {
+            println("cancelled saving")
+        }
+        
         if (segue.identifier == "detailToLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! menuLocationController
@@ -376,9 +327,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         } else if (segue.identifier == "detailToPicture") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! pictureViewController
-            
-            coreRemoveElements()
-            coreSaveElements()
             
             controller.state = self.state
             controller.elements = self.elements
@@ -396,20 +344,20 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
         
         
-        var index = 0
+        //var index = 0
         for element in elements {
             var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
             item.setValue(element.location, forKey: "location")
             item.setValue(element.picture, forKey: "picture")
             item.setValue(element.notes, forKey: "notes")
             item.setValue(element.category, forKey: "category")
-            item.setValue(index, forKey: "uniqueID")
+            item.setValue(element.uniqueID, forKey: "uniqueID")
             
             var error: NSError?
             if !managedContext.save(&error) {
                 println("Could not save \(error), \(error?.userInfo)")
             }
-            index++
+            //index++
         }
     }
     

@@ -23,8 +23,16 @@ class menuElementController: UIViewController {
     }
     
     @IBAction func toReload(sender: AnyObject) {
-        self.continuance = false
-        self.performSegueWithIdentifier("menuToOrganize", sender: self)
+        var emptyAlert = UIAlertController(title: "Warning!", message: "Reloading will destroy any new data that hasn't yet been uploaded.", preferredStyle: UIAlertControllerStyle.Alert)
+        emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
+            self.continuance = false
+            self.performSegueWithIdentifier("menuToOrganize", sender: self)
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+        }))
+        
+        self.presentViewController(emptyAlert, animated: true, completion: nil)
     }
     
     @IBAction func toCancel(sender: AnyObject) {

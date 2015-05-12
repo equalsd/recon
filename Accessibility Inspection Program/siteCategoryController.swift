@@ -14,6 +14,8 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
     var siteSelected: String!
     var state: position!
 
+    @IBOutlet weak var continueButton: UIBarButtonItem!
+    
     @IBAction func toLogin(sender: AnyObject) {
         //self.performSegueWithIdentifier("toLogin", sender: self)
         dismissViewControllerAnimated(true, completion: nil)
@@ -28,6 +30,9 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
 
         // Do any additional setup after loading the view.
         println(self.state.type)
+        if (self.state.tracking == nil) {
+            self.continueButton.enabled = false
+        }
     }
 
     override func didReceiveMemoryWarning() {

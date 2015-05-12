@@ -102,40 +102,13 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! UITableViewCell
         
         let location = self.locations[indexPath.row] as String
-        //let descriptionData = self.descriptionData[indexPath.row] as String
-        
-        //cell.textLabel.text = rowData["tracking"] as? String
-        //cell.textLabel.text = location
         
         if let locationLabel = cell.viewWithTag(150) as? UILabel {
             locationLabel.text = location
         }
-        
-        //if let descriptionLabel = cell.viewWithTag(101) as? UILabel{
-        //    descriptionLabel.text = descriptionData
-        //}
-        
-        // Grab the artworkUrl60 key to get an image URL for the app's thumbnail
-        //let urlString: NSString = rowData["artworkUrl60"] as NSString
-        //let imgURL: NSURL? = NSURL(string: urlString)
-        
-        // Download an NSData representation of the image at the URL
-        //let imgData = NSData(contentsOfURL: imgURL!)
-        //cell.imageView.image = UIImage(data: imgData!)
-        
-        // Get the formatted price string for display in the subtitle
-        //let formattedPrice: NSString = rowData["formattedPrice"] as NSString
-        
-        //cell.detailTextLabel?.text = formattedPrice
+
         return cell
     }
-    
-    
-    // UITableViewDelegate Functions
-    
-    /*func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 44
-    }*/
     
     func getLocations() {
         var elements = self.elements

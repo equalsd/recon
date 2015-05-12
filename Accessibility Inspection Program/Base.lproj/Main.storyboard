@@ -145,6 +145,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="continueButton" destination="8JH-ee-Pal" id="xb5-kt-piN"/>
                         <segue destination="QeP-FO-G7g" kind="show" identifier="toSiteList" id="7dQ-AB-5xh"/>
                         <segue destination="Ldf-of-Fnc" kind="show" identifier="toNew" id="Zw8-ta-DuQ"/>
                         <segue destination="cFb-Vg-8hy" kind="show" identifier="toElementCatFromCont" id="S49-IR-9u5"/>
@@ -633,11 +634,11 @@
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
-                        <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z6I-0E-BJN">
+                        <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xOO-nL-0Xj">
                             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <cells>
@@ -660,12 +661,17 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="X6x-3D-AJE">
+                                            <rect key="frame" x="42" y="56" width="37" height="37"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
                                     <constraint firstItem="G2E-ZP-MKe" firstAttribute="centerX" secondItem="kBF-rR-QXI" secondAttribute="centerX" id="2Qv-bf-K6d"/>
                                     <constraint firstItem="G2E-ZP-MKe" firstAttribute="leading" secondItem="lJW-Dz-5N5" secondAttribute="leadingMargin" id="Czl-U2-EDv"/>
+                                    <constraint firstItem="X6x-3D-AJE" firstAttribute="centerX" secondItem="G2E-ZP-MKe" secondAttribute="centerX" id="FKb-ak-33Y"/>
+                                    <constraint firstItem="G2E-ZP-MKe" firstAttribute="top" secondItem="X6x-3D-AJE" secondAttribute="bottom" constant="5" id="FUN-dl-YCn"/>
                                     <constraint firstItem="kBF-rR-QXI" firstAttribute="top" secondItem="lJW-Dz-5N5" secondAttribute="top" id="IzT-Qn-9l6"/>
                                     <constraint firstItem="G2E-ZP-MKe" firstAttribute="bottom" secondItem="lJW-Dz-5N5" secondAttribute="bottomMargin" id="VCU-7n-ngR"/>
                                     <constraint firstAttribute="trailing" secondItem="kBF-rR-QXI" secondAttribute="trailing" id="epF-ih-OxZ"/>
@@ -1061,10 +1067,10 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="FaE-Dq-4pc"/>
-        <segue reference="nDT-LN-eDI"/>
-        <segue reference="okl-bh-Fvb"/>
         <segue reference="BBQ-3g-zn4"/>
+        <segue reference="udk-W1-Kn7"/>
+        <segue reference="nDT-LN-eDI"/>
+        <segue reference="FaE-Dq-4pc"/>
         <segue reference="kcb-9w-HH2"/>
     </inferredMetricsTieBreakers>
 </document>

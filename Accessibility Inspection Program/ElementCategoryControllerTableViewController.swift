@@ -431,6 +431,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             var notes: String?
             var location: String?
             var category: String?
+            var uniqueID: Int?
             var elements: [Elemental] = []
             
             if (results.count == 0) {
@@ -441,7 +442,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 
                 self.presentViewController(emptyAlert, animated: true, completion: nil)
             } else {
-                var index: Int = 0
+                //var index: Int = 0
                 for result in results {
                     location = result.valueForKey("location") as? String
                     //println(location)
@@ -450,14 +451,15 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     picture = result.valueForKey("picture") as? String
                     //println(picture)
                     category =  result.valueForKey("category") as? String
-                    //println(category)
+                    uniqueID = result.valueForKey("uniqueID") as? Int
+                    println(category)
                     
                     if (picture == nil) {
-                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!, uniqueID: index))
+                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!, uniqueID: uniqueID!))
                     } else {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: uniqueID!))
                     }
-                    index = index + 1
+                    //index = index + 1
                 }
                 
                 /*for item in elements {
@@ -487,20 +489,20 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
         
         
-        var index = 0
+        //var index = 0
         for element in elements {
             var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
             item.setValue(element.location, forKey: "location")
             item.setValue(element.picture, forKey: "picture")
             item.setValue(element.notes, forKey: "notes")
             item.setValue(element.category, forKey: "category")
-            item.setValue(index, forKey: "uniqueID")
+            item.setValue(element.uniqueID, forKey: "uniqueID")
             
             var error: NSError?
             if !managedContext.save(&error) {
                 println("Could not save \(error), \(error?.userInfo)")
             }
-            index++
+            //index++
             //println(index)
             //println(element.picture)
         }
