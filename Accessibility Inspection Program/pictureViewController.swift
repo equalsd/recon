@@ -23,9 +23,21 @@ class pictureViewController: UICollectionViewController {
     @IBOutlet weak var activity: UIActivityIndicatorView!
    
     @IBAction func addButton(sender: AnyObject) {
-        self.state.uniqueID = -1
-        //self.selectedNote = ""
-        self.performSegueWithIdentifier("pictureToDetail", sender: self)
+        var emptyAlert = UIAlertController(title: "Menu", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        emptyAlert.addAction(UIAlertAction(title: "Add Picture", style: .Default, handler: {( action: UIAlertAction!) in
+            
+            self.state.uniqueID = -1
+            //self.selectedNote = ""
+            self.performSegueWithIdentifier("pictureToDetail", sender: self)
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+        }))
+        
+        self.presentViewController(emptyAlert, animated: true, completion: nil)
     }
     
     @IBAction func pictureToLocation(sender: AnyObject) {
@@ -175,7 +187,7 @@ class pictureViewController: UICollectionViewController {
         var uniqueIDs: [Int] = []
         
         for item in elements {
-            if (item.location == self.state.current() && item.picture != "location") {
+            if (item.category == self.state.current() && item.picture != "location") {
                 notes.append(item.notes! as String)
                 pictures.append(item.picture! as String)
                 uniqueIDs.append(item.uniqueID! as Int)

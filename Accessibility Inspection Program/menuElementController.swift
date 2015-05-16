@@ -58,6 +58,7 @@ class menuElementController: UIViewController {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
             controller.state = self.state
+            self.state.category.removeAll()
             controller.continuance = self.continuance
         } else if (segue.identifier == "uploader") {
             //var navigationController = segue.destinationViewController as UINavigationController

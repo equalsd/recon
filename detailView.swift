@@ -62,7 +62,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         
         scrollView.frame.size.width = UIScreen.mainScreen().bounds.width
         self.pictureField.image = UIImage(named: "noimg.png")
-        locationBar.text = self.state.current()
+        locationBar.text = self.state.last()
         
         picker!.delegate=self
         
@@ -289,6 +289,8 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                         if (success) {
                             var number = self.greatest() + 1
                             self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
+                            println("categories: \(self.state.current())")
+                            println("location  : \(self.locationBar.text)")
                             self.state.uniqueID = number
                             picker.dismissViewControllerAnimated(true, completion: nil)
                             

@@ -17,11 +17,33 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     var continuance: Bool!
     var reload: Bool!
     var locationCount = Dictionary<String, Int>()
-    var pictures = false
     var sub = true
 
     @IBAction func menuButton(sender: AnyObject) {
-        self.performSegueWithIdentifier("toMenu", sender: self)
+        //self.performSegueWithIdentifier("toMenu", sender: self)
+        var emptyAlert = UIAlertController(title: "Menu", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        emptyAlert.addAction(UIAlertAction(title: "Reload", style: .Default, handler: {( action: UIAlertAction!) in
+            
+            var ec = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+            ec.state = self.state
+            self.state.category.removeAll()
+            ec.continuance = true
+            
+            self.navigationController!.pushViewController(ec, animated: true)
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in
+            var uc = self.storyboard?.instantiateViewControllerWithIdentifier("uploadBoard") as! uploadController
+            uc.state = self.state
+            uc.elements = self.elements
+            
+            self.navigationController!.pushViewController(uc, animated: true)
+
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+        }))
+        
+        self.presentViewController(emptyAlert, animated: true, completion: nil)
     }
     
     @IBAction func backButton(sender: AnyObject) {
@@ -88,12 +110,10 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             if (self.state.current() == "empty") {
                 var extended = categorizer("Root")
                 self.elementCategories.extend(extended)
-            } else {
-                //println("get locations in this category")
-                getLocationsbyCategory()
-                self.pictures = true
             }
         }
+        
+        getLocationsbyCategory()
         
         var title = self.state.last()
         if (title == "empty") {
@@ -164,7 +184,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         if (current != "empty") {
             for item in self.elements {
                 println(item.category!)
-                if (item.category! == current) {
+                if (item.category! == current && item.uniqueID == -2) {
                     if (!contains(self.elementCategories, item.location as! String)) {
                         self.elementCategories.extend([item.location as! String])
                     }
@@ -227,37 +247,11 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             self.navigationController!.pushViewController(pc, animated: true)
         default :
             state.add(location) //unless its a picture thing...
-            var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
-            vc.state = self.state
-            vc.elements = self.elements
-            self.navigationController!.pushViewController(vc, animated: true)
+            var ec = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+            ec.state = self.state
+            ec.elements = self.elements
+            self.navigationController!.pushViewController(ec, animated: true)
         }
-        /*if (indexPath.row ==  1) {
-            if (!self.pictures) {
-            
-                state.add(location) //unless its a picture thing...
-                var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
-                vc.state = self.state
-                vc.elements = self.elements
-                self.navigationController!.pushViewController(vc, animated: true)
-            } else {
-                //println("to pictures")
-                state.add(location)
-                
-                var pc = self.storyboard?.instantiateViewControllerWithIdentifier("pictureBoard") as! pictureViewController
-                pc.state = self.state
-                pc.elements = self.elements
-                self.navigationController!.pushViewController(pc, animated: true)
-
-            }
-        } else {
-            var lm = self.storyboard?.instantiateViewControllerWithIdentifier("locationManager") as! menuLocationController
-            lm.state = self.state
-            lm.elements = self.elements
-            lm.done = "elementCategoryController"
-            
-            self.navigationController!.pushViewController(lm, animated: true)
-        }*/
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

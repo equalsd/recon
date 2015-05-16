@@ -25,7 +25,11 @@ class uploadController: UIViewController {
     @IBOutlet weak var uploadButton: UIButton!
     
     @IBAction func returnToElements(sender: AnyObject) {
-        self.performSegueWithIdentifier("uploaderToOrganize", sender: self)
+        //self.performSegueWithIdentifier("uploaderToOrganize", sender: self)
+        var ec = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+        ec.state = self.state
+        ec.elements = self.elements
+        self.navigationController!.pushViewController(ec, animated: true)
     }
     
     @IBAction func uploadStart(sender: AnyObject) {

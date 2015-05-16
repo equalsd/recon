@@ -612,108 +612,12 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
-                        <segue destination="vvt-fu-FvQ" kind="show" identifier="toLocation" id="fPW-OG-tTE"/>
                         <segue destination="pM4-5v-5Ov" kind="presentation" identifier="toMenu" id="sna-qq-ufx"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rlu-GN-7B4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2256" y="1810"/>
-        </scene>
-        <!--Location Controller-->
-        <scene sceneID="bcv-r3-i9d">
-            <objects>
-                <collectionViewController id="PBG-2Y-Trl" customClass="locationController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="WtP-OR-c9t">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wlS-hC-bew">
-                            <size key="itemSize" width="120" height="123"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xOO-nL-0Xj">
-                            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="lJW-Dz-5N5" customClass="LocationViewCell" customModule="Accessibility_Inspection_Program" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="120" height="150"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kBF-rR-QXI">
-                                            <rect key="frame" x="0.0" y="0.0" width="120" height="90"/>
-                                        </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G2E-ZP-MKe">
-                                            <rect key="frame" x="8" y="98" width="104" height="44"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="44" id="OJL-ru-QfD"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="X6x-3D-AJE">
-                                            <rect key="frame" x="42" y="56" width="37" height="37"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                                <constraints>
-                                    <constraint firstItem="G2E-ZP-MKe" firstAttribute="centerX" secondItem="kBF-rR-QXI" secondAttribute="centerX" id="2Qv-bf-K6d"/>
-                                    <constraint firstItem="G2E-ZP-MKe" firstAttribute="leading" secondItem="lJW-Dz-5N5" secondAttribute="leadingMargin" id="Czl-U2-EDv"/>
-                                    <constraint firstItem="X6x-3D-AJE" firstAttribute="centerX" secondItem="G2E-ZP-MKe" secondAttribute="centerX" id="FKb-ak-33Y"/>
-                                    <constraint firstItem="G2E-ZP-MKe" firstAttribute="top" secondItem="X6x-3D-AJE" secondAttribute="bottom" constant="5" id="FUN-dl-YCn"/>
-                                    <constraint firstItem="kBF-rR-QXI" firstAttribute="top" secondItem="lJW-Dz-5N5" secondAttribute="top" id="IzT-Qn-9l6"/>
-                                    <constraint firstItem="G2E-ZP-MKe" firstAttribute="bottom" secondItem="lJW-Dz-5N5" secondAttribute="bottomMargin" id="VCU-7n-ngR"/>
-                                    <constraint firstAttribute="trailing" secondItem="kBF-rR-QXI" secondAttribute="trailing" id="epF-ih-OxZ"/>
-                                    <constraint firstItem="G2E-ZP-MKe" firstAttribute="top" secondItem="kBF-rR-QXI" secondAttribute="bottom" constant="8" symbolic="YES" id="jww-aA-q8M"/>
-                                    <constraint firstItem="kBF-rR-QXI" firstAttribute="leading" secondItem="lJW-Dz-5N5" secondAttribute="leading" id="stF-va-EfR"/>
-                                </constraints>
-                                <size key="customSize" width="120" height="150"/>
-                                <connections>
-                                    <outlet property="imageView" destination="kBF-rR-QXI" id="sme-fU-Wr5"/>
-                                    <outlet property="label" destination="G2E-ZP-MKe" id="VNw-gP-e11"/>
-                                </connections>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="PBG-2Y-Trl" id="Zev-PO-LkV"/>
-                            <outlet property="delegate" destination="PBG-2Y-Trl" id="0gG-7y-mkX"/>
-                        </connections>
-                    </collectionView>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" id="0UX-FW-y6g">
-                        <barButtonItem key="leftBarButtonItem" title="To Organizer" id="vo9-0g-i6C">
-                            <connections>
-                                <action selector="locationToOrganizer:" destination="PBG-2Y-Trl" id="pdE-ld-21t"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="ZgP-53-OyD">
-                            <connections>
-                                <action selector="addLocation:" destination="PBG-2Y-Trl" id="sT6-n2-Z3L"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <segue destination="Joq-j0-p8g" kind="show" identifier="locationToPicture" id="udk-W1-Kn7"/>
-                        <segue destination="NtF-RI-AEA" kind="show" identifier="toGetLocation" id="nxK-dV-mFe"/>
-                        <segue destination="cFb-Vg-8hy" kind="show" identifier="locationToOrganizer" id="FaE-Dq-4pc"/>
-                    </connections>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aFx-Pw-w5Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3688" y="1810"/>
         </scene>
         <!--Picture View Controller-->
         <scene sceneID="IIa-TO-7Vk">
@@ -787,7 +691,7 @@
                                 <action selector="pictureToLocation:" destination="sO3-th-k6x" id="tkF-hG-meK"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="L8T-55-7wD">
+                        <barButtonItem key="rightBarButtonItem" title="Menu" id="L8T-55-7wD">
                             <connections>
                                 <action selector="addButton:" destination="sO3-th-k6x" id="drc-7v-5sc"/>
                             </connections>
@@ -796,7 +700,6 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <segue destination="RSa-ue-BsR" kind="show" identifier="pictureToDetail" id="BBQ-3g-zn4"/>
-                        <segue destination="vvt-fu-FvQ" kind="show" identifier="pictureToLocations" id="nDT-LN-eDI"/>
                         <segue destination="NtF-RI-AEA" kind="show" identifier="pictureToLocation" id="kcb-9w-HH2"/>
                     </connections>
                 </collectionViewController>
@@ -897,10 +800,10 @@
             </objects>
             <point key="canvasLocation" x="2256" y="2564"/>
         </scene>
-        <!--Upload Controller-->
+        <!--Upload Menu-->
         <scene sceneID="c8q-5n-jGS">
             <objects>
-                <viewController id="7DH-3Q-b3j" customClass="uploadController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="uploadBoard" id="7DH-3Q-b3j" customClass="uploadController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="T0I-KV-DWQ"/>
                         <viewControllerLayoutGuide type="bottom" id="The-Hl-gig"/>
@@ -909,13 +812,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Dhu-MK-fr0">
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Dhu-MK-fr0">
                                 <rect key="frame" x="194" y="114" width="213" height="2"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="213" id="zdn-HB-m8d"/>
                                 </constraints>
                             </progressView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTL-kN-RUI">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTL-kN-RUI">
                                 <rect key="frame" x="194" y="131" width="213" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="213" id="SfP-FI-jia"/>
@@ -924,7 +827,7 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GWl-Y7-owg">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GWl-Y7-owg">
                                 <rect key="frame" x="246" y="204" width="108" height="30"/>
                                 <state key="normal" title="Start Uploading">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -933,7 +836,7 @@
                                     <action selector="uploadStart:" destination="7DH-3Q-b3j" eventType="touchUpInside" id="a7p-7o-30d"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6n-lq-M0w">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6n-lq-M0w">
                                 <rect key="frame" x="277" y="249" width="46" height="30"/>
                                 <state key="normal" title="Return">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -956,13 +859,8 @@
                             <constraint firstItem="q6n-lq-M0w" firstAttribute="top" secondItem="GWl-Y7-owg" secondAttribute="bottom" constant="15" id="wHp-a0-T0S"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="FNp-wd-xfo">
-                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="cancel" id="BaG-cs-vq8">
-                            <connections>
-                                <segue destination="i5n-7S-32H" kind="unwind" unwindAction="elementList:" id="e6F-j2-QZP"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Upload Menu" id="FNp-wd-xfo"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="progressLabel" destination="JTL-kN-RUI" id="IFV-jq-hIg"/>
                         <outlet property="progressView" destination="Dhu-MK-fr0" id="lgW-v1-3Ck"/>
@@ -971,7 +869,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FIb-GV-uKU" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="i5n-7S-32H" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2256" y="3277"/>
         </scene>
@@ -1012,24 +909,6 @@
             <point key="canvasLocation" x="54" y="2564"/>
         </scene>
         <!--Navigation Controller-->
-        <scene sceneID="l6r-Zh-Rdi">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vvt-fu-FvQ" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vZP-Qn-ixT">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="PBG-2Y-Trl" kind="relationship" relationship="rootViewController" id="Uy8-zm-ECr"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="a2z-dz-uSK" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2962" y="1810"/>
-        </scene>
-        <!--Navigation Controller-->
         <scene sceneID="4h1-zw-BbA">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Joq-j0-p8g" sceneMemberID="viewController">
@@ -1067,10 +946,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="s8Q-FN-6kc"/>
-        <segue reference="udk-W1-Kn7"/>
-        <segue reference="nDT-LN-eDI"/>
-        <segue reference="BBQ-3g-zn4"/>
         <segue reference="kcb-9w-HH2"/>
+        <segue reference="BBQ-3g-zn4"/>
+        <segue reference="6gw-s9-2m5"/>
     </inferredMetricsTieBreakers>
 </document>
