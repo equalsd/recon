@@ -54,7 +54,17 @@ class position {
         if (category.isEmpty) {
             return "empty"
         } else {
+            //return category.last!
+            return "|".join(category)
+        }
+    }
+    
+    func last() -> String {
+        if (category.isEmpty) {
+            return "empty"
+        } else {
             return category.last!
+            //return "|".join(category)
         }
     }
     

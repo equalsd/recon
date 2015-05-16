@@ -10,7 +10,7 @@ import UIKit
 
 class siteCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Hotel", "Restaurant", "Strip Mall"]
+    var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Health", "Hotel", "Retail Office", "Restaurant", "Strip Mall"]
     var siteSelected: String!
     var state: position!
 
@@ -56,7 +56,13 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
         
         //cell.textLabel.text = rowData["tracking"] as? String
         if let nameLabel = cell.viewWithTag(100) as? UILabel{
-            nameLabel.text = siteType
+            if (siteType == "Health") {
+                nameLabel.text = "Health Care Facility"
+            } else if (siteType == "Hotel") {
+                nameLabel.text = "Hotel/Motel"
+            } else {
+                nameLabel.text = siteType
+            }
         }
         
         

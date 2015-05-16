@@ -21,6 +21,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     var locationManager: CLLocationManager!
     var selectedLocation: String!
     var done: String!
+    var color: Int!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var locationBar: UITextField!
@@ -78,7 +79,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         if (self.selectedLocation != nil) {
             locationBar.text = self.selectedLocation
         } else {
-            var currentLocation = self.state.current()
+            var currentLocation = self.state.last()
             if (currentLocation != "empty") {
                 locationBar.text = currentLocation
             } else {
@@ -87,6 +88,9 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         }
         
         getLocations()
+        self.color = self.locations.count
+        addDefaultLocations()
+        self.tableView.reloadData()
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -105,8 +109,11 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         
         if let locationLabel = cell.viewWithTag(150) as? UILabel {
             locationLabel.text = location
+            if (indexPath.row >= self.color) {
+                locationLabel.textColor = UIColor.grayColor()
+            }
         }
-
+        
         return cell
     }
     
@@ -121,8 +128,20 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
         }
         
         self.locations = locations
-        self.tableView.reloadData()
+    }
+    
+    func addDefaultLocations() {
+        var location = self.state.last()
         
+        if (location == "Parking Lots") {
+            self.locations.extend(["Main Parking", "East Parking", "North Parking", "South Parking", "West Parking", "Parking 1", "Parking 2"])
+        } else if (location == "Restrooms") {
+            self.locations.extend(["Female Restroom", "Male Restroom", "Unisex Restroom", "Restroom 1", "Restroom 2"])
+        } else if (location == "Path") {
+            self.locations.extend(["Elevator", "Floor", "Hallway", "Lobby", "Ramp", "Room", "Stairs"])
+        } else if (location == "Exterior Path of Travel") {
+            self.locations.extend(["Curb Ramp", "Elevator", "Ramp", "Sidewalk", "Stairs"])
+        }
     }
     
     override func didReceiveMemoryWarning() {

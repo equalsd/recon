@@ -42,7 +42,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         self.openCamera()
     }
     
-    
     @IBAction func backButton(sender: AnyObject) {
         //println("akc")
         self.performSegueWithIdentifier("detailToPicture", sender: self)
@@ -124,6 +123,20 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         setupDetail(locality[self.state.uniqueID])
     }
     
+    func check_location(location: String) -> Bool {
+        var elements = self.elements
+        var locations: [String] = []
+        var found = false
+        
+        for item in elements {
+            if (item.location == location) {
+                return true
+            }
+        }
+        
+         return false
+    }
+    
     func lookFor(ID: Int, locality: [Elemental]) -> Int {
         var index: Int = 0
         for item in locality {
@@ -147,6 +160,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             self.elements[index].location = self.locationBar.text
         } else {
             self.elements[index].location = "misc location"
+        }
+        
+        if (!check_location(self.locationBar.text)) {
+            self.elements.append(Elemental(location: self.locationBar.text, picture: "location", notes: "", category: self.state.current(), uniqueID: -2))
         }
         
         coreRemoveElements()
@@ -271,7 +288,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                         
                         if (success) {
                             var number = self.greatest() + 1
-                            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.parent(), uniqueID: number))
+                            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
                             self.state.uniqueID = number
                             picker.dismissViewControllerAnimated(true, completion: nil)
                             
@@ -332,8 +349,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             controller.elements = self.elements
         }
     }
-    
-
     
     func coreSaveElements() {
         println("inserting...Core")

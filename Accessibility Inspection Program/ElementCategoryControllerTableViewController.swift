@@ -11,24 +11,33 @@ import CoreData
 
 class elementCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource  {
     
-    var elementCategories:[String] = ["Add Location"]
+    var elementCategories:[String] = ["View Images", "Add Location"]
     var elements: [Elemental] = []
     var state: position!
     var continuance: Bool!
     var reload: Bool!
     var locationCount = Dictionary<String, Int>()
     var pictures = false
+    var sub = true
 
     @IBAction func menuButton(sender: AnyObject) {
         self.performSegueWithIdentifier("toMenu", sender: self)
     }
     
     @IBAction func backButton(sender: AnyObject) {
-        state.pop()
-        var ecc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
-        ecc.elements = self.elements
-        ecc.state = self.state
-        self.navigationController!.pushViewController(ecc, animated: true)
+        if (state.self.current() == "empty") {
+            var sc = self.storyboard?.instantiateViewControllerWithIdentifier("siteBoard") as! siteCategoryController
+            sc.state = self.state
+            
+            self.navigationController!.pushViewController(sc, animated: true)
+        } else {
+            state.pop()
+            var ecc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+            ecc.elements = self.elements
+            ecc.state = self.state
+            
+            self.navigationController!.pushViewController(ecc, animated: true)
+        }
     }
     
     override func viewDidLoad() {
@@ -65,7 +74,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             }
         }
         
-        switch self.state.current() {
+        switch self.state.last() {
         case "Parking":
             var extended = categorizer("Parking")
             self.elementCategories.extend(extended)
@@ -86,7 +95,13 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             }
         }
         
-        counter()
+        var title = self.state.last()
+        if (title == "empty") {
+            self.title = "Root"
+        } else {
+            self.title = title
+        }
+        //counter()
         self.tableView!.reloadData()
     }
     
@@ -119,7 +134,10 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             
             return extended
         case "Root":
-            return ["General Location", "Parking", "Exterior Path of Travel", "Egress/Entries", "Primary Function Areas", "Interior Path of Travel"]
+            self.sub = false
+            self.elementCategories.removeAtIndex(0)
+            self.elementCategories.removeAtIndex(0)
+            return ["General Location", "Parking", "Exterior Path of Travel", "Egress", "Primary Function Areas", "Interior Path of Travel"]
         default:
           return []
         }
@@ -142,9 +160,11 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     
     func getLocationsbyCategory() {
         var current = self.state.current()
+        println("current: \(current)")
         if (current != "empty") {
             for item in self.elements {
-                if (item.category == current) {
+                println(item.category!)
+                if (item.category! == current) {
                     if (!contains(self.elementCategories, item.location as! String)) {
                         self.elementCategories.extend([item.location as! String])
                     }
@@ -166,17 +186,22 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         
         let cell = tableView.dequeueReusableCellWithIdentifier("categoryCell", forIndexPath: indexPath) as! UITableViewCell
         
-        let siteType = self.elementCategories[indexPath.row] as String
+        var siteType: String!
+        if (indexPath.row == 1 && self.sub == true) {
+            siteType = "Add Sub-Location"
+        } else {
+            siteType = self.elementCategories[indexPath.row]
+        }
         
         //cell.textLabel.text = rowData["tracking"] as? String
         if let nameLabel = cell.viewWithTag(100) as? UILabel{
             var number: String!
             
-            if (self.locationCount[siteType] == nil || self.locationCount[siteType] == 0) {
+            //if (self.locationCount[siteType] == nil || self.locationCount[siteType] == 0) {
                 nameLabel.text = siteType
-            } else {
-                nameLabel.text = siteType + " (\(locationCount[siteType]!))"
-            }
+            /*} else {
+                nameLabel.text = siteType //+ " (\(locationCount[siteType]!))"
+            }*/
         }
         
         return cell
@@ -184,7 +209,30 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var location = self.elementCategories[indexPath.row] as String
-        if (indexPath.row > 0) {
+        switch location {
+        case "Add Location" :
+            var lm = self.storyboard?.instantiateViewControllerWithIdentifier("locationManager") as! menuLocationController
+            lm.state = self.state
+            lm.elements = self.elements
+            lm.done = "elementCategoryController"
+            
+            self.navigationController!.pushViewController(lm, animated: true)
+        case "View Images" :
+            //state.add(location)
+            
+            var pc = self.storyboard?.instantiateViewControllerWithIdentifier("pictureBoard") as! pictureViewController
+            pc.state = self.state
+            pc.elements = self.elements
+            
+            self.navigationController!.pushViewController(pc, animated: true)
+        default :
+            state.add(location) //unless its a picture thing...
+            var vc = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
+            vc.state = self.state
+            vc.elements = self.elements
+            self.navigationController!.pushViewController(vc, animated: true)
+        }
+        /*if (indexPath.row ==  1) {
             if (!self.pictures) {
             
                 state.add(location) //unless its a picture thing...
@@ -209,7 +257,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             lm.done = "elementCategoryController"
             
             self.navigationController!.pushViewController(lm, animated: true)
-        }
+        }*/
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -283,7 +331,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                 println("JSON ERROR \(err!.localizedDescription)")
             }
             
-            //println(jsonResult)
+            println(jsonResult)
             var index: Int = 0
             for (rootKey, rootValue) in jsonResult {
                 //println(rootValue)
@@ -302,7 +350,11 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                         }
                     }
                     
-                    elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
+                    if (picture! == "location") {
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: -2))
+                    } else {
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
+                    }
                     index = index + 1
                 } else if (rootKey as! NSString == "dir") {
                     self.state.site = rootValue as! String
@@ -312,11 +364,6 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     //println(self.type)
                 }
             }
-            
-            
-            //println(description)
-            //completionHandler(results)
-            
             
             NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                 dispatch_async(dispatch_get_main_queue(), {

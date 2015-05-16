@@ -50,7 +50,7 @@ class pictureViewController: UICollectionViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        self.title = self.state.current()
+        self.title = self.state.last()
         getItemsByLocation()
     }
 

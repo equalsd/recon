@@ -102,10 +102,10 @@
             </objects>
             <point key="canvasLocation" x="54" y="229"/>
         </scene>
-        <!--Site Types-->
+        <!--Load Report-->
         <scene sceneID="acs-zw-SSC">
             <objects>
-                <tableViewController id="kGv-fV-aBJ" customClass="siteCategoryController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="siteBoard" id="kGv-fV-aBJ" customClass="siteCategoryController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Tc7-Co-p7m">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -132,7 +132,7 @@
                             <outlet property="delegate" destination="kGv-fV-aBJ" id="wLN-Hf-qbj"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Site Types" id="EwS-uG-Mfb">
+                    <navigationItem key="navigationItem" title="Load Report" id="EwS-uG-Mfb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="Sj2-4X-EMz">
                             <connections>
                                 <action selector="toLogin:" destination="kGv-fV-aBJ" id="idd-nh-q9s"/>
@@ -171,7 +171,7 @@
             </objects>
             <point key="canvasLocation" x="54" y="1068"/>
         </scene>
-        <!--Site List-->
+        <!--Report List-->
         <scene sceneID="uX6-Ph-4rK">
             <objects>
                 <tableViewController id="tRc-sM-aah" customClass="siteListController" customModule="Accessibility_Inspection_Program" customModuleProvider="target" sceneMemberID="viewController">
@@ -206,7 +206,7 @@
                             <outlet property="delegate" destination="tRc-sM-aah" id="dsT-uv-Dqr"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Site List" id="kTR-6d-lJx"/>
+                    <navigationItem key="navigationItem" title="Report List" id="kTR-6d-lJx"/>
                     <connections>
                         <segue destination="cFb-Vg-8hy" kind="show" identifier="toElementCatFromList" id="s8Q-FN-6kc"/>
                     </connections>
@@ -782,9 +782,9 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" id="mM5-xx-en4">
-                        <barButtonItem key="leftBarButtonItem" title="To Category" id="YS4-O1-wwa">
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="TR9-gf-rfJ">
                             <connections>
-                                <action selector="pictureToLocation:" destination="sO3-th-k6x" id="kfU-QS-eeM"/>
+                                <action selector="pictureToLocation:" destination="sO3-th-k6x" id="tkF-hG-meK"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="L8T-55-7wD">
@@ -1067,10 +1067,10 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="BBQ-3g-zn4"/>
+        <segue reference="s8Q-FN-6kc"/>
         <segue reference="udk-W1-Kn7"/>
         <segue reference="nDT-LN-eDI"/>
-        <segue reference="FaE-Dq-4pc"/>
+        <segue reference="BBQ-3g-zn4"/>
         <segue reference="kcb-9w-HH2"/>
     </inferredMetricsTieBreakers>
 </document>
