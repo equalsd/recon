@@ -26,30 +26,35 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     var swiped = false
     
     var notes: String!
+    let cDHelper = coreDataHelper(inheretAppDelegate: UIApplication.sharedApplication().delegate as! AppDelegate)
     
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var locationBar: UITextField! = nil
     @IBOutlet weak var pictureField: UIImageView!
     @IBOutlet weak var notesField: UITextView!
     @IBAction func cancelButton(sender: AnyObject) {
          self.performSegueWithIdentifier("cancelElements", sender: self)
     }
     
-    @IBAction func addButton(sender: AnyObject) {
+    /*@IBAction func addButton(sender: AnyObject) {
         println("add")
         self.multiple = true
         resolveDetails()
         self.openCamera()
-    }
+    }*/
     
     @IBAction func backButton(sender: AnyObject) {
         //println("akc")
+        if (self.picture != nil) {
+            resolveDetails()
+            self.cDHelper.coreUpdateElement(self.state.tracking, uniqueID: self.state.uniqueID, key: "notes", value: self.notesField.text)
+        } else {
+            println("cancelled saving")
+        }
         self.performSegueWithIdentifier("detailToPicture", sender: self)
     }
     
     @IBAction func viewTapped(sender: AnyObject) {
         notesField.resignFirstResponder()
-        locationBar.resignFirstResponder()
     }
     
     /*override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
@@ -57,17 +62,31 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         self.view.endEditing(true)
     }*/
     
+    @IBAction func deleteItem(sender: AnyObject) {
+        var emptyAlert = UIAlertController(title: "Warning", message: "Confirm deletion.  (Images on server and on device will remain)", preferredStyle: UIAlertControllerStyle.Alert)
+        emptyAlert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: {( action: UIAlertAction!) in
+            println("removing item \(self.state.uniqueID)")
+            self.elements.removeAtIndex(self.state.uniqueID)
+            self.cDHelper.coreRemoveElement("Elements", tracking: self.state.tracking, uniqueID: self.state.uniqueID)
+            self.performSegueWithIdentifier("detailToPicture", sender: self)
+        }))
+        emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+            //add logic here
+        }))
+        
+        self.presentViewController(emptyAlert, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         scrollView.frame.size.width = UIScreen.mainScreen().bounds.width
         self.pictureField.image = UIImage(named: "noimg.png")
-        locationBar.text = self.state.last()
         
         picker!.delegate=self
         
         if (self.state.uniqueID == -1) {
-            self.openCamera()
+            //self.openCamera()
         } else {
             setupDetail(self.elements[self.state.uniqueID])
         }
@@ -75,21 +94,20 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        locationBar.delegate = self
         
-        var leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
-        var rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        //var leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        //var rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
         
-        leftSwipe.direction = .Left
-        rightSwipe.direction = .Right
+        //leftSwipe.direction = .Left
+        //rightSwipe.direction = .Right
         
-        view.addGestureRecognizer(leftSwipe)
-        view.addGestureRecognizer(rightSwipe)
+        //view.addGestureRecognizer(leftSwipe)
+        //view.addGestureRecognizer(rightSwipe)
     }
     
     func handleSwipes(sender:UISwipeGestureRecognizer) {
         
-        resolveDetails()
+        //resolveDetails()
         
         var locality: [Elemental] = []
         var index: Int = 0
@@ -153,21 +171,17 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         var index = lookFor(self.state.uniqueID, locality: self.elements)
         if (self.notesField.text != nil) {
             self.elements[index].notes = self.notesField.text
+            println(self.elements[index].uniqueID)
         } else {
             self.elements[index].notes = ""
         }
-        if (self.locationBar.text != nil) {
-            self.elements[index].location = self.locationBar.text
-        } else {
-            self.elements[index].location = "misc location"
+        
+        /*if (!check_location(self.selectedLocation)) {
+            self.elements.append(Elemental(location: self.selectedLocation, picture: "location", notes: "", category: self.state.current(), uniqueID: -2, site: self.state.tracking))
         }
         
-        if (!check_location(self.locationBar.text)) {
-            self.elements.append(Elemental(location: self.locationBar.text, picture: "location", notes: "", category: self.state.current(), uniqueID: -2))
-        }
-        
-        coreRemoveElements()
-        coreSaveElements()
+        self.cDHelper.coreRemoveElements("Elements", tracking: state.tracking)
+        self.cDHelper.coreSaveElements(elements, tracking: state.tracking)*/
     }
     
     func setupDetail(item: Elemental) {
@@ -175,11 +189,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         self.pictureField.contentMode = .ScaleAspectFit
         
         if (swiped == false) {
-            if (item.location != nil) {
-                self.locationBar.text = item.location as! String
-            } else {
-                self.locationBar.text = "misc location"
-            }
         }
         if (item.notes != nil) {
             notesField.text = item.notes as! String
@@ -188,6 +197,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
         var photo = item.picture
         self.picture = photo as! String
+        println("picture \(self.picture)")
         if (photo == nil || photo == "") {
             //self.picture == ""
             //self.pictureField.image = UIImage(named: "noimg.png")
@@ -211,11 +221,12 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             
             var ID = imageManager.requestImageForAsset(asset, targetSize: targetSize, contentMode: .AspectFit, options: nil, resultHandler: {
                 (result, info)->Void in
+                self.pictureField.contentMode = .ScaleAspectFit
                 self.pictureField.image = result
             })
 
         } else {
-            let path = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/" + "\(photo!).jpg"
+            let path = "http://ada-veracity.com/clients/" + "\(self.state.tracking)" + "/" + "\(photo!).jpg"
             
             //image
             let url = NSURL(string: path)
@@ -256,12 +267,23 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         animateViewMoving(false, moveValue: 220)
     }
 
-    func openCamera() {
+    /*func openCamera() {
         if(UIImagePickerController .isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera))
         {
             picker!.sourceType = UIImagePickerControllerSourceType.Camera
+            picker!.allowsEditing = false
+            picker!.cameraCaptureMode = .Photo
             self.presentViewController(picker!, animated: true, completion: nil)
+        } else {
+            noCamera()
         }
+    }*/
+    
+    /*func noCamera() {
+        let alertVC = UIAlertController(title: "No Camera", message: "Sorry, this device has no camera", preferredStyle: .Alert)
+        let okAction = UIAlertAction(title: "OK", style:.Default, handler: nil)
+        alertVC.addAction(okAction)
+        presentViewController(alertVC, animated: true, completion: nil)
     }
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject])
@@ -284,13 +306,13 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
                 albumChangeRequest.addAssets([assetPlaceholder])
                 }, completionHandler: {(success, error)in
                     dispatch_async(dispatch_get_main_queue(), {
-                        NSLog("Adding Image to Library -> %@", (success ? "Sucess":"Error!"))
+                        NSLog("Adding Image to Library -> %@", (success ? "Success":"Error!"))
                         
                         if (success) {
                             var number = self.greatest() + 1
-                            self.elements.append(Elemental(location: self.locationBar.text, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
+                            self.elements.append(Elemental(location: self.selectedLocation, picture: self.picture, notes: self.notesField.text, category: self.state.current(), uniqueID: number))
                             println("categories: \(self.state.current())")
-                            println("location  : \(self.locationBar.text)")
+                            println("location  : \(self.selectedLocation)")
                             self.state.uniqueID = number
                             picker.dismissViewControllerAnimated(true, completion: nil)
                             
@@ -303,9 +325,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             
         })
 
-    }
+    }*/
     
-    func greatest() -> Int {
+    /*func greatest() -> Int {
         var largest = 0
         for item in self.elements {
             if (item.uniqueID > largest && item.uniqueID < 80000) {
@@ -314,9 +336,9 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
         
         return largest
-    }
+    }*/
     
-    func imager(image: UIImage, didFinishSavingWithError error: NSErrorPointer, contextInfo: UnsafePointer<(Void)>) {
+    /*func imager(image: UIImage, didFinishSavingWithError error: NSErrorPointer, contextInfo: UnsafePointer<(Void)>) {
         println("nuts")
     }
     
@@ -324,7 +346,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         println("picker cancel.")
         picker.dismissViewControllerAnimated(true, completion: nil)
         self.multiple = false
-    }
+    }*/
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -332,11 +354,6 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if (self.picture != nil) {
-            resolveDetails()
-        } else {
-            println("cancelled saving")
-        }
         
         if (segue.identifier == "detailToLocation") {
             var navigationController =  segue.destinationViewController as! UINavigationController
@@ -352,7 +369,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
     }
     
-    func coreSaveElements() {
+    /*func coreSaveElements() {
         println("inserting...Core")
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -401,10 +418,10 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
             
         }
         //println(user)
-    }
+    }*/
 
     
-    func newlocation(elements: [Elemental], indexical: Int) -> String {
+    /*func newlocation(elements: [Elemental], indexical: Int) -> String {
         var returnLocation: String = "Location \(indexical)"
         var newIndex = indexical
         for item in elements {
@@ -416,7 +433,7 @@ class detailView: UIViewController, UIAlertViewDelegate, UIImagePickerController
         }
         
         return returnLocation
-    }
+    }*/
     
     func animateViewMoving (up:Bool, moveValue :CGFloat){
         var movementDuration:NSTimeInterval = 0.3

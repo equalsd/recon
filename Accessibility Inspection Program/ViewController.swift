@@ -16,31 +16,44 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var username: UITextField!
+    var old_username: String = ""
     @IBOutlet weak var warning: UILabel!
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var clearText: UITextField!
+    
     var state = position()
+    var go = true
     var albumFound: Bool! = false
     
     //var existingUser = [NSManagedObject]()
     
     var login = "none"
+    let cDHelper = coreDataHelper(inheretAppDelegate: UIApplication.sharedApplication().delegate as! AppDelegate)
     
     @IBAction func loginButton(sender: AnyObject) {
-        if (self.password.text == "" || self.username.text == "") {
-            warning.text = "Warning: Username and Password need to be filled out"
+        if (loginButton.titleLabel!.text! == "Login") {
+            if (self.password.text == "" || self.username.text == "") {
+                warning.text = "Warning: Username and Password need to be filled out"
+            } else {
+                println("logging in...")
+                jsonLogin()
+            }
         } else {
-            println("logging in...")
-            jsonLogin()
+            self.performSegueWithIdentifier("fromLogintoNewUser", sender: self)
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //coreDataHelper = coreDataHelper(UIApplication.sharedApplication().delegate as! AppDelegate)
         // Do any additional setup after loading the view, typically from a nib.
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext!
     
         let fetchRequest = NSFetchRequest(entityName: "User")
+        password.secureTextEntry = true
     
         var error: NSError?
         
@@ -52,11 +65,16 @@ class ViewController: UIViewController {
                 //println(results[0].valueForKey("username"))
                 let user = results[0]
                 self.username.text = user.valueForKey("username") as? String
+                self.old_username = (user.valueForKey("username") as? String)!
                 self.password.text = user.valueForKey("password") as? String
                 self.state.site = user.valueForKey("site") as? String
                 self.state.tracking = user.valueForKey("tracking") as? String
                 self.state.type = user.valueForKey("type") as? String
-                jsonLogin()
+                if (self.go) {
+                    jsonLogin()
+                }
+                
+                loginButton.setTitle("Login", forState: UIControlState.Normal)
             }
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
@@ -93,6 +111,18 @@ class ViewController: UIViewController {
                     }
             })
         }
+        
+        password.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        username.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+    }
+    
+    func textFieldDidChange(textField: UITextField) {
+        
+        if (self.username.text == "" && self.password.text == "") {
+            self.loginButton.setTitle("New User", forState: UIControlState.Normal)
+        }else {
+            self.loginButton.setTitle("Login", forState: UIControlState.Normal)
+        }
     }
 
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
@@ -116,7 +146,7 @@ class ViewController: UIViewController {
         
         let params:[String: AnyObject] = ["username" : username, "password" : password]
         
-        let url = NSURL(string: "http://precisreports.com/api/verify-login-json.php")
+        let url = NSURL(string: "http://ada-veracity.com/api/verify-login-json.php")
         let request = NSMutableURLRequest(URL: url!)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
@@ -154,8 +184,15 @@ class ViewController: UIViewController {
                     //if (self.existingUser.count == 0) {
                     //    self.coreSaveUser()
                     //} else {
-                        self.coreRemoveUser()
-                        self.coreSaveUser()
+                        //self.coreRemoveUser()
+                        //self.coreSaveUser()
+                    self.cDHelper.coreRemoveElements("User", tracking: "")
+                    
+                    if (self.old_username !=  self.username.text) {
+                        println("removing")
+                        self.cDHelper.coreRemoveElements("Elements", tracking: "")
+                    }
+                    self.cDHelper.coreSaveUser(self.state, password: self.password.text, username: self.username.text)
                     //}
                     
                     self.warning.text = ""
@@ -167,7 +204,7 @@ class ViewController: UIViewController {
         }.resume()
     }
     
-    func coreRemoveUser() {
+    /*func coreRemoveUser() {
         println("removing...")
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -230,19 +267,21 @@ class ViewController: UIViewController {
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
         }
-    }
+    }*/
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var navigationController =  segue.destinationViewController as! UINavigationController
-        var controller = navigationController.topViewController as! siteCategoryController
-        //controller.delegate = self
-        self.state.username = self.username.text
-        self.state.password = self.password.text
-        controller.state = self.state
+        if (segue.identifier == "toSiteCategory") {
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var controller = navigationController.topViewController as! siteCategoryController
+            //controller.delegate = self
+            self.state.username = self.username.text
+            self.state.password = self.password.text
+            controller.state = self.state
+        }
     }
     
     @IBAction func cancelToLogin(segue:UIStoryboardSegue) {
         dismissViewControllerAnimated(true, completion: nil)
-        println("logiwn")
+        println("login")
     }
 }

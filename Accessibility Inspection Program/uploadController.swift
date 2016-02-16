@@ -20,6 +20,8 @@ class uploadController: UIViewController {
     var on: Int = 0
     var number: Int!
     
+    let cDHelper = coreDataHelper(inheretAppDelegate: UIApplication.sharedApplication().delegate as! AppDelegate)
+    
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var progressLabel: UILabel!
     @IBOutlet weak var uploadButton: UIButton!
@@ -57,13 +59,13 @@ class uploadController: UIViewController {
             if (item.picture == "location") {
                 returnArray.append([item.location!, item.notes!, "location", item.uniqueID!, item.category!])
             } else {
-                if (item.uniqueID > 80000) {
-                    returnArray.append([item.location!, item.notes!, "ignore", item.uniqueID!, item.category!])
+                if (item.uniqueID > 80000) { //**NEED TO SAVE BY PICTURE
+                    returnArray.append([item.location!, item.notes!, "leave be", item.uniqueID!, item.category!])
                 } else {
                     if (item.picture!.lowercaseString.rangeOfString("/") != nil) {
-                    item.uniqueID = timestamp
-                        self.pictures.append([item.picture!, "\(item.uniqueID!)"])
-                        returnArray.append([item.location!, item.notes!, "change", "\(item.uniqueID!)", item.category!])
+                    //item.uniqueID = timestamp
+                        self.pictures.append([item.picture!, "\(timestamp)", item.uniqueID!])
+                        returnArray.append([item.location!, item.notes!, "change", "\(timestamp)", item.category!])
                     } else {
                     //self.pictures.append([item.picture!, "leave be"])
                         returnArray.append([item.location!, item.notes!, "leave be", item.picture!, item.category!])
@@ -78,9 +80,12 @@ class uploadController: UIViewController {
     
     func uploadElements() {
         println("uploading...")
+        
+        UIApplication.sharedApplication().idleTimerDisabled = true
+        
         self.uploadButton.enabled = false
         self.progressView.setProgress(0.0, animated: false)
-        self.progressLabel.text = "Uploading... do not turn off or shut off internet connection"
+        self.progressLabel.text = "Uploading..."
 
         var elements = self.elements
         var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -90,7 +95,7 @@ class uploadController: UIViewController {
         println(jsonCompatible)
         println(self.pictures)
         
-        let url = NSURL(string: "http://precisreports.com/api/put-json-elements.php")
+        let url = NSURL(string: "http://ada-veracity.com/api/put-json-elements.php")
         let request = NSMutableURLRequest(URL: url!)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
@@ -160,15 +165,18 @@ class uploadController: UIViewController {
                 }
                 targetSize = CGSizeMake(width, height)
             
+                println("orientation: \(turn) for \(picture[1])")
                 var ID = imageManager.requestImageDataForAsset(asset, options: nil, resultHandler: {
                     (imageData, dataUTI, orientation: UIImageOrientation, info: [NSObject : AnyObject]!) -> Void in
                     var name = "picture_\(index)"
-                    SRWebClient.POST("http://precisreports.com/api/put-picture.php")
+                    SRWebClient.POST("http://ada-veracity.com/api/put-picture.php")
                     .datar(imageData, fieldName: "file", data:["orientation": turn, "site": self.state.tracking, "title": name, "key": picture[1] as! String])
                         .send({(response: AnyObject!, status:Int) -> Void in //println(response)
                             //println("okay..")
-                            println("response: \(response)")
-                            println(picture[1])
+                            var value = response as! String
+                            //println(picture[1])
+                            println("response: \(value)") //save in DATABASE HERE
+                            self.cDHelper.coreUpdateElement(self.state.tracking, uniqueID: picture[2] as! Int, key: "picture", value: value)
                             self.progressBar()
                             
                             var next = index + 1
@@ -184,7 +192,8 @@ class uploadController: UIViewController {
                 uploadPictures(next)
             }*/
         } else {
-            self.coreRemoveElements()
+            //self.coreRemoveElements()
+            UIApplication.sharedApplication().idleTimerDisabled = false
         }
     }
     
@@ -201,7 +210,7 @@ class uploadController: UIViewController {
         } else {
             var fractionalProgress: Float = Float(self.on) / Float(total)
             self.progressView.setProgress(fractionalProgress, animated: true)
-            self.progressLabel.text = "Uploading \(on) of \(total)"
+            self.progressLabel.text = "Sending Item \(on) of \(total)"
         }
     }
     
@@ -218,58 +227,5 @@ class uploadController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    func coreSaveElements() {
-        println("inserting...Core")
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext!
-        
-        let entity =  NSEntityDescription.entityForName("Elements", inManagedObjectContext: managedContext)
-        
-        
-        //var index = 0
-        for element in elements {
-            var item = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
-            item.setValue(element.location, forKey: "location")
-            item.setValue(element.picture, forKey: "picture")
-            item.setValue(element.notes, forKey: "notes")
-            item.setValue(element.category, forKey: "category")
-            item.setValue(element.uniqueID!, forKey: "uniqueID")
-            println(element.uniqueID!)
-            
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Could not save \(error), \(error?.userInfo)")
-            }
-            //index++
-        }
-    }
-    
-    func coreRemoveElements() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
-        
-        let entity = NSFetchRequest(entityName: "Elements")
-        
-        //let user = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
-        
-        var error: NSError? = nil
-        let list = managedContext.executeFetchRequest(entity, error: &error)
-        
-        if let users = list {
-            var bas: NSManagedObject!
-            
-            for bas: AnyObject in users {
-                managedContext.deleteObject(bas as! NSManagedObject)
-            }
-            
-            managedContext.save(nil)
-            
-        }
-        
-        coreSaveElements()
     }
 }

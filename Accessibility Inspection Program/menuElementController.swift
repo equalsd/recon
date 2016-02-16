@@ -8,7 +8,7 @@
 
 import UIKit
 
-class menuElementController: UIViewController {
+class menuElementController: UIViewController, UIPopoverPresentationControllerDelegate {
     var state: position!
     var elements: [Elemental] = []
     var continuance: Bool!
@@ -53,6 +53,11 @@ class menuElementController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle
+    {
+        return .None
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "menuToOrganize") {
             var navigationController =  segue.destinationViewController as! UINavigationController
@@ -66,6 +71,12 @@ class menuElementController: UIViewController {
             var controller = segue.destinationViewController as! uploadController
             controller.state = self.state
             controller.elements = self.elements
+            var pop = controller.popoverPresentationController
+            
+            if pop != nil
+            {
+                pop?.delegate = self
+            }
         } /*else if (segue.identifier == "toSiteList") {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! tableViewControl

@@ -12,22 +12,47 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
 
     var state: position!
     var siteSelected: String!
+    var continuance = false
     
     var nameData = [String]()
     var descriptionData = [String]()
     var trackingData = [String]()
     var typeData = [String]()
+    var savedSites = [String]()
+    let cDHelper = coreDataHelper(inheretAppDelegate: UIApplication.sharedApplication().delegate as! AppDelegate)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        println(siteSelected)
-        jsonGetSites()
+        
+        if (self.siteSelected == "Saved Sites") {
+            self.continuance = true
+            //load saved sites
+            var saved = self.cDHelper.coreNames(self.state.tracking, multiple: true)
+            if (!saved.isEmpty) {
+                var count = saved.count / 4
+                for (var i = 0; i < count; i++) {
+                    var key1 = "name\(i)"
+                    var key2 = "description\(i)"
+                    var key3 = "site\(i)"
+                    var key4 = "type\(i)"
+                    self.nameData.append(saved[key1]!)
+                    self.descriptionData.append(saved[key2]!)
+                    self.trackingData.append(saved[key3]!)
+                    self.typeData.append(saved[key4]!)
+                }
+            }
+        } else {
+            var saved = self.cDHelper.coreNames(self.state.tracking, multiple: true)
+            if (!saved.isEmpty) {
+                var count = saved.count / 4
+                for (var i = 0; i < count; i++) {
+                    var key3 = "site\(i)"
+                    self.savedSites.append(saved[key3]!)
+                }
+            }
+            //load from internet this category
+            jsonGetSites()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -48,10 +73,6 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) ->   UITableViewCell {
-        //let cell = UITableViewCell()
-        //let label = UILabel(CGRect(x:0, y:0, width:200, height:50))
-        //label.text = "Hello Man"
-        //cell.addSubview(label)
         
         let cell = tableView.dequeueReusableCellWithIdentifier("siteCell", forIndexPath: indexPath) as! UITableViewCell
         
@@ -71,7 +92,7 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
+        /*var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
         emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
             self.state.tracking = self.trackingData[indexPath.row] as String
             self.state.site = self.nameData[indexPath.row] as String
@@ -82,8 +103,27 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
             //add logic here
         }))
         
-        self.presentViewController(emptyAlert, animated: true, completion: nil)
-        
+        self.presentViewController(emptyAlert, animated: true, completion: nil)*/
+    
+        if (contains(savedSites, self.trackingData[indexPath.row] as String) && siteSelected != "Saved Sites") {
+            var confirmAlert = UIAlertController(title: "Notice", message: "This site is saved on this device.  Reloading form the server will delete the unique data on this site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
+            confirmAlert.addAction(UIAlertAction(title: "Reload", style: .Default, handler: {( action: UIAlertAction!) in
+                self.state.tracking = self.trackingData[indexPath.row] as String
+                self.state.site = self.nameData[indexPath.row] as String
+                self.state.type = self.typeData[indexPath.row] as String
+                self.performSegueWithIdentifier("toElementCatFromList", sender: self)
+            }))
+            confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
+                //add logic here
+            }))
+            
+            self.presentViewController(confirmAlert, animated: true, completion: nil)
+        } else {
+            self.state.tracking = self.trackingData[indexPath.row] as String
+            self.state.site = self.nameData[indexPath.row] as String
+            self.state.type = self.typeData[indexPath.row] as String
+            self.performSegueWithIdentifier("toElementCatFromList", sender: self)
+        }
     }
 
     /*
@@ -128,7 +168,7 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
         var split = false
         let params:[String: AnyObject] = ["username" : self.state.username, "password" : self.state.password, "type" : self.siteSelected]
         
-        let url = NSURL(string: "http://precisreports.com/api/get-sites-type-json.php")
+        let url = NSURL(string: "http://ada-veracity.com/api/get-sites-type-json.php")
         let request = NSMutableURLRequest(URL: url!)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
@@ -211,12 +251,12 @@ class siteListController: UITableViewController, UITableViewDelegate, UITableVie
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toElementCatFromList" {
+        if (segue.identifier == "toElementCatFromList") {
             var navigationController =  segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController
             
             controller.state = self.state
-            controller.continuance = false
+            controller.continuance = self.continuance
             /*controller.continuance = self.continuance*/
             
             /*let myIndexPath = self.tableView.indexPathForSelectedRow()

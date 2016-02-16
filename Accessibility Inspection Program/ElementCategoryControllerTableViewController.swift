@@ -9,41 +9,45 @@
 import UIKit
 import CoreData
 
-class elementCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource  {
+class elementCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate  {
     
-    var elementCategories:[String] = ["View Images", "Add Location"]
+    var elementCategories:[String] = ["Images", "Add Location"]
     var elements: [Elemental] = []
     var state: position!
     var continuance: Bool!
     var reload: Bool!
     var locationCount = Dictionary<String, Int>()
     var sub = true
+    
+    let cDHelper = coreDataHelper(inheretAppDelegate: UIApplication.sharedApplication().delegate as! AppDelegate)
 
     @IBAction func menuButton(sender: AnyObject) {
         //self.performSegueWithIdentifier("toMenu", sender: self)
-        var emptyAlert = UIAlertController(title: "Menu", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-        emptyAlert.addAction(UIAlertAction(title: "Reload", style: .Default, handler: {( action: UIAlertAction!) in
+        /*var emptyAlert = UIAlertController(title: "Menu", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        emptyAlert.addAction(UIAlertAction(title: "Purchase Credits", style: .Default, handler: {( action: UIAlertAction!) in
             
-            var ec = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
-            ec.state = self.state
-            self.state.category.removeAll()
-            ec.continuance = true
+            var pb = self.storyboard?.instantiateViewControllerWithIdentifier("purchaseBoard") as! purchaseController
+            //ec.state = self.state
+            //self.state.category.removeAll()
+            //ec.continuance = true
             
-            self.navigationController!.pushViewController(ec, animated: true)
+            self.navigationController!.pushViewController(pb, animated: true)
         }))
-        emptyAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in
+        emptyAlert.addAction(UIAlertAction(title: "Upload", style: .Default, handler: {( action: UIAlertAction!) in*/
             var uc = self.storyboard?.instantiateViewControllerWithIdentifier("uploadBoard") as! uploadController
             uc.state = self.state
             uc.elements = self.elements
             
             self.navigationController!.pushViewController(uc, animated: true)
 
-        }))
+        /*}))
         emptyAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {( action: UIAlertAction!) in
             //add logic here
         }))
         
-        self.presentViewController(emptyAlert, animated: true, completion: nil)
+        self.presentViewController(emptyAlert, animated: true, completion: nil)*/
+
+
     }
     
     @IBAction func backButton(sender: AnyObject) {
@@ -66,10 +70,20 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         super.viewDidLoad()
         
         if (self.continuance != nil) {
+            self.cDHelper.coreSaveUser(self.state, password: "", username: "")
             if (self.continuance == true) {
                 coreGetElements()
+                
+                for item in self.elements {
+                    let location = item.category
+                    if (self.locationCount[location! as String] != nil) {
+                        self.locationCount[location! as String] = self.locationCount[location! as String]! + 1
+                    } else {
+                        self.locationCount[location! as String] = 1
+                        //println(location)
+                    }
+                }
             } else {
-                coreSaveSite()
                 jsonElements()
             }
         } else {
@@ -153,11 +167,15 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             }
             
             return extended
+        case "General Location" :
+            self.elementCategories.removeAtIndex(1)
+            println("general")
+            return []
         case "Root":
             self.sub = false
             self.elementCategories.removeAtIndex(0)
             self.elementCategories.removeAtIndex(0)
-            return ["General Location", "Parking", "Exterior Path of Travel", "Egress", "Primary Function Areas", "Interior Path of Travel"]
+            return ["Change Site Type", "General Location", "Parking", "Exterior Path of Travel", "Egress", "Primary Function Areas", "Interior Path of Travel"]
         default:
           return []
         }
@@ -229,15 +247,52 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var location = self.elementCategories[indexPath.row] as String
-        switch location {
-        case "Add Location" :
-            var lm = self.storyboard?.instantiateViewControllerWithIdentifier("locationManager") as! menuLocationController
+        if (location == "Add Location" && indexPath.row == 1) {
+            /*var lm = self.storyboard?.instantiateViewControllerWithIdentifier("locationManager") as! menuLocationController
             lm.state = self.state
             lm.elements = self.elements
             lm.done = "elementCategoryController"
             
-            self.navigationController!.pushViewController(lm, animated: true)
-        case "View Images" :
+            self.navigationController!.pushViewController(lm, animated: true)*/
+            var inputTextField: UITextField?
+            
+            let actionSheetController: UIAlertController = UIAlertController(title: "Add Sub-Location", message: "", preferredStyle: .Alert)
+            
+            actionSheetController.addTextFieldWithConfigurationHandler { textField -> Void in
+                //TextField configuration
+                //textField.textColor = UIColor.blueColor()
+                inputTextField = textField
+            }
+            
+            let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .Cancel) { action -> Void in
+                //Do some stuff
+            }
+            actionSheetController.addAction(cancelAction)
+           
+            let submitAction: UIAlertAction = UIAlertAction(title: "Add", style: .Default) { action -> Void in
+                var input: NSString = inputTextField!.text
+                let range = input.rangeOfString("|")
+                if (range.length == 0) {
+                    self.elements.append(Elemental(location: inputTextField!.text, picture: "location", notes: "", category: self.state.current(), uniqueID: -2, site: self.state.tracking))
+                    
+                    self.cDHelper.coreRemoveElements("Elements", tracking: self.state.tracking)
+                    self.cDHelper.coreSaveElements(self.elements, tracking: self.state.tracking)
+                    //println(inputTextField!.text)
+                    
+                    self.getLocationsbyCategory()
+                    self.tableView!.reloadData()
+                } else {
+                    //invalid character present
+                    var emptyAlert = UIAlertController(title: "Warning:", message: "| is an invalid character", preferredStyle: UIAlertControllerStyle.Alert)
+                    emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
+                    }))
+
+                    self.presentViewController(emptyAlert, animated: true, completion: nil)
+                }
+            }
+            actionSheetController.addAction(submitAction)
+            self.presentViewController(actionSheetController, animated: true, completion: nil)
+        } else if (location == "Images" && indexPath.row == 0) {
             //state.add(location)
             
             var pc = self.storyboard?.instantiateViewControllerWithIdentifier("pictureBoard") as! pictureViewController
@@ -245,7 +300,9 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             pc.elements = self.elements
             
             self.navigationController!.pushViewController(pc, animated: true)
-        default :
+        } else if (location == "Change Site Type" && indexPath.row == 0) {
+            self.performSegueWithIdentifier("fromOrgtoNew", sender: self)
+        } else {
             state.add(location) //unless its a picture thing...
             var ec = self.storyboard?.instantiateViewControllerWithIdentifier("elementBoard") as! elementCategoryController
             ec.state = self.state
@@ -255,7 +312,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "toMenu" {
+        if (segue.identifier == "toMenu") {
             var controller =  segue.destinationViewController as! menuElementController
             //let controller = navigationController.topViewController as! locationController
             
@@ -283,6 +340,12 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             var controller = navigationController.topViewController as! locationController
             controller.state = self.state
             controller.elements = self.elements
+        } else if (segue.identifier == "fromOrgtoNew") {
+            var navigationController =  segue.destinationViewController as! UINavigationController
+            var snc = navigationController.topViewController as! siteNewController
+            
+            snc.state = self.state
+            snc.action = "upgrade"
         }
     }
     
@@ -293,7 +356,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         
         let params:[String: AnyObject] = ["username" : self.state.username, "password" : self.state.password, "site": self.state.tracking]
         
-        let url = NSURL(string: "http://precisreports.com/api/get-elements-json.php")
+        let url = NSURL(string: "http://ada-veracity.com/api/get-elements-json.php")
         let request = NSMutableURLRequest(URL: url!)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
@@ -345,9 +408,9 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     }
                     
                     if (picture! == "location") {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: -2))
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: -2, site: self.state.tracking))
                     } else {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index))
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: index, site: self.state.tracking))
                     }
                     index = index + 1
                 } else if (rootKey as! NSString == "dir") {
@@ -362,7 +425,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                 dispatch_async(dispatch_get_main_queue(), {
                     
-                    self.coreRemoveElements()
+                    self.cDHelper.coreRemoveElements("Elements", tracking: self.state.tracking)
                     
                     if (elements.count == 0) {
                         var emptyAlert = UIAlertController(title: "Notice", message: "This site has no registered locations", preferredStyle: UIAlertControllerStyle.Alert)
@@ -377,7 +440,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                         self.tableView.dataSource = self
                         self.tableView.delegate = self
                         self.elements = elements
-                        self.coreSaveElements()
+                        self.cDHelper.coreSaveElements(elements, tracking: self.state.tracking)
 
                     }
                     
@@ -389,7 +452,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
     }
     
     
-    func coreRemoveElements() {
+    /*func coreRemoveElements() {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext: NSManagedObjectContext = appDelegate.managedObjectContext!
@@ -449,7 +512,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         if !managedContext.save(&error) {
             println("Could not save \(error), \(error?.userInfo)")
         }
-    }
+    }*/
     
     func coreGetElements() {
         println("getting...Core")
@@ -458,10 +521,16 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         let managedContext = appDelegate.managedObjectContext!
         
         let fetchRequest = NSFetchRequest(entityName: "Elements")
+        fetchRequest.resultType = NSFetchRequestResultType.ManagedObjectResultType
+        fetchRequest.returnsDistinctResults = true
+        
+        let pred = NSPredicate(format: "(site == %@)", self.state.tracking)
+        fetchRequest.predicate = pred
         
         var error: NSError?
         
         let fetchedResults =  managedContext.executeFetchRequest(fetchRequest, error: &error) as![NSManagedObject]?
+        
         
         if let results = fetchedResults {
             //do something if its empty...
@@ -496,9 +565,9 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
                     println(category)
                     
                     if (picture == nil) {
-                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!, uniqueID: uniqueID!))
+                        elements.append(Elemental(location: location!, picture: "", notes: notes!, category: category!, uniqueID: uniqueID!, site: self.state.tracking))
                     } else {
-                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: uniqueID!))
+                        elements.append(Elemental(location: location!, picture: picture!, notes: notes!, category: category!, uniqueID: uniqueID!, site: self.state.tracking))
                     }
                     //index = index + 1
                 }
@@ -521,7 +590,7 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
         }
     }
     
-    func coreSaveElements() {
+    /*func coreSaveElements() {
         println("inserting...Core//elements")
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -547,6 +616,6 @@ class elementCategoryController: UITableViewController, UITableViewDelegate, UIT
             //println(index)
             //println(element.picture)
         }
-    }
+    }*/
 
 }

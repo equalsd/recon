@@ -10,15 +10,16 @@ import UIKit
 
 class siteCategoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var siteType:[String] = ["Add New Site", "Bank", "Gas Station", "Health", "Hotel", "Retail Office", "Restaurant", "Strip Mall"]
+    var siteType:[String] = ["Add New Site"]
     var siteSelected: String!
     var state: position!
+    let cDHelper = coreDataHelper(inheretAppDelegate: UIApplication.sharedApplication().delegate as! AppDelegate)
 
     @IBOutlet weak var continueButton: UIBarButtonItem!
     
     @IBAction func toLogin(sender: AnyObject) {
-        //self.performSegueWithIdentifier("toLogin", sender: self)
-        dismissViewControllerAnimated(true, completion: nil)
+        self.performSegueWithIdentifier("toLogin", sender: self)
+        //dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func toEdit(sender: AnyObject) {
@@ -27,11 +28,30 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        println("site list")
+        
+        if (self.state.tracking != nil) {
+            var saved = self.cDHelper.coreNames(self.state.tracking, multiple: true)
+            if (!saved.isEmpty) {
+                println(saved)
+                self.siteType += ["Saved Sites"]
+            }
+        }
+        
+        self.siteType += ["Bank", "Gas Station", "Health", "Hotel", "Retail Office", "Restaurant", "Strip Mall"]
 
         // Do any additional setup after loading the view.
         println(self.state.type)
+        println(self.state.tracking)
         if (self.state.tracking == nil) {
             self.continueButton.enabled = false
+        } else {
+            var names = self.cDHelper.coreNames(self.state.tracking, multiple: false)
+            if (!names.isEmpty) {
+                println(names)
+                var name = names["name0"]
+                self.continueButton.title = "\(name!)"
+            }
         }
     }
 
@@ -60,6 +80,8 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
                 nameLabel.text = "Health Care Facility"
             } else if (siteType == "Hotel") {
                 nameLabel.text = "Hotel/Motel"
+            } else if (siteType == "Strip Mall") {
+                nameLabel.text = "Mall/Strip Mall"
             } else {
                 nameLabel.text = siteType
             }
@@ -84,9 +106,12 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.siteSelected = self.siteType[indexPath.row] as String
         if (self.siteSelected != "Add New Site") {
+            //everything else
             self.performSegueWithIdentifier("toSiteList", sender: self)
         } else {
-            var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
+            //new site
+            
+            /*var emptyAlert = UIAlertController(title: "Notice", message: "This will delete all the current site's data. Pictures will remain in the photo gallery.", preferredStyle: UIAlertControllerStyle.Alert)
             emptyAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {( action: UIAlertAction!) in
                 self.performSegueWithIdentifier("toNew", sender: self)
             }))
@@ -94,13 +119,16 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
                 //add logic here
             }))
             
-            self.presentViewController(emptyAlert, animated: true, completion: nil)
+            self.presentViewController(emptyAlert, animated: true, completion: nil)*/
+            
+            self.performSegueWithIdentifier("toNew", sender: self)
         }
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toLogin" {
             let loginViewController = segue.destinationViewController as! ViewController
+            loginViewController.go = false
             println("login")
         } else if (segue.identifier == "toSiteList") {
             var navigationController =  segue.destinationViewController as! UINavigationController
@@ -123,6 +151,7 @@ class siteCategoryController: UITableViewController, UITableViewDelegate, UITabl
             var controller = navigationController.topViewController as! siteNewController
             
             controller.state = self.state
+            controller.action = "buy"
         } else if (segue.identifier == "toElementCatFromCont") {
             var navigationController = segue.destinationViewController as! UINavigationController
             var controller = navigationController.topViewController as! elementCategoryController

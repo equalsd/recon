@@ -44,7 +44,7 @@ class menuLocationController: UIViewController, UITableViewDelegate, UITableView
     @IBAction func doneButton(sender: AnyObject) {
         if (locationBar.text != "") {
             if (self.done == "elementCategoryController") {
-                self.elements.append(Elemental(location: self.locationBar.text, picture: "location", notes: "", category: self.state.current(), uniqueID: -2))
+                self.elements.append(Elemental(location: self.locationBar.text, picture: "location", notes: "", category: self.state.current(), uniqueID: -2, site: self.state.tracking))
                 
                 coreRemoveElements()
                 coreSaveElements()

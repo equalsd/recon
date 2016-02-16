@@ -19,7 +19,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     var pictures: [String] = []
     let reuseIdentifier = "Cell"
     var locationCount = Dictionary<String, Int>()
-
+    
     @IBAction func addLocation(sender: AnyObject) {
         //println("new Location")
         self.performSegueWithIdentifier("toGetLocation", sender: self)
@@ -32,39 +32,39 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         getItemsByCategory()
         self.title = self.state.current()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
+        
         // Register cell classes
         //self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
+        
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
+    
+    
     // MARK: UICollectionViewDataSource
-
+    
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
-
-
+    
+    
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //println(locations.count)
         return locations.count
     }
-
+    
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! LocationViewCell
-    
+        
         // Configure the cell
         let labelText = self.locations[indexPath.row]
         let number = self.locationCount[labelText]!
@@ -98,7 +98,7 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
                     
                     cell.imageView.image = image
                 }
-            }, failureBlock: nil)
+                }, failureBlock: nil)
         } else {
             let imageText = "http://precisreports.com/clients/" + "\(self.state.tracking)" + "/thumbnails/" + "\(photo).jpg"
             
@@ -123,11 +123,11 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
-            return CGSize(width: 120, height: 150)
+        return CGSize(width: 120, height: 150)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-            return sectionInsets
+        return sectionInsets
     }
     
     func getItemsByCategory () {
@@ -147,40 +147,40 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
                 }
             }
         }
-                
+        
         self.locations = locations
         self.pictures = pictures
         //self.tableView.reloadData()
     }
     
     /*override func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-            //1
-            switch kind {
-                //2
-            case UICollectionElementKindSectionHeader:
-                //3
-                let headerView =
-                collectionView.dequeueReusableSupplementaryViewOfKind(kind,
-                    withReuseIdentifier: "locationReusableView",
-                    forIndexPath: indexPath)
-                    as! locationReusableView
-                headerView.headerTitle.text = self.category!
-                return headerView
-            default:
-                //4
-                assert(false, "Unexpected element kind")
-            }
+    //1
+    switch kind {
+    //2
+    case UICollectionElementKindSectionHeader:
+    //3
+    let headerView =
+    collectionView.dequeueReusableSupplementaryViewOfKind(kind,
+    withReuseIdentifier: "locationReusableView",
+    forIndexPath: indexPath)
+    as! locationReusableView
+    headerView.headerTitle.text = self.category!
+    return headerView
+    default:
+    //4
+    assert(false, "Unexpected element kind")
+    }
     }*/
-
+    
     // MARK: UICollectionViewDelegate
-
+    
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
     override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
+    return true
     }
     */
-
+    
     
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -193,20 +193,18 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
         return false
     }
     
-
+    
     /*
     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
     override func collectionView(collectionView: UICollectionView, shouldShowMenuForItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return false
+    return false
     }
-
     override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
-        println("okay")
-        return false
+    println("okay")
+    return false
     }
-
     override func collectionView(collectionView: UICollectionView, performAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) {
-        println(self.locations[indexPath.row])
+    println(self.locations[indexPath.row])
     }
     */
     
@@ -247,5 +245,5 @@ class locationController: UICollectionViewController, UICollectionViewDelegate {
             controller.elements = self.elements
         }
     }
-
+    
 }
